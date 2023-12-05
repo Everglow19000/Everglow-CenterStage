@@ -32,11 +32,14 @@ public class CameraOpMode extends LinearOpMode {
 
         Dictionary<AprilTagDetection, CameraSystem.AprilTagLocation> DTL;
         AprilTagDetection Key;
+        Enumeration<AprilTagDetection> AE;
         while (opModeIsActive()){
             DTL = cs.GetAprilTagLocation();
-            Key = DTL.keys().nextElement();
-            while (Key != null) {
-                telemetry.addData(DTL.get(Key).name() + ":", Key.ftcPose.x);
+            AE = DTL.keys();
+            Key = AE.nextElement();
+            while (AE.hasMoreElements()) {
+                telemetry.addData(DTL.get(Key).name() + ":", Key.id);
+                Key = AE.nextElement();
             }
             telemetry.update();
             sleep(50);

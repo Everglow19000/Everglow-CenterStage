@@ -11,6 +11,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -51,19 +52,42 @@ public class CameraSystem{
                 new Hashtable<AprilTagDetection, AprilTagLocation>();
 
         Dictionary<Double, AprilTagDetection> doubleToDetection = new Hashtable<Double, AprilTagDetection>();
-        double[] posDouble = new double[]{0,0,0}; //the right is the smallest, the left is the highest
-        AprilTagDetection[] detects = new AprilTagDetection[3];
+
 
         for (int i = 0; i<detections.size(); i++){
-            posDouble[i] = detections.get(i).ftcPose.x;
             doubleToDetection.put(detections.get(i).ftcPose.x, detections.get(i));
         }
 
-        posDouble = Arrays.stream(posDouble).sorted().toArray();
+        double[] posDouble = new double[doubleToDetection.size()]; //the right is the smallest, the left is the highest
+        Enumeration<Double> allValues = doubleToDetection.keys();
+        int count =0;
+        while (allValues.hasMoreElements()){
+            posDouble[count] = allValues.nextElement();
+            count++;
+        }
 
-        detectionToLocation.put(doubleToDetection.get(posDouble[0]), AprilTagLocation.LEFT);
-        detectionToLocation.put(doubleToDetection.get(posDouble[1]), AprilTagLocation.MIDDLE);
-        detectionToLocation.put(doubleToDetection.get(posDouble[2]), AprilTagLocation.RIGHT);
+        try {
+            posDouble = Arrays.stream(posDouble).sorted().toArray();
+        }catch (NullPointerException nullEX){
+            return null;
+        }
+
+
+        for (int i =0; i<doubleToDetection.size(); i++){
+            switch (i){
+                case 0: {
+                    detectionToLocation.put(doubleToDetection.get(posDouble[0]), AprilTagLocation.LEFT);
+                    break;
+                }
+                case 1:{
+                    detectionToLocation.put(doubleToDetection.get(posDouble[1]), AprilTagLocation.MIDDLE);
+                    break;
+                }
+                case 3:{
+                    detectionToLocation.put(doubleToDetection.get(posDouble[2]), AprilTagLocation.RIGHT);
+                }
+            }
+        }
 
         return detectionToLocation;
     }
