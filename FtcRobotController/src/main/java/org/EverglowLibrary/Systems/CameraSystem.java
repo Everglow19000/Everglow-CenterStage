@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Systems;
+package org.EverglowLibrary.Systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -16,7 +16,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 
-public class CameraSystem{
+public class CameraSystem {
 
     private AprilTagProcessor m_AprilTag;
     private final OpMode m_OpMode;
@@ -47,12 +47,13 @@ public class CameraSystem{
     }
 
     public Dictionary<AprilTagDetection,AprilTagLocation> GetAprilTagLocation(List<AprilTagDetection> detections){
+        if(detections.size() == 0)
+            return new Hashtable<AprilTagDetection,AprilTagLocation>();
 
         Dictionary<AprilTagDetection, AprilTagLocation> detectionToLocation =
                 new Hashtable<AprilTagDetection, AprilTagLocation>();
 
         Dictionary<Double, AprilTagDetection> doubleToDetection = new Hashtable<Double, AprilTagDetection>();
-
 
         for (int i = 0; i<detections.size(); i++){
             doubleToDetection.put(detections.get(i).ftcPose.x, detections.get(i));
@@ -68,11 +69,15 @@ public class CameraSystem{
 
         try {
             posDouble = Arrays.stream(posDouble).sorted().toArray();
+
         }catch (NullPointerException nullEX){
             return null;
         }
 
-
+        if(posDouble.length == 1) {
+            detectionToLocation.put(doubleToDetection.get(posDouble[0]), AprilTagLocation.MIDDLE);
+            return detectionToLocation;
+        }
         for (int i =0; i<doubleToDetection.size(); i++){
             switch (i){
                 case 0: {
@@ -83,7 +88,7 @@ public class CameraSystem{
                     detectionToLocation.put(doubleToDetection.get(posDouble[1]), AprilTagLocation.MIDDLE);
                     break;
                 }
-                case 3:{
+                case 2:{
                     detectionToLocation.put(doubleToDetection.get(posDouble[2]), AprilTagLocation.RIGHT);
                 }
             }
@@ -96,4 +101,5 @@ public class CameraSystem{
         return GetAprilTagLocation(DetectAprilTags());
     }
 
+    public void CloseCamera() { m_Camera.close();}
 }

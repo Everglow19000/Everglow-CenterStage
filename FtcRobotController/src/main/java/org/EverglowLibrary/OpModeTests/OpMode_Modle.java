@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.EverglowLibrary.OpModeTests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
