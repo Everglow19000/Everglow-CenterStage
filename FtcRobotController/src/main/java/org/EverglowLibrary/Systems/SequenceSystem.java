@@ -1,43 +1,42 @@
-package org.EverglowLibrary.Async;
+package org.EverglowLibrary.Systems;
 
-import android.provider.Telephony;
-
-import com.sun.tools.javac.code.Attribute;
+import org.EverglowLibrary.ExecuteMotor.WarpedExecute;
 
 import java.nio.channels.AsynchronousCloseException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 
-public class Sequance {
+public class SequenceSystem {
 
-    private Queue<Runnable> m_Runs = new LinkedList<>();
+    private Queue<WarpedExecute> m_Runs = new LinkedList<>();
     private Thread m_Thread;
     private boolean m_IsRunAsync;
     private ExecutorService m_Service;
     private Queue<Future> m_Futures = new LinkedList<>();;
+    private boolean m_alertWhenDone = false;
 
 
-    public Sequance(boolean isRunAsync, Runnable... AllRuns) {
+    public SequenceSystem(boolean isRunAsync, WarpedExecute... AllRuns) {
         this(isRunAsync,Arrays.asList(AllRuns));
     }
 
-    public Sequance(boolean isRunAsync, List<Runnable> AllRuns) {
+    public SequenceSystem(boolean isRunAsync, List<WarpedExecute> AllRuns) {
         m_Runs.addAll(AllRuns);
         m_IsRunAsync = isRunAsync;
         if(isRunAsync)
             setExecutorAsync();
         else
             setExecutorSync();
+    }
+
+    public SequenceSystem(boolean isRunAsync, List<WarpedExecute> AllRuns, boolean alertWhenDone){
+        this(isRunAsync, AllRuns);
+        m_alertWhenDone = alertWhenDone;
     }
 
     private void setExecutorSync() {
@@ -53,7 +52,7 @@ public class Sequance {
             m_Service = Executors.newFixedThreadPool(m_Runs.size());
     }
 
-    public void startSequance() throws AsynchronousCloseException {
+    public void startSequence() throws AsynchronousCloseException {
         if (m_IsRunAsync) {
             try {
                 while (m_Runs.size() != 0) {
@@ -93,11 +92,11 @@ public class Sequance {
         return m_Thread;
     }
 
-    public boolean isSequanceSync() {
+    public boolean isSequenceSync() {
         return m_IsRunAsync;
     }
 
-    public void setRuns(Queue<Runnable> runs) {
+    public void setRuns(Queue<WarpedExecute> runs) {
         //only if there is nothing in there or the size is zero
         if (m_Runs != null)
             if (m_Runs.size() == 0)
@@ -110,7 +109,7 @@ public class Sequance {
             setExecutorAsync();
     }
 
-    public boolean addRun(Runnable run) {
+    public boolean addRun(WarpedExecute run) {
         //only add run the thread isn't started yet
         if (isAllDone()) {
             m_Runs.add(run);
@@ -121,10 +120,14 @@ public class Sequance {
         return false;
     }
 
-    public void interruptSequance(){
+    public void interruptSequence(){
         if(m_IsRunAsync)
             m_Service.shutdown();
         else
             m_Thread.interrupt();
     }
+
+    public void SetAlert(boolean alertWhenDone) { m_alertWhenDone = alertWhenDone; }
+
+    //todo: set an method that alert when sequence done
 }
