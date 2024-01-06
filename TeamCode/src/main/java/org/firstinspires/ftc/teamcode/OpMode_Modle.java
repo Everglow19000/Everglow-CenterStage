@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 //more imports
 
@@ -12,16 +13,25 @@ public class OpMode_Modle extends LinearOpMode {
 
     //make more attributes & functions
     final double TicksToCm = 0.0586;
-    DcMotor FR,FL,BR,BL;BNO055IMU imu;
+    DcMotor FR,FL,BR,BL;
+    BNO055IMU imu;
     @Override
     public void runOpMode(){
-        TestMotor(50, FR);
-        sleep(2000);
-        TestMotor(50, FL);
-        sleep(2000);
-        TestMotor(50, BR);
-        sleep(2000);
-        TestMotor(50, BL);
+        FL = hardwareMap.get(DcMotorEx.class, "leftFront");
+        BL = hardwareMap.get(DcMotorEx.class, "leftRear");
+        BR = hardwareMap.get(DcMotorEx.class, "rightRear");
+        FR = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        waitForStart();
+
+        FR.setPower(0.4);
+        sleep(1000);
+        FL.setPower(0.4);
+        sleep(1000);
+        BR.setPower(0.4);
+        sleep(1000);
+        BL.setPower(0.4);
+        sleep(1000);
     }
     void TestMotor(double dis, DcMotor motor){
         double speed = 0.5;
