@@ -1,5 +1,7 @@
 package org.EverglowLibrary.Systems;
 
+import android.app.TaskInfo;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,7 +19,6 @@ import java.util.List;
 
 
 public class CameraSystem {
-
     private AprilTagProcessor m_AprilTag;
     private final OpMode m_OpMode;
     private VisionPortal m_Camera;

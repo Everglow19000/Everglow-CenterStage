@@ -11,10 +11,11 @@ public class TestMotors extends LinearOpMode {
     @Override
     public void runOpMode(){
         DcMotor motor = hardwareMap.get(DcMotor.class, "back_left");
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         boolean isRun = true;
         waitForStart();
         while (opModeIsActive()){
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             if(gamepad1.x)
                 isRun = !isRun;
             if(gamepad1.left_stick_y == 0 && isRun) {
