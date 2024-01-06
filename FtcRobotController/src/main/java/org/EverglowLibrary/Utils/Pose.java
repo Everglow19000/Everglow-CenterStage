@@ -11,6 +11,7 @@ public class Pose {
         this.angle = angle;
     }
 
+
     public double getX(){
         return x;
     }
@@ -21,5 +22,11 @@ public class Pose {
 
     public double getAngle(){
         return angle;
+    }
+
+    public Pose subtract(Pose anotherPose){
+        Pose returnPose;
+        returnPose = new Pose(x- anotherPose.x, y-anotherPose.y, angle - anotherPose.angle);
+        return  returnPose;
     }
 }

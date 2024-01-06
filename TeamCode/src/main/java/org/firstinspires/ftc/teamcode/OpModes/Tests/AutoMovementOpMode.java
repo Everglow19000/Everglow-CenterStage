@@ -8,6 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.EverglowLibrary.Utils.PointD;
 import org.EverglowLibrary.Utils.Pose;
 
+enum PropPlace{
+    LEFT, MIDDLE,RIGHT
+}
+
 @TeleOp(name = "AutoMovementRight")
 public class AutoMovementOpMode extends LinearOpMode {
     DcMotor leftBack, leftFront, rightBack, rightFront;
@@ -18,14 +22,25 @@ public class AutoMovementOpMode extends LinearOpMode {
         //leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         //rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         //rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        absoluteAutonomus(true,true, this);
+        absoluteAutonomus(true,true, PropPlace.RIGHT, this);
     }
 
-    public static void absoluteAutonomus(boolean isStartRight, boolean isStartBack, LinearOpMode linearOpMode)
+    public static void absoluteAutonomus(boolean isStartRight, boolean isStartBack
+            ,PropPlace propPlace, LinearOpMode linearOpMode)
     {
-
+        //propPlace = 0 :prop in left stripe
+        //propPlace = 1 :prop in middle stripe
+        //propPlace = 2 :prop in right stripe
+        Pose firstPoint;
         linearOpMode.waitForStart();
 
+        double squareSize = 60.5; //in cm
+        double distanceOfPropFromRobot = 67; //in cm
+        double distanceBetweenTags=17; //in cm
+        double distanceBuffer=0;
+        Pose movement;
+
+        /*
         PointD right = new PointD(30,30)
                 , left = new PointD(30,30)
                 , middle =  new PointD(30,30);
@@ -40,16 +55,46 @@ public class AutoMovementOpMode extends LinearOpMode {
         else{
             move(middle.add(new PointD(0,-10)));
         }
+        */
+        Pose startPose = new Pose(0.5* squareSize, 1.5 * squareSize, 0);
 
-        //todo: function of puting the pixel in the place
+        switch (propPlace) {
+            case LEFT:
+                firstPoint = new Pose(1.75 * squareSize, 1.5 * squareSize, 0.5 * Math.PI);
+                distanceBuffer=distanceBetweenTags;
+                break;
+            case MIDDLE:
+                firstPoint = new Pose(1.5 * squareSize, 1.5 * squareSize, 0);
+                distanceBuffer=0;
+                break;
+            default:
+                firstPoint = new Pose(1.75 * squareSize, 1.5 * squareSize, -0.5 * Math.PI);
+                distanceBuffer=-distanceBetweenTags;
+                break;
+        }
+
+
+        Pose secondPoint = new Pose(3.5 * squareSize, 1.5 * squareSize, 0);
+
+
+        Pose finalPoint = new Pose(3.5 * squareSize + distanceBuffer, 5 * squareSize,-0.5*Math.PI);
+
+
+
+        //todo: function of putting the pixel in the place
 
         //Todo: moving to the bord to put the thing on it using the roadRunner
         if(linearOpMode.opModeIsActive()){
-            //move to the board
+            movement = firstPoint.subtract(startPose);
+            //call move(movement)
+            movement = secondPoint.subtract(finalPoint);
+            //call move(movement)
+            movement = finalPoint.subtract(secondPoint);
+            //call move(movement)
         }
     }
 
-    public static void move(PointD place){
+    public static void move(Pose place){
 
     }
 
