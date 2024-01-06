@@ -16,11 +16,11 @@ public class OpMode_Modle extends LinearOpMode {
     @Override
     public void runOpMode(){
         TestMotor(50, FR);
-        sleep(20000);
+        sleep(2000);
         TestMotor(50, FL);
-        sleep(20000);
+        sleep(2000);
         TestMotor(50, BR);
-        sleep(20000);
+        sleep(2000);
         TestMotor(50, BL);
     }
     void TestMotor(double dis, DcMotor motor){
