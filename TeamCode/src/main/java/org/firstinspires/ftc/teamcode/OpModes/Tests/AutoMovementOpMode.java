@@ -36,26 +36,25 @@ public class AutoMovementOpMode extends LinearOpMode {
                 linearOpMode.waitForStart();
 
                 double squareSize = 60.5; //in cm
-                double distanceOfPropFromRobot = 67; //in cm
+                //double distanceOfPropFromRobot = 67; //in cm
                 double distanceBetweenTags=17; //in cm
-                double distanceBuffer=0;
-                double heading = 0;
                 Pose2d startingPoint = new Pose2d(1,2); //todo: change later
                 Pose2d movement;
 
                 Pose2d startPose2d = new Pose2d(0.5* squareSize, 1.5 * squareSize, 0);
 
-                switch (propPlace) {           case LEFT:
+                switch (propPlace) {
+                    case LEFT:
                         firstPoint = new Pose2d(1.75 * squareSize, 1.5 * squareSize,0.5 * Math.PI);
-                        distanceBuffer=distanceBetweenTags;
+                        distanceBetweenTags= distanceBetweenTags;
                         break;
                     case MIDDLE:
                         firstPoint = new Pose2d(1.5 * squareSize, 1.5 * squareSize, 0);
-                        distanceBuffer=0;
+                        distanceBetweenTags = 0;
                         break;
                     default:
                         firstPoint = new Pose2d(1.75 * squareSize, 1.5 * squareSize, -0.5 * Math.PI);
-                        distanceBuffer=-distanceBetweenTags;
+                        distanceBetweenTags = -distanceBetweenTags;
                         break;
                 }
 
@@ -63,7 +62,7 @@ public class AutoMovementOpMode extends LinearOpMode {
                 Pose2d secondPoint = new Pose2d(3.5 * squareSize, 1.5 * squareSize, 0);
 
 
-                Pose2d finalPoint = new Pose2d(3.5 * squareSize + distanceBuffer, 5 * squareSize,-0.5*Math.PI);
+                Pose2d finalPoint = new Pose2d(3.5 * squareSize + distanceBetweenTags, 5 * squareSize,-0.5*Math.PI);
 
 
 
