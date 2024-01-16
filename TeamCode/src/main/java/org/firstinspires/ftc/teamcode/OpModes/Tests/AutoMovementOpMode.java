@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.OpModes.Tests;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.EverglowLibrary.Utils.PointD;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 enum PropPlace{
@@ -22,7 +25,7 @@ public class AutoMovementOpMode extends LinearOpMode {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        rightBack =hardwareMap.get(DcMotor.class, "rightBack");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
                 absoluteAutonomus(true,true, PropPlace.RIGHT, this);
             }
 
@@ -32,21 +35,25 @@ public class AutoMovementOpMode extends LinearOpMode {
                 //propPlace = 0 :prop in left stripe
                 //propPlace = 1 :prop in middle stripe
                 //propPlace = 2 :prop in right stripe
+                SampleMecanumDrive drive = new SampleMecanumDrive(linearOpMode.hardwareMap);
+
+                Trajectory trajectory;
+
                 Pose2d firstPoint;
                 linearOpMode.waitForStart();
 
                 double squareSize = 60.5; //in cm
                 //double distanceOfPropFromRobot = 67; //in cm
                 double distanceBetweenTags=17; //in cm
-                Pose2d startingPoint = new Pose2d(1,2); //todo: change later
                 Pose2d movement;
 
                 Pose2d startPose2d = new Pose2d(0.5* squareSize, 1.5 * squareSize, 0);
+                double heading1 = 0;
 
                 switch (propPlace) {
                     case LEFT:
                         firstPoint = new Pose2d(1.75 * squareSize, 1.5 * squareSize,0.5 * Math.PI);
-                        distanceBetweenTags= distanceBetweenTags;
+
                         break;
                     case MIDDLE:
                         firstPoint = new Pose2d(1.5 * squareSize, 1.5 * squareSize, 0);
@@ -54,12 +61,12 @@ public class AutoMovementOpMode extends LinearOpMode {
                         break;
                     default:
                         firstPoint = new Pose2d(1.75 * squareSize, 1.5 * squareSize, -0.5 * Math.PI);
-                        distanceBetweenTags = -distanceBetweenTags;
+                        distanceBetweenTags = -1*distanceBetweenTags;
                         break;
                 }
 
 
-                Pose2d secondPoint = new Pose2d(3.5 * squareSize, 1.5 * squareSize, 0);
+                Pose2d secondPoint = new Pose2d(3.5 * squareSize, 1.5 * squareSize);
 
 
                 Pose2d finalPoint = new Pose2d(3.5 * squareSize + distanceBetweenTags, 5 * squareSize,-0.5*Math.PI);
@@ -70,12 +77,19 @@ public class AutoMovementOpMode extends LinearOpMode {
 
                 //Todo: moving to the bord to put the thing on it using the roadRunner
                 if(linearOpMode.opModeIsActive()){
-                    movement = firstPoint.minus(startingPoint);
-                    //call move(movement)
-                    movement = secondPoint.minus(finalPoint);
-                    //call move(movement)
-                    movement = finalPoint.minus(secondPoint);
-                    //call move(movement)
+                    try {
+                        trajectory = drive.trajectoryBuilder(startPose2d)
+                                .splineTo(firstPoint.vec(), firstPoint.getHeading())
+                                .splineTo(secondPoint.vec(), secondPoint.getHeading())
+                                .splineTo(finalPoint.vec(), finalPoint.getHeading())
+                                .build();
+                        drive.followTrajectory(trajectory);
+
+                        Thread.currentThread().wait(500);
+                    }
+                    catch (Exception e){
+                        linearOpMode.telemetry.addData("the exception: ", e);
+                    }
                 }
             }
         }
