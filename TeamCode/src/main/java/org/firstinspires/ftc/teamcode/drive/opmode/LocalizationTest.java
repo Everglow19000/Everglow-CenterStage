@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,6 +26,12 @@ public class LocalizationTest extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
+            if(gamepad1.circle){
+                Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
+                        .forward(100)
+                        .build();
+                drive.followTrajectory(trajectory);
+            }
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.right_stick_x,
