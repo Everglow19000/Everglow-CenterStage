@@ -3,14 +3,10 @@ package org.firstinspires.ftc.teamcode.OpModes.Tests;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.EverglowLibrary.Utils.PointD;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 enum PropPlace{
     LEFT, MIDDLE,RIGHT
@@ -53,7 +49,6 @@ public class AutoMovementOpMode extends LinearOpMode {
                 switch (propPlace) {
                     case LEFT:
                         firstPoint = new Pose2d(1.75 * squareSize, 1.5 * squareSize,0.5 * Math.PI);
-
                         break;
                     case MIDDLE:
                         firstPoint = new Pose2d(1.5 * squareSize, 1.5 * squareSize, 0);
@@ -75,7 +70,6 @@ public class AutoMovementOpMode extends LinearOpMode {
 
                 //todo: function of putting the pixel in the place
 
-                //Todo: moving to the bord to put the thing on it using the roadRunner
                 if(linearOpMode.opModeIsActive()){
                     try {
                         trajectory = drive.trajectoryBuilder(startPose2d)

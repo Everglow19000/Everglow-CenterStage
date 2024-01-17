@@ -30,9 +30,9 @@ public class CameraOpMode extends LinearOpMode {
         CameraSystem cs = new CameraSystem(this);
         waitForStart();
 
-        Dictionary<AprilTagDetection, CameraSystem.AprilTagLocation> DTL;
-        AprilTagDetection Key;
-        Enumeration<AprilTagDetection> AE;
+        Dictionary<CameraSystem.AprilTagLocation, AprilTagDetection> DTL;
+        CameraSystem.AprilTagLocation Key;
+        Enumeration<CameraSystem.AprilTagLocation> AE;
         List<AprilTagDetection> detections;
         while (opModeIsActive()){
             try {
@@ -48,7 +48,7 @@ public class CameraOpMode extends LinearOpMode {
                 telemetry.addData("amount places:", DTL.size());
                 telemetry.addData("amount total detection:", detections.size());
                 while (AE.hasMoreElements()) {
-                    telemetry.addData(DTL.get(Key).name() + ":", Key.id);
+                    telemetry.addData(Key.name() + ":", DTL.get(Key).id);
                     Key = AE.nextElement();
                 }
                 telemetry.update();
