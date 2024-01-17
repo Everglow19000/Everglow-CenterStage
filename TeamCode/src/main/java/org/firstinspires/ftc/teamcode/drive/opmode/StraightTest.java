@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @Config
 @Autonomous(group = "drive", name = "Straight Test")
 public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 100; // in
+    public static double DISTANCE = 100; // cm
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,9 +27,8 @@ public class StraightTest extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .strafeTo(new Vector2d(100,100))
+                .forward(DISTANCE)
                 .build();
 
         waitForStart();
