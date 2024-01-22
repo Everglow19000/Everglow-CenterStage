@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.EverglowLibrary.Systems.CameraSystem;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -29,7 +30,7 @@ public class CameraOpMode extends LinearOpMode {
     public void runOpMode(){
         CameraSystem cs = new CameraSystem(this);
         waitForStart();
-
+        /*
         Dictionary<AprilTagDetection, CameraSystem.AprilTagLocation> DTL;
         AprilTagDetection Key;
         Enumeration<AprilTagDetection> AE;
@@ -60,6 +61,18 @@ public class CameraOpMode extends LinearOpMode {
                 cs.CloseCamera();
                 break;
             }
+
+        }
+     */
+        if(gamepad1.cross) {
+            List<Recognition> recognitions = cs.DetectProp();
+
+            for (Recognition rec :
+                    recognitions) {
+                telemetry.addData("rec -> x: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, true)));
+                telemetry.addData("y: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, false)));
+            }
+            telemetry.update();
         }
     }
 }

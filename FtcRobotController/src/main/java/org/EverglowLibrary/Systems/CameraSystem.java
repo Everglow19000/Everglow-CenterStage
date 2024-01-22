@@ -4,16 +4,20 @@ import android.app.TaskInfo;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptTensorFlowObjectDetection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -22,6 +26,7 @@ public class CameraSystem {
     private AprilTagProcessor m_AprilTag;
     private final OpMode m_OpMode;
     private VisionPortal m_Camera;
+    private TfodProcessor m_Prop;
 
     public enum AprilTagLocation{
         LEFT, MIDDLE, RIGHT
@@ -29,6 +34,7 @@ public class CameraSystem {
 
     public CameraSystem(OpMode opMode){
         m_OpMode = opMode;
+        m_Prop = TfodProcessor.easyCreateWithDefaults();
 
         m_AprilTag = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
@@ -39,6 +45,7 @@ public class CameraSystem {
 
         builder.setCamera(m_OpMode.hardwareMap.get(WebcamName.class, "webcam"));
         builder.addProcessor(m_AprilTag);
+        builder.addProcessor(m_Prop);
 
         m_Camera =  builder.build();
     }
@@ -102,5 +109,34 @@ public class CameraSystem {
         return GetAprilTagLocation(DetectAprilTags());
     }
 
+    public List<Recognition> DetectProp(){
+       return m_Prop.getRecognitions();
+    }
+
+    public Recognition getClosetRecognition(){
+        List<Recognition> recognitions = DetectProp();
+        Recognition lowestRec = recognitions.get(0);
+        double lowY = 10000, y;
+        for (Recognition rec:recognitions) {
+            y = ConvertInchToCm(ConvertRecognitionToPos(rec, false));
+            if(y < lowY)
+            {
+                lowestRec = rec;
+                lowY = y;
+            }
+        }
+        return lowestRec;
+    }
+
+    public double ConvertRecognitionToPos(Recognition rec, boolean isX){
+        if(isX)
+            return (rec.getLeft() + rec.getRight()) / 2 ;
+        else
+            return (rec.getTop()  + rec.getBottom()) / 2;
+    }
+
+    public static double ConvertInchToCm(double inch){
+        return inch*2.54;
+    }
     public void CloseCamera() { m_Camera.close();}
 }
