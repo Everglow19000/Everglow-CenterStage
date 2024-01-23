@@ -19,9 +19,9 @@ public class OpMode_Modle extends LinearOpMode {
     BNO055IMU imu;
     @Override
     public void runOpMode(){
-        LE = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
+        LE = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
         RE = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        FE = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
+        FE = new Encoder(hardwareMap.get(DcMotorEx.class, "rightFront"));
         RE.setDirection(Encoder.Direction.REVERSE);
 
         waitForStart();
