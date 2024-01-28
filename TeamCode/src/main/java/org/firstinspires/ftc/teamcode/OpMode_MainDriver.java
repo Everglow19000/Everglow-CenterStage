@@ -66,13 +66,13 @@ public class OpMode_MainDriver extends LinearOpMode{
 
         while (!isStopRequested()) {
             if(gamepad1.circle && !circle_toggle){
-                if(SlideUp){
+                if(SlideUp){ //get elevator up
                     SlideR.setPower(0.6);
                     SlideL.setPower(0.6);
                     SlideR.setTargetPosition(720);
                     SlideL.setTargetPosition(720);
                     SlideUp = !SlideUp;
-                } else {
+                } else { //get elevator down
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
                     SlideR.setTargetPosition(0);
@@ -80,7 +80,8 @@ public class OpMode_MainDriver extends LinearOpMode{
                     SlideUp = !SlideUp;
                 }
             }
-            circle_toggle = gamepad1.circle;
+            circle_toggle = gamepad1.circle; //control when the elevator will work,
+            // lock circle until the movement has done
 
             if(gamepad1.right_bumper && !right_bumper_toggle){
                 if(ClawClosed){
