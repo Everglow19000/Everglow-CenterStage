@@ -1,4 +1,4 @@
-package org.EverglowLibrary.Autonomus;
+/*package org.EverglowLibrary.Autonomus;
 
 import android.graphics.Point;
 
@@ -20,3 +20,5 @@ public class AutoMovement {
         m_Position = referncePose;
     }
 }
+
+ */

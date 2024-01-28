@@ -13,15 +13,24 @@ public class TestEel extends LinearOpMode {
         Elevators elevators = new Elevators(this);
         waitForStart();
         boolean is_sync = false;
-        double buff = 0.5;
+        double buff = 0.2;
+        double left;
+        double right;
         while (opModeIsActive()) {
+            left = gamepad1.left_stick_y*buff;
+            right = gamepad1.right_stick_y*buff;
+
             if(!is_sync)
-                elevators.setPower(gamepad1.left_stick_y*buff, gamepad1.right_stick_y*buff);
+                elevators.setPower(left, right);
             else
-                elevators.setPower(gamepad1.left_stick_y*buff, gamepad1.left_stick_y*buff);
+                elevators.setPower(left);
 
             if(gamepad1.cross)
-                is_sync = !is_sync;
+                is_sync = true;
+            if(gamepad1.circle)
+                is_sync = false;
+            if(gamepad1.square)
+                elevators.goTo(Elevators.Level.UP);
         }
 
         elevators.setPower(0);
