@@ -18,7 +18,8 @@ public class OpMode_MainDriver extends LinearOpMode{
     boolean SlideUp = false;
     boolean ClawClosed = false;
     boolean ClawExtended = false;
-    boolean A_toggle = false;
+    boolean DpadUp_toggle = false;
+    boolean DpadDown_toggle = false;
     boolean circle_toggle = false;
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
@@ -110,14 +111,24 @@ public class OpMode_MainDriver extends LinearOpMode{
             }
             square_toggle = gamepad1.square;
 
-            if(!A_toggle && gamepad1.a) {
+            if(!DpadUp_toggle && gamepad1.dpad_up) {
+                if (GagazMot.getPower() == 0) {
+                    GagazMot.setPower(-1);
+                } else {
+                    GagazMot.setPower(0);
+                }
+            }
+            DpadUp_toggle = gamepad1.dpad_up;
+
+            if(!DpadDown_toggle && gamepad1.dpad_down) {
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(-1);
                 }else {
                     GagazMot.setPower(0);
                 }
             }
-            A_toggle = gamepad1.a;
+
+            DpadDown_toggle = gamepad1.dpad_down;
 
             drive.setWeightedDrivePower(
                     new Pose2d(
