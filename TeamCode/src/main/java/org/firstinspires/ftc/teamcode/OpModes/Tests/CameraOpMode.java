@@ -19,7 +19,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-@TeleOp(name = "Camera")
+@TeleOp(name = "Camera Prop")
 public class CameraOpMode extends LinearOpMode {
 
     //make more attributes & functions
@@ -64,7 +64,7 @@ public class CameraOpMode extends LinearOpMode {
 
         }
      */
-        if(gamepad1.cross) {
+        while (opModeIsActive()) {
             List<Recognition> recognitions = cs.DetectProp();
 
             for (Recognition rec :
@@ -72,7 +72,8 @@ public class CameraOpMode extends LinearOpMode {
                 telemetry.addData("rec -> x: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, true)));
                 telemetry.addData("y: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, false)));
             }
-            telemetry.update();
+            if (!gamepad1.x)
+                telemetry.update();
         }
     }
 }

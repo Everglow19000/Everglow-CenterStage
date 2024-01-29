@@ -12,7 +12,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
 
-@TeleOp(name = "Camera")
+@TeleOp(name = "Camera AprilTag")
 public class CameraOpMode extends LinearOpMode {
     @Override
     public void runOpMode(){

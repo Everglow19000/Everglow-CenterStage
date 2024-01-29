@@ -34,7 +34,7 @@ public class CameraSystem {
 
     public CameraSystem(OpMode opMode){
         m_OpMode = opMode;
-        m_Prop = TfodProcessor.easyCreateWithDefaults();
+        m_Prop = new TfodProcessor.Builder().build();
 
         m_AprilTag = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
