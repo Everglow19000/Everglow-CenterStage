@@ -94,10 +94,10 @@ public class SampleTankDrive extends TankDrive {
         imu.initialize(parameters);
 
         // add/remove motors depending on your robot (e.g., 6WD)
-        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "frontLeftMotor");
-        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "backLeftMotor");
-        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "backRightMotor");
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "frontRightMotor");
+        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
         leftMotors = Arrays.asList(leftFront, leftRear);
