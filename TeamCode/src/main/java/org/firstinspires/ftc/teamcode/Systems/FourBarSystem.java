@@ -30,15 +30,32 @@ public class FourBarSystem {
     Level currentLevel = Level.START;
     ServoAngel currentServoAngel = ServoAngel.START;
 
-    public DcMotorEx fourBarMotor;
+    DcMotorEx fourBarMotor;
     OpMode opMode;
-    public Servo clawAngelServo;
+    Servo clawAngelServo;
 
     public FourBarSystem(OpMode opMode){
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
     }
+
+    public int getCurrentMotorPosition() {
+        return fourBarMotor.getCurrentPosition();
+    }
+
+    public double getCurrentServoPosition() {
+        return clawAngelServo.getPosition();
+    }
+
+    public void setMotorPower(double power) {
+        fourBarMotor.setPower(power);
+    }
+
+    public void setServoPosition(double position) {
+        clawAngelServo.setPosition(position);
+    }
+
 
     public void set4BarPosition(Level targetLevel) {
         currentLevel = targetLevel;
