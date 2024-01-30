@@ -26,8 +26,8 @@ public class ElevatorSystem {
 
 
     public ElevatorSystem(OpMode opMode) {
-        left = opMode.hardwareMap.get(DcMotor.class, "left_elevator");
-        right = opMode.hardwareMap.get(DcMotor.class, "right_elevator");
+        left = opMode.hardwareMap.get(DcMotor.class, "SlideL");
+        right = opMode.hardwareMap.get(DcMotor.class, "SlideR");
 
         left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -71,7 +71,7 @@ public class ElevatorSystem {
     }
 
     public void toggle(){
-        final double downPower = 0.4;
+        final double downPower = -0.4;
         final double upPower = 0.6;
         if(this.ElevatorCurrentLevel == Level.DOWN) {
             ElevatorCurrentLevel = Level.UP;
@@ -80,8 +80,8 @@ public class ElevatorSystem {
         }
         else{
             ElevatorCurrentLevel = Level.DOWN;
-            left.setPower(upPower);
-            right.setPower(upPower);
+            left.setPower(downPower);
+            right.setPower(downPower);
         }
 
         left.setTargetPosition(ElevatorCurrentLevel.state);

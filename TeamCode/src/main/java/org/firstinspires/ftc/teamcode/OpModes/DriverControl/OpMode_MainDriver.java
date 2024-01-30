@@ -45,7 +45,7 @@ public class OpMode_MainDriver extends LinearOpMode{
         SlideR = hardwareMap.get(DcMotorEx.class, "SlideR");
         SlideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        SlideR.setDirection( DcMotorSimple.Direction.REVERSE);
+        SlideL.setDirection( DcMotorSimple.Direction.REVERSE);
         SlideR.setTargetPosition(0);
         SlideL.setTargetPosition(0);
         SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -122,7 +122,7 @@ public class OpMode_MainDriver extends LinearOpMode{
 
             if(!DpadDown_toggle && gamepad1.dpad_down) {
                 if (GagazMot.getPower() == 0) {
-                    GagazMot.setPower(-1);
+                    GagazMot.setPower(1);
                 }else {
                     GagazMot.setPower(0);
                 }
