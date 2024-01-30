@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 
 //more imports
 
-@TeleOp(name = "Modle Op-Mode")
+@TeleOp(name = "Encoder tests")
 public class OpMode_Modle extends LinearOpMode {
 
     //make more attributes & functions

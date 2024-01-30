@@ -36,13 +36,15 @@ public class SimplerOpMode extends LinearOpMode {
         public boolean isLeft(SimplerOpMode.StartPosition startPosition) {
             if(startPosition == FRONTLEFT || startPosition == BACKLEFT)
                 return true;
-            return false;
+            else
+                return false;
         }
 
         public boolean isFront(SimplerOpMode.StartPosition startPosition) {
             if(startPosition == FRONTLEFT || startPosition == FRONTRIGHT)
                 return true;
-            return false;
+            else
+                return false;
         }
     }
 
