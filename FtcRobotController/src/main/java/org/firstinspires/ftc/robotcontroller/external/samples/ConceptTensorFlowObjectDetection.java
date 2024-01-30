@@ -58,10 +58,10 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "MyModelStoredAsAsset.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-       "Pixel",
+       "RedConus"
     };
 
     /**
@@ -116,7 +116,10 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
+        tfod = new TfodProcessor
+                .Builder()
+                .setModelFileName(TFOD_MODEL_FILE)
+
 
             // With the following lines commented out, the default TfodProcessor Builder
             // will load the default model for the season. To define a custom model to load, 
@@ -128,11 +131,11 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
             // The following default settings are available to un-comment and edit as needed to 
             // set parameters for custom models.
-            //.setModelLabels(LABELS)
-            //.setIsModelTensorFlow2(true)
-            //.setIsModelQuantized(true)
-            //.setModelInputSize(300)
-            //.setModelAspectRatio(16.0 / 9.0)
+            .setModelLabels(LABELS)
+            .setIsModelTensorFlow2(true)
+            .setIsModelQuantized(true)
+            .setModelInputSize(300)
+            .setModelAspectRatio(16.0 / 9.0)
 
             .build();
 
