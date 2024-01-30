@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(group = "drive")
+@TeleOp(group = "drive", name = "MainDrive No Systems")
 public class OpMode_MainDriver extends LinearOpMode{
     Servo FlipServo, ClawR, ClawL;
     DcMotorEx SlideL, SlideR, FourBar, GagazMot;
@@ -24,6 +24,7 @@ public class OpMode_MainDriver extends LinearOpMode{
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
 
+    boolean isFourBarRun = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -55,6 +56,7 @@ public class OpMode_MainDriver extends LinearOpMode{
         FourBar = hardwareMap.get(DcMotorEx.class, "4Bar");
         FourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FourBar.setDirection( DcMotorSimple.Direction.REVERSE);
+        //final double powerFourBar = 0.3;
         FourBar.setPower(0.3);
         FourBar.setTargetPosition(-10);
         FourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -66,6 +68,13 @@ public class OpMode_MainDriver extends LinearOpMode{
         waitForStart();
 
         while (!isStopRequested()) {
+            /*
+            if(isFourBarRun){
+                FourBar.setPositionPIDFCoefficients();
+                FourBar.setPower(powerFourBar);
+            }
+             */
+
             if(gamepad1.circle && !circle_toggle){
                 if(SlideUp){ //get elevator up
                     SlideR.setPower(0.6);
@@ -97,12 +106,14 @@ public class OpMode_MainDriver extends LinearOpMode{
             }
             right_bumper_toggle = gamepad1.right_bumper;
 
-            if(gamepad1.square && !square_toggle){
+            if(gamepad1.square && !square_toggle){ //
                 if(ClawExtended){
                     FlipServo.setPosition(0.5);
+                    FourBar.setPower(0.3);
                     FourBar.setTargetPosition(270);
                     ClawExtended = !ClawExtended;
                 } else {
+                    FourBar.setPower(0.15);
                     FourBar.setTargetPosition(-10);
                     sleep(500);
                     FlipServo.setPosition(0);
@@ -111,7 +122,7 @@ public class OpMode_MainDriver extends LinearOpMode{
             }
             square_toggle = gamepad1.square;
 
-            if(!DpadUp_toggle && gamepad1.dpad_up) {
+            if(!DpadUp_toggle && gamepad1.dpad_up) { //galgal azikonim
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(-1);
                 } else {
@@ -120,7 +131,7 @@ public class OpMode_MainDriver extends LinearOpMode{
             }
             DpadUp_toggle = gamepad1.dpad_up;
 
-            if(!DpadDown_toggle && gamepad1.dpad_down) {
+            if(!DpadDown_toggle && gamepad1.dpad_down) { //galgal azikonim, revers
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(1);
                 }else {
