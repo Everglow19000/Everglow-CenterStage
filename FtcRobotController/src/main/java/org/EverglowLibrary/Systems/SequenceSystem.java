@@ -1,6 +1,6 @@
 package org.EverglowLibrary.Systems;
 
-import org.EverglowLibrary.ExecuteMotor.WarpedExecute;
+import org.EverglowLibrary.ExecuteMotor.Sequence;
 
 import java.nio.channels.AsynchronousCloseException;
 import java.util.Arrays;
@@ -12,122 +12,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class SequenceSystem {
+    private Queue<Sequence> m_Runs = new LinkedList<>();
 
-    private Queue<WarpedExecute> m_Runs = new LinkedList<>();
-    private Thread m_Thread;
-    private boolean m_IsRunAsync;
-    private ExecutorService m_Service;
-    private Queue<Future> m_Futures = new LinkedList<>();;
-    private boolean m_alertWhenDone = false;
-
-
-    public SequenceSystem(boolean isRunAsync, WarpedExecute... AllRuns) {
-        this(isRunAsync,Arrays.asList(AllRuns));
+    public SequenceSystem(Sequence... runs){
+        m_Runs.addAll(Arrays.asList(runs));
     }
 
-    public SequenceSystem(boolean isRunAsync, List<WarpedExecute> AllRuns) {
-        m_Runs.addAll(AllRuns);
-        m_IsRunAsync = isRunAsync;
-        if(isRunAsync)
-            setExecutorAsync();
-        else
-            setExecutorSync();
-    }
-
-    public SequenceSystem(boolean isRunAsync, List<WarpedExecute> AllRuns, boolean alertWhenDone){
-        this(isRunAsync, AllRuns);
-        m_alertWhenDone = alertWhenDone;
-    }
-
-    private void setExecutorSync() {
-        m_Thread = new Thread(() -> {
-            while (m_Runs.size() != 0)
-                m_Runs.remove().run();
-        });
-    }
-
-
-    private void setExecutorAsync() {
-        if(m_Runs.size() > 0)
-            m_Service = Executors.newFixedThreadPool(m_Runs.size());
-    }
-
-    public void startSequence() throws AsynchronousCloseException {
-        if (m_IsRunAsync) {
-            try {
-                while (m_Runs.size() != 0) {
-                    //run async the run method in order, save the Future class in Queue of the runs
-                    m_Futures.add(m_Service.submit(m_Runs.remove()));
-                }
-            } catch (Exception e) {
-                throw new AsynchronousCloseException();
-            }
-        } else
-            m_Thread.start();
-    }
-
-    public boolean isAllDone() {
-        if (m_IsRunAsync) {
-            for (Future future :
-                    m_Futures) {
-                if (!future.isDone())
-                    return false;
-            }
-            return true;
-        } else
-            return isSyncThreadDone();
-    }
-
-    public boolean isSyncThreadDone() {
-        if (m_Thread != null)
-            return !m_Thread.isAlive();
-        return true;
-    }
-
-    public Queue<Future> getFutures() {
-        return m_Futures;
-    }
-
-    public Thread getThread() {
-        return m_Thread;
-    }
-
-    public boolean isSequenceSync() {
-        return m_IsRunAsync;
-    }
-
-    public void setRuns(Queue<WarpedExecute> runs) {
-        //only if there is nothing in there or the size is zero
-        if (m_Runs != null)
-            if (m_Runs.size() == 0)
-                m_Runs = runs;
-            else{
-                m_Runs = runs;
-            }
-
-        if(m_IsRunAsync)
-            setExecutorAsync();
-    }
-
-    public boolean addRun(WarpedExecute run) {
-        //only add run the thread isn't started yet
-        if (isAllDone()) {
-            m_Runs.add(run);
-            if(m_IsRunAsync)
-                setExecutorAsync();
-            return true;
+    public void ExecuteAll(){
+        for (Sequence run : m_Runs) {
+            Execute(run);
         }
-        return false;
     }
 
-    public void interruptSequence(){
-        if(m_IsRunAsync)
-            m_Service.shutdown();
-        else
-            m_Thread.interrupt();
+    public static void Execute(Sequence sequence){
+        try {
+            sequence.startSequence();
+        }
+        catch (Exception e){
+
+        }
     }
-
-    public void SetAlert(boolean alertWhenDone) { m_alertWhenDone = alertWhenDone; }
-
-    //todo: set an method that alert when sequence done
 }
