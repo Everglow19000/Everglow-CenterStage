@@ -14,12 +14,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.sql.Time;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Timer;
 
 
 public class CameraSystem {
@@ -28,16 +30,17 @@ public class CameraSystem {
     private VisionPortal m_Camera;
     private TfodProcessor m_Prop;
 
+    private final double MIN_RIGHT_LOCATION = 800;
+
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
             "RedConus"
     };
 
-    public enum AprilTagLocation{
+    public enum DetectionLocation{
         LEFT, MIDDLE, RIGHT
     }
-
     public CameraSystem(OpMode opMode){
         m_OpMode = opMode;
         m_Prop = new TfodProcessor
@@ -81,12 +84,12 @@ public class CameraSystem {
         return m_AprilTag.getDetections();
     }
 
-    public Dictionary<AprilTagDetection,AprilTagLocation> GetAprilTagLocation(List<AprilTagDetection> detections){
+    public Dictionary<AprilTagDetection,DetectionLocation> GetDetectionLocation(List<AprilTagDetection> detections){
         if(detections.size() == 0)
-            return new Hashtable<AprilTagDetection,AprilTagLocation>();
+            return new Hashtable<AprilTagDetection,DetectionLocation>();
 
-        Dictionary<AprilTagDetection, AprilTagLocation> detectionToLocation =
-                new Hashtable<AprilTagDetection, AprilTagLocation>();
+        Dictionary<AprilTagDetection, DetectionLocation> detectionToLocation =
+                new Hashtable<AprilTagDetection, DetectionLocation>();
 
         Dictionary<Double, AprilTagDetection> doubleToDetection = new Hashtable<Double, AprilTagDetection>();
 
@@ -110,21 +113,21 @@ public class CameraSystem {
         }
 
         if(posDouble.length == 1) {
-            detectionToLocation.put(doubleToDetection.get(posDouble[0]), AprilTagLocation.MIDDLE);
+            detectionToLocation.put(doubleToDetection.get(posDouble[0]), DetectionLocation.MIDDLE);
             return detectionToLocation;
         }
         for (int i =0; i<doubleToDetection.size(); i++){
             switch (i){
                 case 0: {
-                    detectionToLocation.put(doubleToDetection.get(posDouble[0]), AprilTagLocation.LEFT);
+                    detectionToLocation.put(doubleToDetection.get(posDouble[0]), DetectionLocation.LEFT);
                     break;
                 }
                 case 1:{
-                    detectionToLocation.put(doubleToDetection.get(posDouble[1]), AprilTagLocation.MIDDLE);
+                    detectionToLocation.put(doubleToDetection.get(posDouble[1]), DetectionLocation.MIDDLE);
                     break;
                 }
                 case 2:{
-                    detectionToLocation.put(doubleToDetection.get(posDouble[2]), AprilTagLocation.RIGHT);
+                    detectionToLocation.put(doubleToDetection.get(posDouble[2]), DetectionLocation.RIGHT);
                 }
             }
         }
@@ -132,8 +135,8 @@ public class CameraSystem {
         return detectionToLocation;
     }
 
-    public Dictionary<AprilTagDetection,AprilTagLocation> GetAprilTagLocation() {
-        return GetAprilTagLocation(DetectAprilTags());
+    public Dictionary<AprilTagDetection,DetectionLocation> GetDetectionLocation() {
+        return GetDetectionLocation(DetectAprilTags());
     }
 
     public List<Recognition> DetectProp(){
@@ -152,6 +155,38 @@ public class CameraSystem {
             }
         }
         return lowestRec;
+    }
+
+    public DetectionLocation DetectAndFindPropLocation(){
+        //takes time!
+        DetectionLocation detectionLocation = null;
+        long start = System.currentTimeMillis();
+        final int TIME_WAIT_MILL = 15 * 1000;
+        boolean isTimeEnd = false;
+        List<Recognition> recognitions;
+        double distanceFromCameraX;
+
+        m_OpMode.telemetry.addLine("start detecting...");
+        m_OpMode.telemetry.update();
+        while (detectionLocation == null || !isTimeEnd){
+            recognitions = DetectProp();
+            if(recognitions.size() != 0){
+                distanceFromCameraX = ConvertRecognitionToPos(recognitions.get(0), true);
+
+                if(distanceFromCameraX <= MIN_RIGHT_LOCATION)
+                    detectionLocation = DetectionLocation.RIGHT;
+                else
+                    detectionLocation = DetectionLocation.MIDDLE;
+            }
+            isTimeEnd = (System.currentTimeMillis() - start) >= TIME_WAIT_MILL;
+        }
+
+        if(isTimeEnd)
+            detectionLocation = DetectionLocation.RIGHT;
+
+        m_OpMode.telemetry.addData("finished detection; point:", detectionLocation.name());
+        m_OpMode.telemetry.update();
+        return detectionLocation;
     }
 
     public double ConvertRecognitionToPos(Recognition rec, boolean isX){
