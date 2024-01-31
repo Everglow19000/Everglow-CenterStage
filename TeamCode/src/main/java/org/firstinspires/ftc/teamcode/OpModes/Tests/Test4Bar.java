@@ -12,9 +12,10 @@ import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 
 @TeleOp(name = "Test4Bar")
 public class Test4Bar extends LinearOpMode {
-    FourBarSystem fourBarSystem = new FourBarSystem(this);
+    FourBarSystem fourBarSystem;
     @Override
     public void runOpMode() throws InterruptedException {
+        fourBarSystem = new FourBarSystem(this);
         waitForStart();
         double position = 0;
         while(opModeIsActive()) {

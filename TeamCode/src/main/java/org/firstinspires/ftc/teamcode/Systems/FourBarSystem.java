@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -38,6 +40,10 @@ public class FourBarSystem {
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
+        fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
+        fourBarMotor.setTargetPosition(-10);
+        fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fourBarMotor.setTargetPositionTolerance(10);
     }
 
     public int getCurrentMotorPosition() {
