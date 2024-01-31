@@ -10,7 +10,7 @@ import java.util.List;
 
 //more imports
 
-@TeleOp(name = "Pixel")
+@TeleOp(name = "PropDetectionComplex")
 public class PixelDetectionOpMode extends LinearOpMode {
 
     //make more attributes & functions

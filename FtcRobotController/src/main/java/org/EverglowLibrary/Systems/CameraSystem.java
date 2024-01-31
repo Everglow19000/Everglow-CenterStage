@@ -46,18 +46,6 @@ public class CameraSystem {
         m_Prop = new TfodProcessor
                 .Builder()
                 .setModelFileName(TFOD_MODEL_FILE)
-
-
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
-
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
                 .setModelLabels(LABELS)
                 .setIsModelTensorFlow2(true)
                 .setIsModelQuantized(true)
@@ -164,11 +152,10 @@ public class CameraSystem {
         final int TIME_WAIT_MILL = 15 * 1000;
         boolean isTimeEnd = false;
         List<Recognition> recognitions;
-        double distanceFromCameraX;
 
         m_OpMode.telemetry.addLine("start detecting...");
         m_OpMode.telemetry.update();
-        while (detectionLocation == null || !isTimeEnd){
+        while (detectionLocation == null && !isTimeEnd){
             recognitions = DetectProp();
             if(recognitions.size() != 0){
                 detectionLocation = RecognitionToLocation(recognitions.get(0));
@@ -194,7 +181,7 @@ public class CameraSystem {
         distanceFromCameraX = ConvertRecognitionToPos(recognition, true);
 
         if(distanceFromCameraX <= MIN_RIGHT_LOCATION)
-            return DetectionLocation.RIGHT;
+            return DetectionLocation.LEFT;
         else
             return DetectionLocation.MIDDLE;
 

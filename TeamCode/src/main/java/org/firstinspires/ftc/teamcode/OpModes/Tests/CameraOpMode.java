@@ -30,40 +30,6 @@ public class CameraOpMode extends LinearOpMode {
     public void runOpMode(){
         CameraSystem cs = new CameraSystem(this);
         waitForStart();
-        /*
-        Dictionary<AprilTagDetection, CameraSystem.AprilTagLocation> DTL;
-        AprilTagDetection Key;
-        Enumeration<AprilTagDetection> AE;
-        List<AprilTagDetection> detections;
-        while (opModeIsActive()){
-            try {
-                detections = cs.DetectAprilTags();
-                DTL = cs.GetAprilTagLocation(detections);
-                AE = DTL.keys();
-
-                if(AE.hasMoreElements())
-                    Key = AE.nextElement();
-                else
-                    continue;
-
-                telemetry.addData("amount places:", DTL.size());
-                telemetry.addData("amount total detection:", detections.size());
-                while (AE.hasMoreElements()) {
-                    telemetry.addData(DTL.get(Key).name() + ":", Key.id);
-                    Key = AE.nextElement();
-                }
-                telemetry.update();
-                sleep(200);
-            }
-            catch (Exception e){
-                telemetry.addData("Exception:", e);
-                telemetry.update();
-                cs.CloseCamera();
-                break;
-            }
-
-        }
-     */
         while (opModeIsActive()) {
             List<Recognition> recognitions = cs.DetectProp();
 
