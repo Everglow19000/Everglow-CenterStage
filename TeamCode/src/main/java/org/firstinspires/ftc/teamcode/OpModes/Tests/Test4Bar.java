@@ -21,8 +21,8 @@ public class Test4Bar extends LinearOpMode {
         while(opModeIsActive()) {
             fourBarSystem.setMotorPower(gamepad1.left_stick_y * 0.2);
             position += gamepad1.right_stick_y / 1000;
-            position = min(1, position);
-            position = max(0, position);
+            //position = min(1, position);
+            //position = max(0, position);
             fourBarSystem.setServoPosition(position);
 
             telemetry.addData("MotorPosition", fourBarSystem.getCurrentMotorPosition());

@@ -36,14 +36,16 @@ public class FourBarSystem {
     OpMode opMode;
     Servo clawAngelServo;
 
+    double fourBarTarget = 0;
+
     public FourBarSystem(OpMode opMode){
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
         fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
-        fourBarMotor.setTargetPosition(-10);
+        fourBarMotor.set4BarPosition(-10);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fourBarMotor.setTargetPositionTolerance(10);
+        fourBarMotor.set4BarPositionTolerance(10);
     }
 
     public int getCurrentMotorPosition() {
@@ -62,10 +64,13 @@ public class FourBarSystem {
         clawAngelServo.setPosition(position);
     }
 
-
-    public void set4BarPosition(Level targetLevel) {
+    public void set4BarPosition(int target) {
+        fourBarTarget = target;
+        fourBarMotor.setTargetPosition(target);
+    }
+    public void set4BarPositionByLevel(Level targetLevel) {
         currentLevel = targetLevel;
-        fourBarMotor.setTargetPosition(currentLevel.state);
+        set4BarPosition(currentLevel.state);
     }
 
     public void setServoPosition(ServoAngel targetServoAngel) {
@@ -75,10 +80,10 @@ public class FourBarSystem {
 
     public void toggle4Bar() {
         if(currentLevel == Level.START || currentLevel == Level.PICKUP || currentLevel == Level.REST) {
-            setServoPosition(ServoAngel.DROP);
+            set4BarPositionByLevel(Level.DROP);
         }
         else{
-            setServoPosition(ServoAngel.PICKUP);
+            set4BarPositionByLevel(Level.PICKUP);
         }
     }
 
@@ -89,6 +94,10 @@ public class FourBarSystem {
         else{
             setServoPosition(ServoAngel.PICKUP);
         }
+    }
+
+    public void updateP() {
+        fourBarMotor.setPower(1);
     }
 
 

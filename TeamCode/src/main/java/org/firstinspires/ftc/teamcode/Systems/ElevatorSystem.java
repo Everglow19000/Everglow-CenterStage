@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class ElevatorSystem {
     public enum Level {
-        DOWN(0), UP(720);
+        DOWN(35), UP(720);
 
         public final int state;
 
@@ -14,8 +14,7 @@ public class ElevatorSystem {
         }
     }
 
-
-
+    public OpMode opMode;
     Level ElevatorCurrentLevel = Level.DOWN;
 
 
@@ -26,6 +25,7 @@ public class ElevatorSystem {
 
 
     public ElevatorSystem(OpMode opMode) {
+        this.opMode = opMode;
         left = opMode.hardwareMap.get(DcMotor.class, "SlideL");
         right = opMode.hardwareMap.get(DcMotor.class, "SlideR");
 
@@ -68,6 +68,12 @@ public class ElevatorSystem {
         final double scale = 0.7;
         left.setPower(powerL * scale);
         right.setPower(powerR * scale);
+    }
+
+    public void printPos(){
+        opMode.telemetry.addData("right:", right.getCurrentPosition());
+        opMode.telemetry.addData("left:", left.getCurrentPosition());
+        opMode.telemetry.update();
     }
 
     public void toggle(){

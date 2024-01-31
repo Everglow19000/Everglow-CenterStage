@@ -30,8 +30,8 @@ public class Elevators {
 
     public Elevators(OpMode opMode) {
         this.opMode = opMode;
-        left = opMode.hardwareMap.get(DcMotor.class, "left_elevator");
-        right = opMode.hardwareMap.get(DcMotor.class, "right_elevator");
+        left = opMode.hardwareMap.get(DcMotor.class, "SlideL");
+        right = opMode.hardwareMap.get(DcMotor.class, "SlideR");
 
         left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -66,6 +66,7 @@ public class Elevators {
         right.setPower(power * scale);
         left.setPower(power * scale);
     }
+
 
     public void setPower(double powerL, double powerR){
         double scaleR = 0.7;
