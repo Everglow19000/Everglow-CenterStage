@@ -68,13 +68,6 @@ public class OpMode_MainDriver extends LinearOpMode{
         waitForStart();
 
         while (!isStopRequested()) {
-            /*
-            if(isFourBarRun){
-                FourBar.setPositionPIDFCoefficients();
-                FourBar.setPower(powerFourBar);
-            }
-             */
-
             if(gamepad1.circle && !circle_toggle){
                 if(SlideUp){ //get elevator up
                     SlideR.setPower(0.6);
@@ -122,24 +115,23 @@ public class OpMode_MainDriver extends LinearOpMode{
             }
             square_toggle = gamepad1.square;
 
-            if(!DpadUp_toggle && gamepad1.dpad_up) { //galgal azikonim
+            if(!DpadUp_toggle && (gamepad1.dpad_up || gamepad2.dpad_up)) { //galgal azikonim
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(-1);
                 } else {
                     GagazMot.setPower(0);
                 }
             }
-            DpadUp_toggle = gamepad1.dpad_up;
+            DpadUp_toggle = (gamepad1.dpad_up || gamepad2.dpad_up);
 
-            if(!DpadDown_toggle && gamepad1.dpad_down) { //galgal azikonim, revers
+            if(!DpadDown_toggle && (gamepad1.dpad_down || gamepad2.dpad_down)) { //galgal azikonim, revers
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(1);
                 }else {
                     GagazMot.setPower(0);
                 }
             }
-
-            DpadDown_toggle = gamepad1.dpad_down;
+            DpadDown_toggle = (gamepad1.dpad_down || gamepad2.dpad_down);
 
             drive.setWeightedDrivePower(
                     new Pose2d(
