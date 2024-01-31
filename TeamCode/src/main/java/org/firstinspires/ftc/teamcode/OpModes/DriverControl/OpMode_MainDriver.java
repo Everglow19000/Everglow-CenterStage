@@ -67,7 +67,14 @@ public class OpMode_MainDriver extends LinearOpMode{
 
         waitForStart();
 
+        double power = 0.3;
         while (!isStopRequested()) {
+
+            if(isFourBarRun){
+                power -= 0.02;
+                FourBar.setPower(Math.min(power, 0.1));
+            }
+
             if(gamepad1.circle && !circle_toggle){
                 if(SlideUp){ //get elevator up
                     SlideR.setPower(0.6);
@@ -78,8 +85,8 @@ public class OpMode_MainDriver extends LinearOpMode{
                 } else { //get elevator down
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
-                    SlideR.setTargetPosition(0);
-                    SlideL.setTargetPosition(0);
+                    SlideR.setTargetPosition(35);
+                    SlideL.setTargetPosition(35);
                     SlideUp = !SlideUp;
                 }
             }
@@ -101,16 +108,20 @@ public class OpMode_MainDriver extends LinearOpMode{
 
             if(gamepad1.square && !square_toggle){ //
                 if(ClawExtended){
+                    power = 0.3;
                     FlipServo.setPosition(0.5);
-                    FourBar.setPower(0.3);
+                    FourBar.setPower(0.4);
                     FourBar.setTargetPosition(270);
+                    FourBar.setPower(power);
                     ClawExtended = !ClawExtended;
+                    isFourBarRun = true;
                 } else {
-                    FourBar.setPower(0.15);
+                    FourBar.setPower(0.3);
                     FourBar.setTargetPosition(-10);
                     sleep(500);
                     FlipServo.setPosition(0);
                     ClawExtended = !ClawExtended;
+                    isFourBarRun = false;
                 }
             }
             square_toggle = gamepad1.square;
