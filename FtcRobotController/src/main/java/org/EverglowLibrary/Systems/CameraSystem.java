@@ -171,12 +171,7 @@ public class CameraSystem {
         while (detectionLocation == null || !isTimeEnd){
             recognitions = DetectProp();
             if(recognitions.size() != 0){
-                distanceFromCameraX = ConvertRecognitionToPos(recognitions.get(0), true);
-
-                if(distanceFromCameraX <= MIN_RIGHT_LOCATION)
-                    detectionLocation = DetectionLocation.RIGHT;
-                else
-                    detectionLocation = DetectionLocation.MIDDLE;
+                detectionLocation = RecognitionToLocation(recognitions.get(0));
             }
             isTimeEnd = (System.currentTimeMillis() - start) >= TIME_WAIT_MILL;
         }
@@ -189,6 +184,21 @@ public class CameraSystem {
         return detectionLocation;
     }
 
+    public DetectionLocation RecognitionToLocation(Recognition recognition){
+
+        if(recognition == null){
+            return DetectionLocation.LEFT;
+        }
+
+        double distanceFromCameraX;
+        distanceFromCameraX = ConvertRecognitionToPos(recognition, true);
+
+        if(distanceFromCameraX <= MIN_RIGHT_LOCATION)
+            return DetectionLocation.RIGHT;
+        else
+            return DetectionLocation.MIDDLE;
+
+    }
     public double ConvertRecognitionToPos(Recognition rec, boolean isX){
         if(isX)
             return (rec.getLeft() + rec.getRight()) / 2 ;

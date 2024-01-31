@@ -19,14 +19,14 @@ public class CameraOpMode extends LinearOpMode {
         CameraSystem cs = new CameraSystem(this);
         waitForStart();
 
-        Dictionary<AprilTagDetection, CameraSystem.AprilTagLocation> DTL;
+        Dictionary<AprilTagDetection, CameraSystem.DetectionLocation> DTL;
         AprilTagDetection Key;
         Enumeration<AprilTagDetection> AE;
         List<AprilTagDetection> detections;
         while (opModeIsActive()){
             try {
                 detections = cs.DetectAprilTags();
-                DTL = cs.GetAprilTagLocation(detections);
+                DTL = cs.GetDetectionLocation(detections);
                 AE = DTL.keys();
 
                 if(AE.hasMoreElements())

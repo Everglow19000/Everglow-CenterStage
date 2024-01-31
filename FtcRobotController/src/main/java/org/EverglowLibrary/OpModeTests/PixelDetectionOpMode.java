@@ -20,17 +20,21 @@ public class PixelDetectionOpMode extends LinearOpMode {
 
         CameraSystem cameraSystem = new CameraSystem(this);
         List<Recognition> recognitions;
+
+        telemetry.addData("location:", cameraSystem.DetectAndFindPropLocation());
+        telemetry.update();
+
         waitForStart();
 
         while (opModeIsActive()) {
             recognitions = cameraSystem.DetectProp();
-            if(gamepad1.cross) {
-                for (Recognition rec : recognitions) {
-                    telemetry.addData("x:", cameraSystem.ConvertRecognitionToPos(rec, true));
-                    telemetry.addData("y:", cameraSystem.ConvertRecognitionToPos(rec, false));
-                }
-                telemetry.update();
+            for (Recognition rec : recognitions) {
+                telemetry.addData("x:", cameraSystem.ConvertRecognitionToPos(rec, true));
+                telemetry.addData("y:", cameraSystem.ConvertRecognitionToPos(rec, false));
+                telemetry.addData("location:", cameraSystem.RecognitionToLocation(rec));
+                telemetry.addLine();
             }
+            telemetry.update();
         }
     }
 }
