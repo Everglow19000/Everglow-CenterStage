@@ -43,9 +43,9 @@ public class FourBarSystem {
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
         fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
-        fourBarMotor.set4BarPosition(-10);
+        fourBarMotor.setTargetPosition(-10);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fourBarMotor.set4BarPositionTolerance(10);
+        fourBarMotor.setTargetPositionTolerance(10);
     }
 
     public int getCurrentMotorPosition() {
