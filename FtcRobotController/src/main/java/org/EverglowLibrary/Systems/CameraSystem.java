@@ -1,10 +1,7 @@
 package org.EverglowLibrary.Systems;
 
-import android.app.TaskInfo;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.ConceptTensorFlowObjectDetection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -14,14 +11,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.sql.Time;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Timer;
 
 
 public class CameraSystem {
@@ -30,12 +24,18 @@ public class CameraSystem {
     private VisionPortal m_Camera;
     private TfodProcessor m_Prop;
 
+
     private final double MIN_RIGHT_LOCATION = 800;
 
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
+    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
+    private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueModle.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
-    private static final String[] LABELS = {
+    private static final String[] LABEL_RED = {
             "RedConus"
+    };
+
+    private static final String[] LABEL_BLUE = {
+            "BlueConus"
     };
 
     public enum DetectionLocation{
@@ -45,14 +45,56 @@ public class CameraSystem {
         m_OpMode = opMode;
         m_Prop = new TfodProcessor
                 .Builder()
-                .setModelFileName(TFOD_MODEL_FILE)
-                .setModelLabels(LABELS)
+                .setModelFileName(TFOD_MODEL_FILE_RED)
+                .setModelLabels(LABEL_RED)
                 .setIsModelTensorFlow2(true)
                 .setIsModelQuantized(true)
                 .setModelInputSize(300)
                 .setModelAspectRatio(16.0 / 9.0)
-
                 .build();
+
+        m_AprilTag = new AprilTagProcessor.Builder()
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        builder.setCamera(m_OpMode.hardwareMap.get(WebcamName.class, "webcam"));
+        builder.addProcessor(m_AprilTag);
+        builder.addProcessor(m_Prop);
+        //builder.addProcessor(m_BlueProp);
+
+        m_Camera =  builder.build();
+    }
+
+    public CameraSystem(OpMode opMode, boolean isRedProp)
+    {
+
+        m_OpMode = opMode;
+        if(isRedProp)
+        {
+            m_Prop = new TfodProcessor
+                    .Builder()
+                    .setModelFileName(TFOD_MODEL_FILE_RED)
+                    .setModelLabels(LABEL_BLUE)
+                    .setIsModelTensorFlow2(true)
+                    .setIsModelQuantized(true)
+                    .setModelInputSize(300)
+                    .setModelAspectRatio(16.0 / 9.0)
+                    .build();
+        }
+        else {
+            m_Prop = new TfodProcessor
+                    .Builder()
+                    .setModelFileName(TFOD_MODEL_FILE_BLUE)
+                    .setModelLabels(LABEL_BLUE)
+                    .setIsModelTensorFlow2(true)
+                    .setIsModelQuantized(true)
+                    .setModelInputSize(300)
+                    .setModelAspectRatio(16.0 / 9.0)
+                    .build();
+        }
 
         m_AprilTag = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
@@ -128,7 +170,7 @@ public class CameraSystem {
     }
 
     public List<Recognition> DetectProp(){
-       return m_Prop.getRecognitions();
+        return m_Prop.getRecognitions();
     }
 
     public Recognition getClosetRecognition(List<Recognition> recognitions){
@@ -147,6 +189,7 @@ public class CameraSystem {
 
     public DetectionLocation DetectAndFindPropLocation(){
         //takes time!
+
         DetectionLocation detectionLocation = null;
         long start = System.currentTimeMillis();
         final int TIME_WAIT_MILL = 15 * 1000;

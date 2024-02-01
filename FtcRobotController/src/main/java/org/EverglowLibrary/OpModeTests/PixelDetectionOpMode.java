@@ -18,16 +18,20 @@ public class PixelDetectionOpMode extends LinearOpMode {
     @Override
     public void runOpMode(){
 
-        CameraSystem cameraSystem = new CameraSystem(this);
+        CameraSystem cameraSystem = new CameraSystem(this, true);
         List<Recognition> recognitions;
 
-        telemetry.addData("location:", cameraSystem.DetectAndFindPropLocation());
+        //CameraSystem.DetectionLocation blue =  cameraSystem.DetectAndFindPropLocation(false);
+        CameraSystem.DetectionLocation red = cameraSystem.DetectAndFindPropLocation();
+        //telemetry.addData("location blue:",  blue);
+        telemetry.addData("location red:", red);
         telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
             recognitions = cameraSystem.DetectProp();
+            recognitions.addAll(cameraSystem.DetectProp());
             for (Recognition rec : recognitions) {
                 telemetry.addData("x:", cameraSystem.ConvertRecognitionToPos(rec, true));
                 telemetry.addData("y:", cameraSystem.ConvertRecognitionToPos(rec, false));
