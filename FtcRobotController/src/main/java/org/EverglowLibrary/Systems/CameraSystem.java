@@ -25,7 +25,7 @@ public class CameraSystem {
     private TfodProcessor m_Prop;
 
 
-    private final double MIN_RIGHT_LOCATION = 800;
+    private final double MIN_RIGHT_LOCATION = 300;
 
     private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
     private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueModle.tflite";

@@ -27,7 +27,8 @@ public class SimplerOpMode extends LinearOpMode {
     }
 
     public enum StartPosition{
-        FRONTLEFT(new Vector2d(0, 0)), FRONTRIGHT(new Vector2d(0, 0)), BACKLEFT(new Vector2d(0, 0)), BACKRIGHT(new Vector2d(0, 0));
+        FRONTLEFT(new Vector2d(0.25, 3.75)), FRONTRIGHT(new Vector2d(5.75, 3.75))
+        , BACKLEFT(new Vector2d(0.25, 1.75)), BACKRIGHT(new Vector2d(5.75, 1.75));
 
         public final Vector2d startPositionVector;
         StartPosition(Vector2d startPosition) {
