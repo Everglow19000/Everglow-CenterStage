@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem {
 
     public enum Level {
-        START(-25), PICKUP(-25), DROP(240), REST(150);
-        //start: -45, pickup: 210
+        START(-16), PICKUP(-16), DROP(240), REST(150);
+        //start: -45, -17, pickup: 210,235
         public final int state;
 
         Level(int state) {

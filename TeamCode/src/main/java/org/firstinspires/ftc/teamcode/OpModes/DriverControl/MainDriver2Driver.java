@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "BasicOpMode")
+@TeleOp(name = "MainDriver2Driver")
 public class MainDriver2Driver extends LinearOpMode {
 
     private SampleMecanumDrive drive;
