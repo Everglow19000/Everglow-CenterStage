@@ -4,8 +4,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
 //import org.firstinspires.ftc.teamcode.Systems.DrivingSystem;
@@ -23,11 +21,6 @@ public class BasicOpMode extends LinearOpMode {
     FourBarSystem fourBarSystem;
     GWheelSystem gWheelSystem;
 
-    boolean isPressed = false;
-    DcMotorEx SlideL, SlideR;
-    boolean circle_toggle = false;
-    boolean SlideUp = false;
-    boolean FourBarUp = false;
 
     @Override
     public void runOpMode() {
@@ -39,64 +32,26 @@ public class BasicOpMode extends LinearOpMode {
         fourBarSystem = new FourBarSystem(this);
         gWheelSystem = new GWheelSystem(this);
 
-
-        SlideL = hardwareMap.get(DcMotorEx.class, "SlideL");
-        SlideR = hardwareMap.get(DcMotorEx.class, "SlideR");
-        SlideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        SlideL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        SlideL.setDirection( DcMotorSimple.Direction.REVERSE);
-        SlideR.setTargetPosition(0);
-        SlideL.setTargetPosition(0);
-        SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         waitForStart();
         while (opModeIsActive()) {
 
 
-            if(gamepad1.dpad_up) { gWheelSystem.toggle(true); }
-            else if(gamepad1.dpad_down) { gWheelSystem.toggle(false); }
+            if(gamepad1.right_trigger > 0.01) { gWheelSystem.toggle(true); }
+            else if(gamepad1.left_trigger > 0.01) { gWheelSystem.toggle(false); }
 
-            if(gamepad1.circle && !circle_toggle){
-                if(!SlideUp){ //get elevator up
-                    SlideR.setPower(0.6);
-                    SlideL.setPower(0.6);
-                    SlideR.setTargetPosition(720);
-                    SlideL.setTargetPosition(720);
-                    SlideUp = !SlideUp;
-                } else { //get elevator down
-                    SlideR.setPower(0.4);
-                    SlideL.setPower(0.4);
-                    SlideR.setTargetPosition(35);
-                    SlideL.setTargetPosition(35);
-                    SlideUp = !SlideUp;
-                }
-            }
-            circle_toggle = gamepad1.circle; //control when the elevator will work,
-            // lock circle until the movement has done
+            if(gamepad1.right_bumper){ elevatorSystem.toggle(); }
 
-            if(gamepad1.right_bumper) { clawSystem.toggle(); }
+            if(gamepad1.left_bumper) { clawSystem.toggle(); }
 
             //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
-            if(gamepad1.square && !isPressed) {
-                if(FourBarUp) {
-                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
-                    FourBarUp = false;
-                }
-                else {
-                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
-                    FourBarUp = true;
-                }
+            if(gamepad1.dpad_left) {
+                fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
             }
-
-            isPressed = gamepad1.square;
-
-            //if(gamepad1.dpad_left) {
-            //    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
-            //    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
-            //}
+            if(gamepad1.dpad_up) {
+                fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+            }
             //if(gamepad1.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
 
 
@@ -108,7 +63,6 @@ public class BasicOpMode extends LinearOpMode {
                     )
             );
             drive.update();
-            fourBarSystem.updateP();
         }
 
 
