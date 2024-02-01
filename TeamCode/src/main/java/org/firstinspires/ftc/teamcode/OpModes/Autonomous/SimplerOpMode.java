@@ -346,40 +346,41 @@ public class SimplerOpMode extends LinearOpMode {
         }
 
 
-        //todo: drive(startLocation, FirstDropLocation);
+        //drive(startLocation, FirstDropLocation);
         Trajectory traj1 = drive.trajectoryBuilder(startLocation)
                 .splineTo(FirstDropLocation.vec(),FirstDropLocation.getHeading())
                 .build();
         drive.followTrajectory(traj1);
         sleep(1000);
 
-        //todo: להפעיל גג"ז
+        //להפעיל גג"ז
         gWheelSystem.toggle(true);
         sleep(2000);
         gWheelSystem.toggle(true);
         sleep(1000);
 
-        //todo: drive(FirstDropLocation, SecondDropMiddlePoint); drive(SecondDropMiddlePoint, SecondDropLocation);
-        Trajectory traj2 = drive.trajectoryBuilder(FirstDropLocation)
+        //drive(FirstDropLocation, SecondDropMiddlePoint); drive(SecondDropMiddlePoint, SecondDropLocation);
+        Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .splineTo(SecondDropMiddlePoint.vec(),SecondDropMiddlePoint.getHeading())
                 .splineTo(SecondDropLocation.vec(),SecondDropLocation.getHeading())
                 .build();
         drive.followTrajectory(traj2);
         sleep(1000);
 
-        //todo: פריקה שנייה
-        fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+        //פריקה שנייה
+        elevatorSystem.goTo(ElevatorSystem.Level.UP);
         fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+        fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
         sleep(2000);
         clawSystem.toggle();
         sleep(1000);
 
-        //todo: drive(SecondDropLocation,SecondDropLocation - 20)
-        drive.followTrajectory(drive.trajectoryBuilder(FirstDropLocation)
+        //drive(SecondDropLocation,SecondDropLocation - 20)
+        drive.followTrajectory(drive.trajectoryBuilder(traj2.end())
                 .forward(-20)
                 .build());
+        fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
         sleep(1000);
         fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
-        fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.START);
     }
 }

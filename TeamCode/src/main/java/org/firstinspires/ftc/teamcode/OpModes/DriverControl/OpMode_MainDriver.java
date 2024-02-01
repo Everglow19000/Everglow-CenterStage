@@ -58,7 +58,7 @@ public class OpMode_MainDriver extends LinearOpMode{
         FourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FourBar.setDirection( DcMotorSimple.Direction.REVERSE);
         //final double powerFourBar = 0.3;
-        FourBar.setPower(0.3);
+        FourBar.setPower(0.6);
         FourBar.setTargetPosition(-10);
         FourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FourBar.setTargetPositionTolerance(10);
@@ -71,17 +71,17 @@ public class OpMode_MainDriver extends LinearOpMode{
         while (!isStopRequested()) {
 
             if(gamepad1.circle && !circle_toggle){
-                if(SlideUp){ //get elevator up
+                if(SlideUp){ //get elevator down
+                    SlideR.setPower(0.4);
+                    SlideL.setPower(0.4);
+                    SlideR.setTargetPosition(0);
+                    SlideL.setTargetPosition(0);
+                    SlideUp = !SlideUp;
+                } else { //get elevator up
                     SlideR.setPower(0.6);
                     SlideL.setPower(0.6);
                     SlideR.setTargetPosition(720);
                     SlideL.setTargetPosition(720);
-                    SlideUp = !SlideUp;
-                } else { //get elevator down
-                    SlideR.setPower(0.4);
-                    SlideL.setPower(0.4);
-                    SlideR.setTargetPosition(35);
-                    SlideL.setTargetPosition(35);
                     SlideUp = !SlideUp;
                 }
             }

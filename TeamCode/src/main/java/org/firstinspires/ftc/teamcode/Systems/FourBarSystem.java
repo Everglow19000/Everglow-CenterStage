@@ -15,7 +15,6 @@ public class FourBarSystem {
 
     public enum Level {
         START(0), PICKUP(-10), DROP(270), REST(150);
-
         public final int state;
 
         Level(int state) {
@@ -24,7 +23,7 @@ public class FourBarSystem {
     }
 
     public enum ServoAngel {
-        START(0), PICKUP(0), DROP(0.426), Pass(0);
+        PICKUP(0), DROP(0.426);
 
         public final double state;
 
@@ -34,7 +33,7 @@ public class FourBarSystem {
     }
 
     Level currentLevel = Level.START;
-    ServoAngel currentServoAngel = ServoAngel.START;
+    ServoAngel currentServoAngel = ServoAngel.PICKUP;
 
     DcMotorEx fourBarMotor;
     OpMode opMode;
