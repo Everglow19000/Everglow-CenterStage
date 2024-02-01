@@ -6,32 +6,31 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
+//import org.firstinspires.ftc.teamcode.Systems.DrivingSystem;
 import org.firstinspires.ftc.teamcode.Systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(group = "drive", name = "MainDriver2Driver")
+@TeleOp(name = "BasicOpMode")
 public class MainDriver2Driver extends LinearOpMode {
-    @Override
-    public void runOpMode() throws InterruptedException {
 
-    }
-    /*
-    SampleMecanumDrive drive;
-    ElevatorSystem elevatorSystem;
-    ClawSystem clawSystem;
-    FourBarSystem fourBarSystem;
-    GWheelSystem gWheelSystem;
-    boolean isPressed = false;
-    DcMotorEx SlideL, SlideR;
-    boolean FourBarUp = false;
+    private SampleMecanumDrive drive;
+    private ElevatorSystem elevatorSystem;
+    private ClawSystem clawSystem;
+    private FourBarSystem fourBarSystem;
+    private GWheelSystem gWheelSystem;
+    private boolean isPressed = false;
+    private boolean FourBarUp = false;
+
+    private DcMotorEx SlideL, SlideR;
+    private boolean SlideUp = false;
+    private boolean circle_toggle = false;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -49,38 +48,41 @@ public class MainDriver2Driver extends LinearOpMode {
         SlideL.setTargetPosition(0);
         SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        SlideR.setPower(0.4);
+        SlideL.setPower(0.4);
+
 
         waitForStart();
         while (opModeIsActive()) {
 
 
-            if(gamepad1.dpad_up) { gWheelSystem.toggle(true); }
-            else if(gamepad1.dpad_down) { gWheelSystem.toggle(false); }
+            if(gamepad2.dpad_up) { gWheelSystem.toggle(true); }
+            else if(gamepad2.dpad_down) { gWheelSystem.toggle(false); }
 
-            if(gamepad1.right_bumper){ elevatorSystem.toggle(); }
+            if(gamepad2.right_bumper) { clawSystem.toggle(); }
 
-            if(gamepad1.left_bumper) { clawSystem.toggle(); }
-
-            //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
-            if(gamepad1.square && !isPressed) {
+            //if(gamepad2.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
+            if(gamepad2.square && !isPressed) {
                 if(!FourBarUp) {
+
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                    sleep(500);
                     fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
                     FourBarUp = true;
                 }
                 else {
-                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
                     fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
                     FourBarUp = false;
                 }
             }
 
-            isPressed = gamepad1.square;
-            //if(gamepad1.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
+            isPressed = gamepad2.square;
+            //if(gamepad2.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
 
 
-            if(gamepad1.circle && !circle_toggle){
-                if(SlideUp){ //get elevator up
+            if(gamepad2.circle && !circle_toggle){
+                if(!SlideUp){ //get elevator up
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
                     SlideR.setTargetPosition(720);
@@ -89,8 +91,8 @@ public class MainDriver2Driver extends LinearOpMode {
                 } else { //get elevator down
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
-                    SlideR.setTargetPosition(35);
-                    SlideL.setTargetPosition(35);
+                    SlideR.setTargetPosition(0);
+                    SlideL.setTargetPosition(0);
                     SlideUp = !SlideUp;
                 }
             }
@@ -109,7 +111,4 @@ public class MainDriver2Driver extends LinearOpMode {
 
 
     }
-
-     */
 }
-
