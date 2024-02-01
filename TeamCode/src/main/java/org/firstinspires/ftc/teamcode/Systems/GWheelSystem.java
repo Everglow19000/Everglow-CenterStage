@@ -17,9 +17,9 @@ public class GWheelSystem {
         motor.setPower(Power);
     }
 
-    public void toggle(boolean in) {
+    public void toggle(boolean inverted) {
         if(currentPower != 0) currentPower = 0;
-        else if(in) currentPower = -1;
+        else if(inverted) currentPower = -1;
         else currentPower = 1;
 
         setPower(currentPower);

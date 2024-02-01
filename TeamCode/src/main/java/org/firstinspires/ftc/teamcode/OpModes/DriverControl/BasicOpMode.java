@@ -43,10 +43,16 @@ public class BasicOpMode extends LinearOpMode {
 
             if(gamepad1.left_bumper) { clawSystem.toggle(); }
 
-            if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
-            if(gamepad1.dpad_left) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP); }
-            if(gamepad1.dpad_up) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP); }
-            if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
+            //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
+            if(gamepad1.dpad_left) {
+                fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+            }
+            if(gamepad1.dpad_up) {
+                fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+            }
+            //if(gamepad1.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
 
 
             drive.setWeightedDrivePower(

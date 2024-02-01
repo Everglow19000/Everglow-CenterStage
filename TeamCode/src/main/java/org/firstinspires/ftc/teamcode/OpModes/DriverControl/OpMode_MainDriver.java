@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,10 +8,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(group = "drive", name = "MainDrive No Systems")
+@TeleOp(group = "drive", name = "OpMode_MainDriver")
 public class OpMode_MainDriver extends LinearOpMode{
+    FourBarSystem fourBarSystem;
     Servo FlipServo, ClawR, ClawL;
     DcMotorEx SlideL, SlideR, FourBar, GagazMot;
     boolean SlideUp = false;
@@ -24,10 +25,10 @@ public class OpMode_MainDriver extends LinearOpMode{
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
 
-    boolean isFourBarRun = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        fourBarSystem = new FourBarSystem(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -67,13 +68,7 @@ public class OpMode_MainDriver extends LinearOpMode{
 
         waitForStart();
 
-        double power = 0.3;
         while (!isStopRequested()) {
-
-            if(isFourBarRun){
-                power -= 0.02;
-                FourBar.setPower(Math.min(power, 0.1));
-            }
 
             if(gamepad1.circle && !circle_toggle){
                 if(SlideUp){ //get elevator up
@@ -108,20 +103,13 @@ public class OpMode_MainDriver extends LinearOpMode{
 
             if(gamepad1.square && !square_toggle){ //
                 if(ClawExtended){
-                    power = 0.3;
-                    FlipServo.setPosition(0.5);
-                    FourBar.setPower(0.4);
-                    FourBar.setTargetPosition(270);
-                    FourBar.setPower(power);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.START);
                     ClawExtended = !ClawExtended;
-                    isFourBarRun = true;
                 } else {
-                    FourBar.setPower(0.3);
-                    FourBar.setTargetPosition(-10);
-                    sleep(500);
-                    FlipServo.setPosition(0);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
                     ClawExtended = !ClawExtended;
-                    isFourBarRun = false;
                 }
             }
             square_toggle = gamepad1.square;

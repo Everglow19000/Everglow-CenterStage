@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 
@@ -23,7 +24,7 @@ public class FourBarSystem {
     }
 
     public enum ServoAngel {
-        START(0), PICKUP(0), DROP(0.5), Pass(0);
+        START(0), PICKUP(0), DROP(0.426), Pass(0);
 
         public final double state;
 
@@ -100,16 +101,20 @@ public class FourBarSystem {
     }
 
     public void updateP() {
-        final double modifair = 0.1;
+        final double modifair = 0.05;
+        final int restGravityPosition = 40;
         double deviation = fourBarTarget - getCurrentMotorPosition();
-        double motorPower = -deviation;
-        motorPower += modifair *signum(motorPower);
+        double motorPower = -deviation / 100;
+
+        double AngleGravity = (getCurrentMotorPosition() - restGravityPosition) / 270 * PI;
+        double gravityPower =  - modifair * Math.cos(AngleGravity);
+        motorPower += gravityPower;
 
         opMode.telemetry.addData("Target", fourBarTarget);
         opMode.telemetry.addData("deviation", deviation);
         opMode.telemetry.addData("motorPower", motorPower);
 
-        if(abs(deviation) < )
+
 
         //if(deviation > 100) motorPower += modifair;
         //if(deviation < 20) motorPower -= modifair;
