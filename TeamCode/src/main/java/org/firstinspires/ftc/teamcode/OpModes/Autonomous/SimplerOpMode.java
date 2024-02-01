@@ -49,7 +49,7 @@ public class SimplerOpMode extends LinearOpMode {
         }
     }
 
-    public void runAfterInput(SimplerOpMode.StartPosition startPosition, CameraSystem.DetectionLocation propPlace) {
+    public static void runAfterInput(SimplerOpMode.StartPosition startPosition, CameraSystem.DetectionLocation propPlace) {
 
     }
 
