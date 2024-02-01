@@ -110,9 +110,12 @@ public class FourBarSystem {
         double gravityPower =  - modifair * Math.cos(AngleGravity);
         motorPower += gravityPower;
 
-        opMode.telemetry.addData("Target", fourBarTarget);
-        opMode.telemetry.addData("deviation", deviation);
-        opMode.telemetry.addData("motorPower", motorPower);
+
+        opMode.telemetry.addData("AngleGravity", AngleGravity);
+        opMode.telemetry.addData("AngleGravity", AngleGravity);
+        //opMode.telemetry.addData("Target", fourBarTarget);
+        //opMode.telemetry.addData("deviation", deviation);
+        //opMode.telemetry.addData("motorPower", motorPower);
 
 
 
