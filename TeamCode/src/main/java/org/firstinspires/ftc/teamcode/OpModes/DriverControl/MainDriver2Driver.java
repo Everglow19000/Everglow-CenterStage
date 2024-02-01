@@ -8,11 +8,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "OpMode_SecondaryDriver")
-public class OpMode_SecondaryDriver extends LinearOpMode {
-
+@TeleOp(group = "drive", name = "MainDriver2Driver")
+public class MainDriver2Driver extends LinearOpMode {
+    FourBarSystem fourBarSystem;
     Servo FlipServo, ClawR, ClawL;
     DcMotorEx SlideL, SlideR, FourBar, GagazMot;
     boolean SlideUp = false;
@@ -23,17 +24,18 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
     boolean circle_toggle = false;
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
-
     boolean isFourBarRun = false;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
+        fourBarSystem = new FourBarSystem(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // flip servo
         FlipServo = hardwareMap.get(Servo.class, "FlipServo");
-        FlipServo.setPosition(0);
+        FlipServo.setPosition(0.1691);
 
         // claw
         ClawR = hardwareMap.get(Servo.class, "ClawR");
@@ -47,12 +49,13 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
         SlideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideL.setDirection( DcMotorSimple.Direction.REVERSE);
-        SlideR.setTargetPosition(35);
-        SlideL.setTargetPosition(35);
+        SlideR.setTargetPosition(0);
+        SlideL.setTargetPosition(0);
         SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // four bar
+        /*
         FourBar = hardwareMap.get(DcMotorEx.class, "4Bar");
         FourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FourBar.setDirection( DcMotorSimple.Direction.REVERSE);
@@ -61,33 +64,65 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
         FourBar.setTargetPosition(-10);
         FourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FourBar.setTargetPositionTolerance(10);
+         */
 
         // galal azikonim
         GagazMot = hardwareMap.get(DcMotorEx.class, "GagazMot");
 
         waitForStart();
-
+        double power = 0.4;
         while (!isStopRequested()) {
-            //todo:fix elevator
-            if(gamepad1.circle && !circle_toggle){
-                if(gamepad1.circle) {
-                    SlideR.setPower(0.4);
-                    SlideL.setPower(0.4);
+            if(isFourBarRun){
+                power = Math.max(power-0.2, 0.1);
+                fourBarSystem.setMotorPower(power);
+            }
+            if(gamepad2.circle && !circle_toggle){
+                if(!SlideUp){ //get elevator up
+                    SlideR.setPower(0.6);
+                    SlideL.setPower(0.6);
                     SlideR.setTargetPosition(720);
                     SlideL.setTargetPosition(720);
-                }else {
+                    SlideUp = !SlideUp;
+                } else { //get elevator down
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
                     SlideR.setTargetPosition(35);
                     SlideL.setTargetPosition(35);
+                    SlideUp = !SlideUp;
                 }
             }
             circle_toggle = gamepad1.circle; //control when the elevator will work,
             // lock circle until the movement has done
 
-            ///todo:fix 4bar
+            if(gamepad2.right_bumper && !right_bumper_toggle){
+                if(ClawClosed){
+                    ClawL.setPosition(0.7);
+                    ClawR.setPosition(0.4);
+                    ClawClosed = !ClawClosed;
+                } else {
+                    ClawL.setPosition(0);
+                    ClawR.setPosition(1);
+                    ClawClosed = !ClawClosed;
+                }
+            }
+            right_bumper_toggle = gamepad1.right_bumper;
 
-            ///todo:fix claw?
+            if(gamepad1.square && !square_toggle){ //
+                if(ClawExtended){
+                    power = 0.3;
+                    fourBarSystem.setMotorPower(power);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+                    ClawExtended = !ClawExtended;
+                    isFourBarRun = true;
+                } else {
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    ClawExtended = !ClawExtended;
+                    isFourBarRun = false;
+                }
+            }
+            square_toggle = gamepad1.square;
 
             if(!DpadUp_toggle && (gamepad1.dpad_up || gamepad2.dpad_up)) { //galgal azikonim
                 if (GagazMot.getPower() == 0) {
@@ -114,6 +149,7 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
+
             drive.update();
 
             //Pose2d poseEstimate = drive.getPoseEstimate();
@@ -122,3 +158,4 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
         }
     }
 }
+

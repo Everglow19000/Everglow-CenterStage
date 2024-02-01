@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem {
 
     public enum Level {
-        START(0), PICKUP(-10), DROP(270), REST(150);
+        START(-30), PICKUP(-30), DROP(225), REST(150);
 
         public final int state;
 
@@ -24,7 +24,7 @@ public class FourBarSystem {
     }
 
     public enum ServoAngel {
-        START(0), PICKUP(0), DROP(0.426), Pass(0);
+        PICKUP(0.0), DROP(0.524);
 
         public final double state;
 
@@ -33,8 +33,8 @@ public class FourBarSystem {
         }
     }
 
-    Level currentLevel = Level.START;
-    ServoAngel currentServoAngel = ServoAngel.START;
+    Level currentLevel = Level.PICKUP;
+    ServoAngel currentServoAngel = ServoAngel.PICKUP;
 
     DcMotorEx fourBarMotor;
     OpMode opMode;
@@ -46,10 +46,12 @@ public class FourBarSystem {
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
-        fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
-        fourBarMotor.setTargetPosition(-10);
+
+        clawAngelServo.setPosition(ServoAngel.PICKUP.state);
+        fourBarMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        fourBarMotor.setTargetPosition(Level.PICKUP.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fourBarMotor.setTargetPositionTolerance(10);
+        fourBarMotor.setPower(0.5);
     }
 
     public int getCurrentMotorPosition() {
@@ -100,26 +102,34 @@ public class FourBarSystem {
         }
     }
 
+    double last = 0, change = 0;
+
     public void updateP() {
-        final double modifair = 0.05;
-        final int restGravityPosition = 40;
+        final double modifair = 0.02, mod2 = 0.15;
+        final double restGravityPosition = 34;
+
+        change = getCurrentMotorPosition() - last;
+        last = getCurrentMotorPosition();
         double deviation = fourBarTarget - getCurrentMotorPosition();
         double motorPower = -deviation / 100;
 
         double AngleGravity = (getCurrentMotorPosition() - restGravityPosition) / 270 * PI;
         double gravityPower =  - modifair * Math.cos(AngleGravity);
-        motorPower += gravityPower;
+        motorPower += gravityPower - mod2 * change;
 
         opMode.telemetry.addData("Target", fourBarTarget);
         opMode.telemetry.addData("deviation", deviation);
         opMode.telemetry.addData("motorPower", motorPower);
-
+        opMode.telemetry.addData("gravityPower", gravityPower);
+        opMode.telemetry.addData("change", change);
+        opMode.telemetry.update();
 
 
         //if(deviation > 100) motorPower += modifair;
         //if(deviation < 20) motorPower -= modifair;
         setMotorPower(motorPower);
     }
+
 
 
 }

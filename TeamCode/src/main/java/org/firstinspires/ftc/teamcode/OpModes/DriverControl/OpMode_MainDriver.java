@@ -24,6 +24,7 @@ public class OpMode_MainDriver extends LinearOpMode{
     boolean circle_toggle = false;
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
+    boolean isFourBarRun = false;
 
 
     @Override
@@ -34,7 +35,7 @@ public class OpMode_MainDriver extends LinearOpMode{
 
         // flip servo
         FlipServo = hardwareMap.get(Servo.class, "FlipServo");
-        FlipServo.setPosition(0);
+        FlipServo.setPosition(0.1691);
 
         // claw
         ClawR = hardwareMap.get(Servo.class, "ClawR");
@@ -54,6 +55,7 @@ public class OpMode_MainDriver extends LinearOpMode{
         SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // four bar
+        /*
         FourBar = hardwareMap.get(DcMotorEx.class, "4Bar");
         FourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FourBar.setDirection( DcMotorSimple.Direction.REVERSE);
@@ -62,16 +64,20 @@ public class OpMode_MainDriver extends LinearOpMode{
         FourBar.setTargetPosition(-10);
         FourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FourBar.setTargetPositionTolerance(10);
+         */
 
         // galal azikonim
         GagazMot = hardwareMap.get(DcMotorEx.class, "GagazMot");
 
         waitForStart();
-
+        double power = 0.4;
         while (!isStopRequested()) {
-
-            if(gamepad1.circle && !circle_toggle){
-                if(SlideUp){ //get elevator up
+            if(isFourBarRun){
+                power = Math.max(power-0.2, 0.1);
+                fourBarSystem.setMotorPower(power);
+            }
+            if(gamepad2.circle && !circle_toggle){
+                if(!SlideUp){ //get elevator up
                     SlideR.setPower(0.6);
                     SlideL.setPower(0.6);
                     SlideR.setTargetPosition(720);
@@ -85,10 +91,10 @@ public class OpMode_MainDriver extends LinearOpMode{
                     SlideUp = !SlideUp;
                 }
             }
-            circle_toggle = gamepad1.circle; //control when the elevator will work,
+            circle_toggle = gamepad2.circle; //control when the elevator will work,
             // lock circle until the movement has done
 
-            if(gamepad1.right_bumper && !right_bumper_toggle){
+            if(gamepad2.right_bumper && !right_bumper_toggle){
                 if(ClawClosed){
                     ClawL.setPosition(0.7);
                     ClawR.setPosition(0.4);
@@ -99,38 +105,42 @@ public class OpMode_MainDriver extends LinearOpMode{
                     ClawClosed = !ClawClosed;
                 }
             }
-            right_bumper_toggle = gamepad1.right_bumper;
+            right_bumper_toggle = gamepad2.right_bumper;
 
-            if(gamepad1.square && !square_toggle){ //
+            if(gamepad2.square && !square_toggle){ //
                 if(ClawExtended){
-                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.START);
+                    power = 0.3;
+                    fourBarSystem.setMotorPower(power);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
                     ClawExtended = !ClawExtended;
+                    isFourBarRun = true;
                 } else {
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
                     fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
                     ClawExtended = !ClawExtended;
+                    isFourBarRun = false;
                 }
             }
-            square_toggle = gamepad1.square;
+            square_toggle = gamepad2.square;
 
-            if(!DpadUp_toggle && (gamepad1.dpad_up || gamepad2.dpad_up)) { //galgal azikonim
+            if(!DpadUp_toggle && (gamepad2.dpad_up || gamepad2.dpad_up)) { //galgal azikonim
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(-1);
                 } else {
                     GagazMot.setPower(0);
                 }
             }
-            DpadUp_toggle = (gamepad1.dpad_up || gamepad2.dpad_up);
+            DpadUp_toggle = (gamepad2.dpad_up || gamepad2.dpad_up);
 
-            if(!DpadDown_toggle && (gamepad1.dpad_down || gamepad2.dpad_down)) { //galgal azikonim, revers
+            if(!DpadDown_toggle && (gamepad2.dpad_down || gamepad2.dpad_down)) { //galgal azikonim, revers
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(1);
                 }else {
                     GagazMot.setPower(0);
                 }
             }
-            DpadDown_toggle = (gamepad1.dpad_down || gamepad2.dpad_down);
+            DpadDown_toggle = (gamepad2.dpad_down || gamepad2.dpad_down);
 
             drive.setWeightedDrivePower(
                     new Pose2d(
@@ -143,7 +153,7 @@ public class OpMode_MainDriver extends LinearOpMode{
             drive.update();
 
             //Pose2d poseEstimate = drive.getPoseEstimate();
-            //telemetry.addData("x", gamepad1.a);
+            //telemetry.addData("x", gamepad2.a);
             //telemetry.update();
         }
     }

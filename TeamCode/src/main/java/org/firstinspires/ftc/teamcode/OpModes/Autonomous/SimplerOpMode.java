@@ -182,7 +182,6 @@ public class SimplerOpMode extends LinearOpMode {
                 break;
         }
 
-
     }
 
 
