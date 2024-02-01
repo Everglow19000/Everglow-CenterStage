@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.EverglowLibrary.Systems.CameraSystem;
@@ -17,8 +16,8 @@ import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous(group = "Autonomous", name = "TEMP_FrontLeftcCheck")
-public class TEMP_FrontLeftcCheck extends LinearOpMode {
+@Autonomous(group = "Autonomous", name = "TEMP_FrontRightCheck")
+public class TEMP_FrontRightCheck extends LinearOpMode {
     SampleMecanumDrive drive;
     ElevatorSystem elevatorSystem;
     ClawSystem clawSystem;
