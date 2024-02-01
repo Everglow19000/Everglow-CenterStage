@@ -34,8 +34,6 @@ public class BasicOpMode extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-
-
             if(gamepad1.right_trigger > 0.01) { gWheelSystem.toggle(true); }
             else if(gamepad1.left_trigger > 0.01) { gWheelSystem.toggle(false); }
 
