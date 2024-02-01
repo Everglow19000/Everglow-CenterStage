@@ -47,8 +47,8 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
         SlideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SlideL.setDirection( DcMotorSimple.Direction.REVERSE);
-        SlideR.setTargetPosition(0);
-        SlideL.setTargetPosition(0);
+        SlideR.setTargetPosition(35);
+        SlideL.setTargetPosition(35);
         SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -69,11 +69,18 @@ public class OpMode_SecondaryDriver extends LinearOpMode {
 
         while (!isStopRequested()) {
             //todo:fix elevator
-            if(gamepad1.circle){
-                SlideR.setPower(0.4);
-                SlideL.setPower(0.4);
+            if(gamepad1.circle && !circle_toggle){
+                if(gamepad1.circle) {
+                    SlideR.setPower(0.4);
+                    SlideL.setPower(0.4);
                     SlideR.setTargetPosition(720);
                     SlideL.setTargetPosition(720);
+                }else {
+                    SlideR.setPower(0.4);
+                    SlideL.setPower(0.4);
+                    SlideR.setTargetPosition(35);
+                    SlideL.setTargetPosition(35);
+                }
             }
             circle_toggle = gamepad1.circle; //control when the elevator will work,
             // lock circle until the movement has done

@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.Systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class ElevatorSystem {
     public enum Level {
-        DOWN(35), UP(720);
+        DOWN(35), UP(720); //down 35
 
         public final int state;
 
@@ -26,26 +28,15 @@ public class ElevatorSystem {
 
     public ElevatorSystem(OpMode opMode) {
         this.opMode = opMode;
-        left = opMode.hardwareMap.get(DcMotor.class, "SlideL");
-        right = opMode.hardwareMap.get(DcMotor.class, "SlideR");
-
-        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        left.setDirection(DcMotor.Direction.REVERSE);
-        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left = opMode.hardwareMap.get(DcMotorEx.class, "SlideL");
+        right = opMode.hardwareMap.get(DcMotorEx.class, "SlideR");
         right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-//		left.setTargetPosition(0);
-//		right.setTargetPosition(0);
-//
-//		left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//		right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//		left.setPower(0.7);
-//		right.setPower(0.7);
-        setPower(0);
+        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left.setDirection( DcMotorSimple.Direction.REVERSE);
+        right.setTargetPosition(Level.DOWN.state);
+        left.setTargetPosition(Level.DOWN.state);
+        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -78,7 +69,7 @@ public class ElevatorSystem {
 
     public void toggle(){
         final double downPower = -0.4;
-        final double upPower = 0.6;
+        final double upPower = 0.4;
         if(this.ElevatorCurrentLevel == Level.DOWN) {
             ElevatorCurrentLevel = Level.UP;
             left.setPower(upPower);
@@ -90,7 +81,6 @@ public class ElevatorSystem {
             right.setPower(downPower);
         }
 
-        left.setTargetPosition(ElevatorCurrentLevel.state);
-        right.setTargetPosition(ElevatorCurrentLevel.state);
+        goTo(ElevatorCurrentLevel);
     }
 }

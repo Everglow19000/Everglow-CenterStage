@@ -17,24 +17,25 @@ public class Test4Bar extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         fourBarSystem = new FourBarSystem(this);
         waitForStart();
-        double positionServo = 0, positionMotor = 0;
+        double positionServo = 0, positionMotor = FourBarSystem.Level.PICKUP.state;
         double power4 = 0;
         while(opModeIsActive()) {
             fourBarSystem.set4BarPosition((int)positionMotor);
             positionServo += gamepad1.right_stick_y / 1000;
-            positionMotor += gamepad1.left_stick_y;
+            positionMotor += gamepad1.left_stick_y / 100;
             //position = min(1, position);
             //position = max(0, position);
-            //fourBarSystem.setServoPosition(positionServo);
+            fourBarSystem.setServoPosition(positionServo);
 
             //if(gamepad1.a) {fourBarSystem.toggle4Bar();}
 
-            power4 += gamepad1.left_stick_y / 1000000000;
+            //power4 += gamepad1.left_stick_y / 100;
 
-            fourBarSystem.setMotorPower(power4);
+            //fourBarSystem.setMotorPower(power4);
+            fourBarSystem.setServoPosition(positionServo);
 
             telemetry.addData("MotorPosition", fourBarSystem.getCurrentMotorPosition());
-            telemetry.addData("MotorPower", power4);
+            //telemetry.addData("MotorPower", power4);
             //fourBarSystem.updateP();
             telemetry.update();
 

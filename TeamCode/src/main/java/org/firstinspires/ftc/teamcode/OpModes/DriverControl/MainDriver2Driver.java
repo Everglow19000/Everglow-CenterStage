@@ -6,31 +6,32 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
-//import org.firstinspires.ftc.teamcode.Systems.DrivingSystem;
 import org.firstinspires.ftc.teamcode.Systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "BasicOpMode")
-public class BasicOpMode extends LinearOpMode {
+@TeleOp(group = "drive", name = "MainDriver2Driver")
+public class MainDriver2Driver extends LinearOpMode {
+    @Override
+    public void runOpMode() throws InterruptedException {
 
-    private SampleMecanumDrive drive;
-    private ElevatorSystem elevatorSystem;
-    private ClawSystem clawSystem;
-    private FourBarSystem fourBarSystem;
-    private GWheelSystem gWheelSystem;
-    private boolean isPressed = false;
-    private boolean FourBarUp = false;
-
-    private DcMotorEx SlideL, SlideR;
-    private boolean SlideUp = false;
-    private boolean circle_toggle = false;
+    }
+    /*
+    SampleMecanumDrive drive;
+    ElevatorSystem elevatorSystem;
+    ClawSystem clawSystem;
+    FourBarSystem fourBarSystem;
+    GWheelSystem gWheelSystem;
+    boolean isPressed = false;
+    DcMotorEx SlideL, SlideR;
+    boolean FourBarUp = false;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -48,9 +49,6 @@ public class BasicOpMode extends LinearOpMode {
         SlideL.setTargetPosition(0);
         SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        SlideR.setPower(0.4);
-        SlideL.setPower(0.4);
-
 
         waitForStart();
         while (opModeIsActive()) {
@@ -59,20 +57,20 @@ public class BasicOpMode extends LinearOpMode {
             if(gamepad1.dpad_up) { gWheelSystem.toggle(true); }
             else if(gamepad1.dpad_down) { gWheelSystem.toggle(false); }
 
-            if(gamepad1.right_bumper) { clawSystem.toggle(); }
+            if(gamepad1.right_bumper){ elevatorSystem.toggle(); }
+
+            if(gamepad1.left_bumper) { clawSystem.toggle(); }
 
             //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
             if(gamepad1.square && !isPressed) {
                 if(!FourBarUp) {
-
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
-                    sleep(500);
                     fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
                     FourBarUp = true;
                 }
                 else {
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
                     FourBarUp = false;
                 }
             }
@@ -82,7 +80,7 @@ public class BasicOpMode extends LinearOpMode {
 
 
             if(gamepad1.circle && !circle_toggle){
-                if(!SlideUp){ //get elevator up
+                if(SlideUp){ //get elevator up
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
                     SlideR.setTargetPosition(720);
@@ -91,8 +89,8 @@ public class BasicOpMode extends LinearOpMode {
                 } else { //get elevator down
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
-                    SlideR.setTargetPosition(0);
-                    SlideL.setTargetPosition(0);
+                    SlideR.setTargetPosition(35);
+                    SlideL.setTargetPosition(35);
                     SlideUp = !SlideUp;
                 }
             }
@@ -111,4 +109,7 @@ public class BasicOpMode extends LinearOpMode {
 
 
     }
+
+     */
 }
+
