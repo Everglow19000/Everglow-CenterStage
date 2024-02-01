@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Systems;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.signum;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -97,7 +100,20 @@ public class FourBarSystem {
     }
 
     public void updateP() {
-        fourBarMotor.setPower(1);
+        final double modifair = 0.1;
+        double deviation = fourBarTarget - getCurrentMotorPosition();
+        double motorPower = -deviation;
+        motorPower += modifair *signum(motorPower);
+
+        opMode.telemetry.addData("Target", fourBarTarget);
+        opMode.telemetry.addData("deviation", deviation);
+        opMode.telemetry.addData("motorPower", motorPower);
+
+        if(abs(deviation) < )
+
+        //if(deviation > 100) motorPower += modifair;
+        //if(deviation < 20) motorPower -= modifair;
+        setMotorPower(motorPower);
     }
 
 
