@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
 //import org.firstinspires.ftc.teamcode.Systems.DrivingSystem;
@@ -15,45 +17,87 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @TeleOp(name = "BasicOpMode")
 public class BasicOpMode extends LinearOpMode {
 
-    SampleMecanumDrive drive;
-    ElevatorSystem elevatorSystem;
-    ClawSystem clawSystem;
-    FourBarSystem fourBarSystem;
-    GWheelSystem gWheelSystem;
+    private SampleMecanumDrive drive;
+    private ElevatorSystem elevatorSystem;
+    private ClawSystem clawSystem;
+    private FourBarSystem fourBarSystem;
+    private GWheelSystem gWheelSystem;
+    private boolean isPressed = false;
+    private boolean FourBarUp = false;
 
+    private DcMotorEx SlideL, SlideR;
+    private boolean SlideUp = false;
+    private boolean circle_toggle = false;
 
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        elevatorSystem = new ElevatorSystem(this);
+
         clawSystem = new ClawSystem(this);
         fourBarSystem = new FourBarSystem(this);
         gWheelSystem = new GWheelSystem(this);
+
+        SlideL = hardwareMap.get(DcMotorEx.class, "SlideL");
+        SlideR = hardwareMap.get(DcMotorEx.class, "SlideR");
+        SlideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SlideL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        SlideL.setDirection( DcMotorSimple.Direction.REVERSE);
+        SlideR.setTargetPosition(0);
+        SlideL.setTargetPosition(0);
+        SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        SlideR.setPower(0.4);
+        SlideL.setPower(0.4);
+
 
         waitForStart();
         while (opModeIsActive()) {
 
 
-            if(gamepad1.right_trigger > 0.01) { gWheelSystem.toggle(true); }
-            else if(gamepad1.left_trigger > 0.01) { gWheelSystem.toggle(false); }
+            if(gamepad1.dpad_up) { gWheelSystem.toggle(true); }
+            else if(gamepad1.dpad_down) { gWheelSystem.toggle(false); }
 
-            if(gamepad1.right_bumper){ elevatorSystem.toggle(); }
-
-            if(gamepad1.left_bumper) { clawSystem.toggle(); }
+            if(gamepad1.right_bumper) { clawSystem.toggle(); }
 
             //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
-            if(gamepad1.dpad_left) {
-                fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
-                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+            if(gamepad1.square && !isPressed) {
+                if(!FourBarUp) {
+
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                    sleep(500);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+                    FourBarUp = true;
+                }
+                else {
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                    FourBarUp = false;
+                }
             }
-            if(gamepad1.dpad_up) {
-                fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
-                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
-            }
+
+            isPressed = gamepad1.square;
             //if(gamepad1.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
 
+
+            if(gamepad1.circle && !circle_toggle){
+                if(!SlideUp){ //get elevator up
+                    SlideR.setPower(0.4);
+                    SlideL.setPower(0.4);
+                    SlideR.setTargetPosition(720);
+                    SlideL.setTargetPosition(720);
+                    SlideUp = !SlideUp;
+                } else { //get elevator down
+                    SlideR.setPower(0.4);
+                    SlideL.setPower(0.4);
+                    SlideR.setTargetPosition(0);
+                    SlideL.setTargetPosition(0);
+                    SlideUp = !SlideUp;
+                }
+            }
+
+            circle_toggle = !circle_toggle;
 
             drive.setWeightedDrivePower(
                     new Pose2d(

@@ -104,7 +104,7 @@ public class OpMode_MainDriver extends LinearOpMode{
             if(gamepad1.square && !square_toggle){ //
                 if(ClawExtended){
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.START);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
                     ClawExtended = !ClawExtended;
                 } else {
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);

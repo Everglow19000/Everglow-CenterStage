@@ -8,42 +8,38 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
+import org.firstinspires.ftc.teamcode.Systems.ElevatorSystem;
 import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
+import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "drive", name = "MainDriver2Driver")
 public class MainDriver2Driver extends LinearOpMode {
-    FourBarSystem fourBarSystem;
-    Servo FlipServo, ClawR, ClawL;
-    DcMotorEx SlideL, SlideR, FourBar, GagazMot;
-    boolean SlideUp = false;
-    boolean ClawClosed = false;
-    boolean ClawExtended = false;
-    boolean DpadUp_toggle = false;
-    boolean DpadDown_toggle = false;
-    boolean circle_toggle = false;
-    boolean right_bumper_toggle = false;
-    boolean square_toggle = false;
-    boolean isFourBarRun = false;
+    @Override
+    public void runOpMode() throws InterruptedException {
 
+    }
+    /*
+    SampleMecanumDrive drive;
+    ElevatorSystem elevatorSystem;
+    ClawSystem clawSystem;
+    FourBarSystem fourBarSystem;
+    GWheelSystem gWheelSystem;
+    boolean isPressed = false;
+    DcMotorEx SlideL, SlideR;
+    boolean FourBarUp = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        fourBarSystem = new FourBarSystem(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        // flip servo
-        FlipServo = hardwareMap.get(Servo.class, "FlipServo");
-        FlipServo.setPosition(0.1691);
 
-        // claw
-        ClawR = hardwareMap.get(Servo.class, "ClawR");
-        ClawL = hardwareMap.get(Servo.class, "ClawL");
-        ClawR.setPosition(1);
-        ClawL.setPosition(0);
+        clawSystem = new ClawSystem(this);
+        fourBarSystem = new FourBarSystem(this);
+        gWheelSystem = new GWheelSystem(this);
 
-        // slide
         SlideL = hardwareMap.get(DcMotorEx.class, "SlideL");
         SlideR = hardwareMap.get(DcMotorEx.class, "SlideR");
         SlideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -54,32 +50,39 @@ public class MainDriver2Driver extends LinearOpMode {
         SlideR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         SlideL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // four bar
-        /*
-        FourBar = hardwareMap.get(DcMotorEx.class, "4Bar");
-        FourBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FourBar.setDirection( DcMotorSimple.Direction.REVERSE);
-        //final double powerFourBar = 0.3;
-        FourBar.setPower(0.3);
-        FourBar.setTargetPosition(-10);
-        FourBar.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FourBar.setTargetPositionTolerance(10);
-         */
-
-        // galal azikonim
-        GagazMot = hardwareMap.get(DcMotorEx.class, "GagazMot");
-
         waitForStart();
-        double power = 0.4;
-        while (!isStopRequested()) {
-            if(isFourBarRun){
-                power = Math.max(power-0.2, 0.1);
-                fourBarSystem.setMotorPower(power);
+        while (opModeIsActive()) {
+
+
+            if(gamepad1.dpad_up) { gWheelSystem.toggle(true); }
+            else if(gamepad1.dpad_down) { gWheelSystem.toggle(false); }
+
+            if(gamepad1.right_bumper){ elevatorSystem.toggle(); }
+
+            if(gamepad1.left_bumper) { clawSystem.toggle(); }
+
+            //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
+            if(gamepad1.square && !isPressed) {
+                if(!FourBarUp) {
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+                    FourBarUp = true;
+                }
+                else {
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    FourBarUp = false;
+                }
             }
-            if(gamepad2.circle && !circle_toggle){
-                if(!SlideUp){ //get elevator up
-                    SlideR.setPower(0.6);
-                    SlideL.setPower(0.6);
+
+            isPressed = gamepad1.square;
+            //if(gamepad1.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
+
+
+            if(gamepad1.circle && !circle_toggle){
+                if(SlideUp){ //get elevator up
+                    SlideR.setPower(0.4);
+                    SlideL.setPower(0.4);
                     SlideR.setTargetPosition(720);
                     SlideL.setTargetPosition(720);
                     SlideUp = !SlideUp;
@@ -91,56 +94,8 @@ public class MainDriver2Driver extends LinearOpMode {
                     SlideUp = !SlideUp;
                 }
             }
-            circle_toggle = gamepad1.circle; //control when the elevator will work,
-            // lock circle until the movement has done
 
-            if(gamepad2.right_bumper && !right_bumper_toggle){
-                if(ClawClosed){
-                    ClawL.setPosition(0.7);
-                    ClawR.setPosition(0.4);
-                    ClawClosed = !ClawClosed;
-                } else {
-                    ClawL.setPosition(0);
-                    ClawR.setPosition(1);
-                    ClawClosed = !ClawClosed;
-                }
-            }
-            right_bumper_toggle = gamepad1.right_bumper;
-
-            if(gamepad1.square && !square_toggle){ //
-                if(ClawExtended){
-                    power = 0.3;
-                    fourBarSystem.setMotorPower(power);
-                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
-                    ClawExtended = !ClawExtended;
-                    isFourBarRun = true;
-                } else {
-                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
-                    ClawExtended = !ClawExtended;
-                    isFourBarRun = false;
-                }
-            }
-            square_toggle = gamepad1.square;
-
-            if(!DpadUp_toggle && (gamepad1.dpad_up || gamepad2.dpad_up)) { //galgal azikonim
-                if (GagazMot.getPower() == 0) {
-                    GagazMot.setPower(-1);
-                } else {
-                    GagazMot.setPower(0);
-                }
-            }
-            DpadUp_toggle = (gamepad1.dpad_up || gamepad2.dpad_up);
-
-            if(!DpadDown_toggle && (gamepad1.dpad_down || gamepad2.dpad_down)) { //galgal azikonim, revers
-                if (GagazMot.getPower() == 0) {
-                    GagazMot.setPower(1);
-                }else {
-                    GagazMot.setPower(0);
-                }
-            }
-            DpadDown_toggle = (gamepad1.dpad_down || gamepad2.dpad_down);
+            circle_toggle = !circle_toggle;
 
             drive.setWeightedDrivePower(
                     new Pose2d(
@@ -149,13 +104,12 @@ public class MainDriver2Driver extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
-
             drive.update();
-
-            //Pose2d poseEstimate = drive.getPoseEstimate();
-            //telemetry.addData("x", gamepad1.a);
-            //telemetry.update();
         }
+
+
     }
+
+     */
 }
 

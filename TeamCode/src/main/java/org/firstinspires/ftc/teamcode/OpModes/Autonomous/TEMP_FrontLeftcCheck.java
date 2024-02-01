@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(group = "Autonomous", name = "FrontLeftAutonomous")
+@TeleOp(group = "Autonomous", name = "Temp-checkFrontLeft")
 public class TEMP_FrontLeftcCheck extends LinearOpMode {
     SampleMecanumDrive drive;
     ElevatorSystem elevatorSystem;
