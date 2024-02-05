@@ -8,7 +8,7 @@ import static java.lang.Math.min;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
+import org.EverglowLibrary.Systems.FourBarSystem;
 
 @TeleOp(name = "Test4Bar")
 public class Test4Bar extends LinearOpMode {

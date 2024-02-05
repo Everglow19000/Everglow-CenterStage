@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.Systems;
+package org.EverglowLibrary.Systems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class ClawSystem {
     private boolean open = false;
@@ -28,5 +27,14 @@ public class ClawSystem {
             ClawL.setPosition(leftClosed);
         }
         open = !open;
+    }
+
+    class Executor implements ISequenceable{
+
+        @Override
+        public void ExecuteSequence() {
+            toggle();
+        }
+
     }
 }

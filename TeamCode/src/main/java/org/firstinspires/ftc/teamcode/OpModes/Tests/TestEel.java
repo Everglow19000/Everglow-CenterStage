@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode.OpModes.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Systems.ElevatorSystem;
+import org.EverglowLibrary.Systems.ElevatorSystem;
 
 
 @TeleOp(name = "TestEel")

@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.EverglowLibrary.Systems.CameraSystem;
-import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
-import org.firstinspires.ftc.teamcode.Systems.ElevatorSystem;
-import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
-import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
+import org.EverglowLibrary.Systems.ClawSystem;
+import org.EverglowLibrary.Systems.ElevatorSystem;
+import org.EverglowLibrary.Systems.FourBarSystem;
+import org.EverglowLibrary.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous(group = "Autonomous", name = "TEMP_FrontRightCheck")

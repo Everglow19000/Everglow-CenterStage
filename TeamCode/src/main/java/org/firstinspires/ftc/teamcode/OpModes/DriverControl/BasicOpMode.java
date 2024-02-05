@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Systems.ClawSystem;
+import org.EverglowLibrary.Systems.ClawSystem;
 //import org.firstinspires.ftc.teamcode.Systems.DrivingSystem;
-import org.firstinspires.ftc.teamcode.Systems.ElevatorSystem;
-import org.firstinspires.ftc.teamcode.Systems.FourBarSystem;
-import org.firstinspires.ftc.teamcode.Systems.GWheelSystem;
+import org.EverglowLibrary.Systems.ElevatorSystem;
+import org.EverglowLibrary.Systems.FourBarSystem;
+import org.EverglowLibrary.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name = "BasicOpMode")
