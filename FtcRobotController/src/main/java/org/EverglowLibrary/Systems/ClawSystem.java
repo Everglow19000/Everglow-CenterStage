@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-public class ClawSystem {
+public class ClawSystem implements ExecutorableSystem{
     private boolean open = false;
     final private double leftOpen = 0.7, leftClosed = 0, rightOpen = 0.4, rightClosed = 1;
     private OpMode opMode;
@@ -29,12 +29,16 @@ public class ClawSystem {
         open = !open;
     }
 
-    class Executor implements ISequenceable{
+    @Override
+    public Executor getExecutor() {
+        return new ClayExecutor();
+    }
+
+    public class ClayExecutor extends Executor{
 
         @Override
-        public void ExecuteSequence() {
+        public void run() {
             toggle();
         }
-
     }
 }

@@ -19,10 +19,10 @@ import java.util.List;
 
 
 public class CameraSystem {
-    private AprilTagProcessor m_AprilTag;
+    private final AprilTagProcessor m_AprilTag;
     private final OpMode m_OpMode;
-    private VisionPortal m_Camera;
-    private TfodProcessor m_Prop;
+    private final VisionPortal m_Camera;
+    private final TfodProcessor m_Prop;
 
 
     private final double MIN_RIGHT_LOCATION = 300;

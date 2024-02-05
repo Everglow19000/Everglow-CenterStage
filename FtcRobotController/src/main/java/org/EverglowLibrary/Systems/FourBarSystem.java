@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,7 +12,22 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class FourBarSystem {
+public class FourBarSystem implements ExecutorableSystem{
+
+    @Override
+    public Executor getExecutor() {
+        Level tempLevel = Level.PICKUP;
+        ServoAngel tempServo = ServoAngel.PICKUP;
+        if(currentLevel == Level.PICKUP) {
+            tempLevel = Level.DROP;
+            tempServo = ServoAngel.DROP;
+        }
+        return new FourBarExecutor(tempServo,tempLevel);
+    }
+
+    public Executor getExecutor(Level level,ServoAngel servoAngel){
+        return new FourBarExecutor(servoAngel,level);
+    }
 
     public enum Level {
         START(-16), PICKUP(-16), DROP(240), REST(150);
@@ -37,12 +53,12 @@ public class FourBarSystem {
     ServoAngel currentServoAngel = ServoAngel.PICKUP;
 
     DcMotorEx fourBarMotor;
-    OpMode opMode;
+    LinearOpMode opMode;
     Servo clawAngelServo;
 
     double fourBarTarget = 0;
 
-    public FourBarSystem(OpMode opMode){
+    public FourBarSystem(LinearOpMode opMode){
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
@@ -127,5 +143,27 @@ public class FourBarSystem {
         setMotorPower(motorPower);
     }
 
+    public class FourBarExecutor extends Executor{
 
+        private final ServoAngel m_ServoAngle;
+        private final Level m_Level;
+
+        public FourBarExecutor(ServoAngel servoAngel, Level level) {
+            m_ServoAngle = servoAngel;
+            m_Level = level;
+        }
+
+        @Override
+        public void run() {
+            if(m_Level == Level.PICKUP){
+                set4BarPositionByLevel(m_Level);
+                opMode.sleep(200);
+                setServoPosition(m_ServoAngle);
+            }
+            else {
+                setServoPosition(m_ServoAngle);
+                set4BarPositionByLevel(m_Level);
+            }
+        }
+    }
 }

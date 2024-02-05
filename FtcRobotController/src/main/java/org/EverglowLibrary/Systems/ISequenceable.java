@@ -1,5 +1,4 @@
 package org.EverglowLibrary.Systems;
 
-public interface ISequenceable {
-    void ExecuteSequence();
+public interface ISequenceable extends Runnable{
 }

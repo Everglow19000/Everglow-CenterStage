@@ -5,7 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class ElevatorSystem {
+public class ElevatorSystem implements ExecutorableSystem {
+    @Override
+    public Executor getExecutor() {
+        return new ElevatorExecutor();
+    }
+
     public enum Level {
         DOWN(35), UP(720); //down 35
 
@@ -82,5 +87,17 @@ public class ElevatorSystem {
         }
 
         goTo(ElevatorCurrentLevel);
+    }
+
+    public ElevatorExecutor toggleExecutor(){
+        return new ElevatorExecutor();
+    }
+
+
+    public class ElevatorExecutor extends Executor{
+        @Override
+        public void run() {
+            toggle();
+        }
     }
 }
