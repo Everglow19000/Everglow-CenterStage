@@ -47,6 +47,11 @@ public class GWheelSystem implements ExecutorableSystem {
         public void run() {
             toggle(isInverted);
         }
+
+        @Override
+        public boolean isFinished() {
+            return true; //there is no logic here
+        }
     }
 
 }

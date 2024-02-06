@@ -16,4 +16,9 @@ public class ExecutorSleep extends Executor {
             Thread.currentThread().interrupt();
         }
     }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

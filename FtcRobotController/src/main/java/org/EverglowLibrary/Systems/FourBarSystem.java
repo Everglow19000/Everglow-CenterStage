@@ -165,5 +165,19 @@ public class FourBarSystem implements ExecutorableSystem{
                 set4BarPositionByLevel(m_Level);
             }
         }
+
+        @Override
+        public boolean isFinished() {
+            final double epsilon4Bar = 5;
+            final double epsilonServo = 0.02;
+            if(m_Level == Level.PICKUP){
+                return fourBarMotor.getCurrentPosition() - epsilon4Bar <= Level.PICKUP.state
+                        && clawAngelServo.getPosition() - epsilonServo <= ServoAngel.PICKUP.state;
+            }
+            else{
+                return fourBarMotor.getCurrentPosition() + epsilon4Bar >= Level.DROP.state
+                        && clawAngelServo.getPosition() + epsilonServo >= ServoAngel.DROP.state;
+            }
+        }
     }
 }

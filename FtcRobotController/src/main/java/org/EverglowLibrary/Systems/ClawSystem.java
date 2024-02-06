@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ClawSystem implements ExecutorableSystem{
     private boolean open = false;
     final private double leftOpen = 0.7, leftClosed = 0, rightOpen = 0.4, rightClosed = 1;
-    private OpMode opMode;
+    private final OpMode opMode;
 
     Servo ClawR, ClawL;
     public ClawSystem(OpMode opMode){
@@ -18,11 +18,10 @@ public class ClawSystem implements ExecutorableSystem{
     }
 
     public void toggle() {
-        if(open) {
+        if (open) {
             ClawR.setPosition(rightOpen);
             ClawL.setPosition(leftOpen);
-        }
-        else {
+        } else {
             ClawR.setPosition(rightClosed);
             ClawL.setPosition(leftClosed);
         }
@@ -39,6 +38,15 @@ public class ClawSystem implements ExecutorableSystem{
         @Override
         public void run() {
             toggle();
+        }
+
+        @Override
+        public boolean isFinished() {
+            final double epsilon = 0.05;
+            if(open)
+                return ClawR.getPosition() - epsilon <= rightOpen && ClawL.getPosition() + epsilon >= leftOpen;
+            else
+                return ClawR.getPosition() + epsilon >= rightClosed && ClawL.getPosition() - epsilon <= leftClosed;
         }
     }
 }

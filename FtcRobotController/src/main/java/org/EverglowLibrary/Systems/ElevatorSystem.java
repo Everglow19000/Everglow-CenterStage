@@ -11,6 +11,9 @@ public class ElevatorSystem implements ExecutorableSystem {
         return new ElevatorExecutor();
     }
 
+    public Executor getExecutor(Level level) {
+        return new ElevatorExecutor(level);
+    }
     public enum Level {
         DOWN(35), UP(720); //down 35
 
@@ -55,13 +58,13 @@ public class ElevatorSystem implements ExecutorableSystem {
     }
 
     public void setPower(double power){
-        final double scale = 0.7;
+        final double scale = 1;
         left.setPower(power * scale);
         right.setPower(power * scale);
     }
 
     public void setPower(double powerL, double powerR){
-        final double scale = 0.7;
+        final double scale = 1;
         left.setPower(powerL * scale);
         right.setPower(powerR * scale);
     }
@@ -89,15 +92,44 @@ public class ElevatorSystem implements ExecutorableSystem {
         goTo(ElevatorCurrentLevel);
     }
 
-    public ElevatorExecutor toggleExecutor(){
-        return new ElevatorExecutor();
-    }
-
 
     public class ElevatorExecutor extends Executor{
+        private Level toRun = null;
+
+        public ElevatorExecutor(){
+            //ElevatorCurrentLevel = Level.DOWN;
+        }
+
+        public ElevatorExecutor(Level level){
+            toRun = level;
+        }
         @Override
         public void run() {
-            toggle();
+            if(toRun == null) {
+                toggle();
+            }
+            else{
+                if(toRun == Level.UP) {
+                    setPower(0.4);
+                    ElevatorCurrentLevel = Level.UP;
+                }
+                else {
+                    setPower(-0.4);
+                    ElevatorCurrentLevel = Level.DOWN;
+                }
+                goTo(toRun);
+            }
+        }
+
+        @Override
+        public boolean isFinished() {
+            final double epsilon = 5;
+            if(ElevatorCurrentLevel == Level.UP)
+                return left.getCurrentPosition() + epsilon >= Level.UP.state
+                        && right.getCurrentPosition() + epsilon >= Level.UP.state;
+            else
+                return left.getCurrentPosition() - epsilon <= Level.DOWN.state
+                        && right.getCurrentPosition() - epsilon <= Level.DOWN.state;
         }
     }
 }

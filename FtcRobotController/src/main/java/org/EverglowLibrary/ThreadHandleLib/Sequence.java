@@ -1,5 +1,7 @@
 package org.EverglowLibrary.ThreadHandleLib;
 
+import org.EverglowLibrary.Systems.Executor;
+
 import java.nio.channels.AsynchronousCloseException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -11,18 +13,19 @@ import java.util.concurrent.Future;
 
 public class Sequence {
 
-    private Queue<Runnable> m_Runs = new LinkedList<>();
-    private Thread m_Thread;
+    private Queue<org.EverglowLibrary.Systems.Executor> m_Runs = new LinkedList<>();
+    private Thread m_Thread = new Thread();
     private boolean m_IsRunAsync;
     private ExecutorService m_Service;
+    private Runnable m_ToRun;
     private Queue<Future> m_Futures = new LinkedList<>();;
 
 
-    public Sequence(boolean isRunAsync, Runnable... AllRuns) {
+    public Sequence(boolean isRunAsync, Executor... AllRuns) {
         this(isRunAsync, Arrays.asList(AllRuns));
     }
 
-    public Sequence(boolean isRunAsync, List<Runnable> AllRuns) {
+    public Sequence(boolean isRunAsync, List<Executor> AllRuns) {
         m_Runs.addAll(AllRuns);
         m_IsRunAsync = isRunAsync;
         if(isRunAsync)
@@ -32,10 +35,22 @@ public class Sequence {
     }
 
     private void setExecutorSync() {
-        m_Thread = new Thread(() -> {
-            while (m_Runs.size() != 0)
-                m_Runs.remove().run();
-        });
+        m_ToRun = () -> {
+            Queue<Executor> temp = new LinkedList<>();
+            Executor toRun;
+            while (m_Runs.size() != 0) {
+                toRun = m_Runs.remove();
+                temp.add(toRun);
+                toRun.run();
+                while (!toRun.isFinished()){
+
+                }
+            }
+
+            while (temp.size() != 0){
+                m_Runs.add(temp.remove());
+            }
+        };
     }
 
 
@@ -54,8 +69,12 @@ public class Sequence {
             } catch (Exception e) {
                 throw new AsynchronousCloseException();
             }
-        } else
-            m_Thread.start();
+        } else{
+            if(!m_Thread.isAlive()) {
+                m_Thread = new Thread(m_ToRun);
+                m_Thread.start();
+            }
+        }
     }
 
     public boolean isAllDone() {
@@ -88,7 +107,7 @@ public class Sequence {
         return m_IsRunAsync;
     }
 
-    public void setRuns(Queue<Runnable> runs) {
+    public void setRuns(Queue<Executor> runs) {
         //only if there is nothing in there or the size is zero
         if (m_Runs != null)
             if (m_Runs.size() == 0)
@@ -101,7 +120,7 @@ public class Sequence {
             setExecutorAsync();
     }
 
-    public boolean addRun(Runnable run) {
+    public boolean addRun(Executor run) {
         //only add run the thread isn't started yet
         if (isAllDone()) {
             m_Runs.add(run);
