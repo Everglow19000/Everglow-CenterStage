@@ -12,26 +12,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class FourBarSystem implements ExecutorableSystem{
-
-    @Override
-    public Executor getExecutor() {
-        Level tempLevel = Level.PICKUP;
-        ServoAngel tempServo = ServoAngel.PICKUP;
-        if(currentLevel == Level.PICKUP) {
-            tempLevel = Level.DROP;
-            tempServo = ServoAngel.DROP;
-        }
-        return new FourBarExecutor(tempServo,tempLevel);
-    }
+public class FourBarSystem{
 
     public Executor getExecutor(Level level,ServoAngel servoAngel){
         return new FourBarExecutor(servoAngel,level);
     }
 
     public enum Level {
-        START(-16), PICKUP(-16), DROP(240), REST(150);
-        //start: -45, -17, pickup: 210,235
+        START(-13), PICKUP(-13), DROP(220), REST(180);
+        //start: -10, pickup: 210,235
         public final int state;
 
         Level(int state) {
@@ -64,9 +53,15 @@ public class FourBarSystem implements ExecutorableSystem{
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
         clawAngelServo.setPosition(ServoAngel.PICKUP.state);
         fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
-        fourBarMotor.setTargetPosition(Level.PICKUP.state);
+        fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fourBarMotor.setPower(0.5);
+    }
+
+    public boolean isFinish(Level level){
+        int epsilon4Bar = 2;
+        return (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
+                (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
     }
 
     public int getCurrentMotorPosition() {
@@ -129,8 +124,8 @@ public class FourBarSystem implements ExecutorableSystem{
         double motorPower = -deviation / 100;
 
         double AngleGravity = (getCurrentMotorPosition() - restGravityPosition) / 270 * PI;
-        double gravityPower =  - modifair * Math.cos(AngleGravity);
-        motorPower += gravityPower - mod2 * change;
+        double gravityPower =  modifair * Math.sin(AngleGravity);
+        motorPower += gravityPower * signum(motorPower) - mod2 * change;
 
         opMode.telemetry.addData("Target", fourBarTarget);
         opMode.telemetry.addData("deviation", deviation);
@@ -157,7 +152,7 @@ public class FourBarSystem implements ExecutorableSystem{
         public void run() {
             if(m_Level == Level.PICKUP){
                 set4BarPositionByLevel(m_Level);
-                opMode.sleep(200);
+                opMode.sleep(1000);
                 setServoPosition(m_ServoAngle);
             }
             else {
@@ -166,18 +161,10 @@ public class FourBarSystem implements ExecutorableSystem{
             }
         }
 
+
         @Override
         public boolean isFinished() {
-            final double epsilon4Bar = 5;
-            final double epsilonServo = 0.02;
-            if(m_Level == Level.PICKUP){
-                return fourBarMotor.getCurrentPosition() - epsilon4Bar <= Level.PICKUP.state
-                        && clawAngelServo.getPosition() - epsilonServo <= ServoAngel.PICKUP.state;
-            }
-            else{
-                return fourBarMotor.getCurrentPosition() + epsilon4Bar >= Level.DROP.state
-                        && clawAngelServo.getPosition() + epsilonServo >= ServoAngel.DROP.state;
-            }
+            return isFinish(m_Level);
         }
     }
 }

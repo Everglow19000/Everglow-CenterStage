@@ -107,6 +107,7 @@ public class MainDriver2Driver extends LinearOpMode {
                     )
             );
             drive.update();
+            fourBarSystem.updateP();
         }
 
 

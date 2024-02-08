@@ -106,6 +106,7 @@ public class BasicOpMode extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
+            fourBarSystem.updateP();
             drive.update();
         }
 

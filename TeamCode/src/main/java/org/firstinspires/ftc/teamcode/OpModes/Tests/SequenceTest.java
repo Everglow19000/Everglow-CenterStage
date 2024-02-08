@@ -22,9 +22,9 @@ public class SequenceTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ElevatorSystem elevatorSystem = new ElevatorSystem(this);
-        //FourBarSystem fourBarSystem = new FourBarSystem(this);
+        FourBarSystem fourBarSystem = new FourBarSystem(this);
         GWheelSystem gWheelSystem = new GWheelSystem(this);
-        //ClawSystem clawSystem = new ClawSystem(this);
+        ClawSystem clawSystem = new ClawSystem(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap);
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d(0,0))
                 .forward(50)
@@ -33,12 +33,12 @@ public class SequenceTest extends LinearOpMode {
         Sequence moveStraightDownUP = new Sequence(false, executorTrajectories
                 ,gWheelSystem.getExecutor(true)
                 , Executor.sleep(2000)
-                ,gWheelSystem.getExecutor());
+                ,gWheelSystem.getExecutor(true));
 
         Sequence downUP = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)
                 , elevatorSystem.getExecutor(ElevatorSystem.Level.UP));
 
-        Sequence switchElevators = new Sequence(false,elevatorSystem.getExecutor());
+        Sequence switchElevators = new Sequence(false,elevatorSystem.getExecutor(ElevatorSystem.Level.UP));
 
         waitForStart();
 

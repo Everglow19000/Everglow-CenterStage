@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class GWheelSystem implements ExecutorableSystem {
+public class GWheelSystem{
     private final DcMotorEx motor;
     double currentPower = 0;
     OpMode opMode;
@@ -23,11 +23,6 @@ public class GWheelSystem implements ExecutorableSystem {
         else currentPower = 1;
 
         setPower(currentPower);
-    }
-
-    @Override
-    public Executor getExecutor() {
-        return getExecutor(false);
     }
 
     public Executor getExecutor(boolean isReverse){

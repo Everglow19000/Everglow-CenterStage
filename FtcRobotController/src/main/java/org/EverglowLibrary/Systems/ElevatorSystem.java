@@ -5,11 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-public class ElevatorSystem implements ExecutorableSystem {
-    @Override
-    public Executor getExecutor() {
-        return new ElevatorExecutor();
-    }
+public class ElevatorSystem{
 
     public Executor getExecutor(Level level) {
         return new ElevatorExecutor(level);
@@ -109,6 +105,8 @@ public class ElevatorSystem implements ExecutorableSystem {
                 toggle();
             }
             else{
+                opMode.telemetry.addData("to run", toRun);
+                opMode.telemetry.update();
                 if(toRun == Level.UP) {
                     setPower(0.4);
                     ElevatorCurrentLevel = Level.UP;

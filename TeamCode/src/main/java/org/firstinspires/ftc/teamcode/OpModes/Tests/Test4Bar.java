@@ -5,6 +5,8 @@ package org.firstinspires.ftc.teamcode.OpModes.Tests;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import android.util.Pair;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -17,29 +19,24 @@ public class Test4Bar extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         fourBarSystem = new FourBarSystem(this);
         waitForStart();
-        double positionServo = 0, positionMotor = FourBarSystem.Level.PICKUP.state;
+        int positionServo = 0, positionMotor = FourBarSystem.Level.PICKUP.state;
         double power4 = 0;
         while(opModeIsActive()) {
-            fourBarSystem.set4BarPosition((int)positionMotor);
-            positionServo += gamepad1.right_stick_y / 1000;
-            positionMotor += gamepad1.left_stick_y / 100;
-            //position = min(1, position);
-            //position = max(0, position);
-            fourBarSystem.setServoPosition(positionServo);
+            positionMotor = fourBarSystem.getCurrentMotorPosition();
 
-            //if(gamepad1.a) {fourBarSystem.toggle4Bar();}
-
-            //power4 += gamepad1.left_stick_y / 100;
-
-            //fourBarSystem.setMotorPower(power4);
-            fourBarSystem.setServoPosition(positionServo);
-
-            telemetry.addData("MotorPosition", fourBarSystem.getCurrentMotorPosition());
-            //telemetry.addData("MotorPower", power4);
-            //fourBarSystem.updateP();
-            telemetry.update();
-
+            if(gamepad1.dpad_up){
+                fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                sleep(1000);
+                fourBarSystem.set4BarPosition(FourBarSystem.Level.DROP.state);
+            }
+            if(gamepad1.cross){
+                fourBarSystem.setMotorPower(0.1);
+            }
+            else if(gamepad1.triangle){
+                fourBarSystem.setMotorPower(-0.1);
+            }
+            else
+                fourBarSystem.set4BarPosition(positionMotor);
         }
-        fourBarSystem.setMotorPower(gamepad1.left_stick_y * 0.2);
     }
 }
