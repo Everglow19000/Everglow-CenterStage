@@ -14,7 +14,7 @@ import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "BasicOpMode")
+@TeleOp(name = "BasicOpMode", group = "OpMode")
 public class BasicOpMode extends LinearOpMode {
 
     private SampleMecanumDrive drive;

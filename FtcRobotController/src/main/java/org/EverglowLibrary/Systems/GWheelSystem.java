@@ -25,6 +25,10 @@ public class GWheelSystem{
         setPower(currentPower);
     }
 
+    public double getCurrentPower(){
+        return currentPower;
+    }
+
     public Executor getExecutor(boolean isReverse){
         return new GWheelExecutor(isReverse);
     }

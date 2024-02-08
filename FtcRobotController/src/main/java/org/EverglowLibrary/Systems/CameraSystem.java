@@ -192,7 +192,7 @@ public class CameraSystem {
 
         DetectionLocation detectionLocation = null;
         long start = System.currentTimeMillis();
-        final int TIME_WAIT_MILL = 15 * 1000;
+        final int TIME_WAIT_MILL = 3 * 1000;
         boolean isTimeEnd = false;
         List<Recognition> recognitions;
 

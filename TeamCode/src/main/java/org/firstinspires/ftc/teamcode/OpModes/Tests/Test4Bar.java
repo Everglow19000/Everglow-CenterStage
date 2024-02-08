@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.EverglowLibrary.Systems.FourBarSystem;
 
-@TeleOp(name = "Test4Bar")
+@TeleOp(name = "Test4Bar", group = "test")
 public class Test4Bar extends LinearOpMode {
     FourBarSystem fourBarSystem;
     @Override

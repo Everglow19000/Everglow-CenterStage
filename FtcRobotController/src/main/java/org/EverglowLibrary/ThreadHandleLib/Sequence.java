@@ -17,7 +17,6 @@ public class Sequence {
     private Thread m_Thread = new Thread();
     private boolean m_IsRunAsync;
     private ExecutorService m_Service;
-    private Runnable m_ToRun;
     private Queue<Future> m_Futures = new LinkedList<>();;
 
 
@@ -35,22 +34,16 @@ public class Sequence {
     }
 
     private void setExecutorSync() {
-        m_ToRun = () -> {
-            Queue<Executor> temp = new LinkedList<>();
-            Executor toRun;
-            while (m_Runs.size() != 0) {
-                toRun = m_Runs.remove();
-                temp.add(toRun);
-                toRun.run();
-                while (!toRun.isFinished()){
+        m_Thread = new Thread(() -> {
+            Executor[] arrExe = m_Runs.toArray(new Executor[m_Runs.size()]);
+
+            for (int i = 0; i<m_Runs.size(); i++){
+                arrExe[i].run();
+                while (!arrExe[i].isFinished()){
 
                 }
             }
-
-            while (temp.size() != 0){
-                m_Runs.add(temp.remove());
-            }
-        };
+        });
     }
 
 
@@ -62,16 +55,16 @@ public class Sequence {
     public void startSequence() throws AsynchronousCloseException {
         if (m_IsRunAsync) {
             try {
-                while (m_Runs.size() != 0) {
+                Executor[] arrExe = m_Runs.toArray(new Executor[m_Runs.size()]);
+                for (int i = 0; i < m_Runs.size(); i++) {
                     //run async the run method in order, save the Future class in Queue of the runs
-                    m_Futures.add(m_Service.submit(m_Runs.remove()));
+                    m_Futures.add(m_Service.submit(arrExe[i]));
                 }
             } catch (Exception e) {
                 throw new AsynchronousCloseException();
             }
         } else{
             if(!m_Thread.isAlive()) {
-                m_Thread = new Thread(m_ToRun);
                 m_Thread.start();
             }
         }

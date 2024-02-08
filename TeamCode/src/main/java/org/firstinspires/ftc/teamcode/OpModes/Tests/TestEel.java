@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.EverglowLibrary.Systems.ElevatorSystem;
 
 
-@TeleOp(name = "TestEel")
+@TeleOp(name = "TestEel", group = "test")
 public class TestEel extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

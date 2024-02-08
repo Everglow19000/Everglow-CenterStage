@@ -14,7 +14,7 @@ import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "MainDriver2Driver")
+@TeleOp(name = "MainDriver2Driver", group = "drive")
 public class MainDriver2Driver extends LinearOpMode {
 
     private SampleMecanumDrive drive;

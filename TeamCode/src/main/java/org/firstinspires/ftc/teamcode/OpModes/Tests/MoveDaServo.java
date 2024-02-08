@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 //more imports
 
-@TeleOp(name = "MoveDaServo")
+@TeleOp(name = "MoveDaServo",group = "test")
 public class MoveDaServo extends LinearOpMode {
 
     //make more attributes & functions

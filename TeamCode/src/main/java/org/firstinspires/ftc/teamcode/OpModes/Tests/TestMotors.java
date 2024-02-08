@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "Motors Test")
+@TeleOp(name = "Motors Test", group = "test")
 public class TestMotors extends LinearOpMode {
 
     //make more attributes & functions

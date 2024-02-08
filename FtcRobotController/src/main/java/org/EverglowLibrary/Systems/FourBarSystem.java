@@ -19,7 +19,7 @@ public class FourBarSystem{
     }
 
     public enum Level {
-        START(-13), PICKUP(-13), DROP(220), REST(180);
+        START(-12), PICKUP(0), DROP(238), REST(195);
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -52,7 +52,9 @@ public class FourBarSystem{
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
         clawAngelServo.setPosition(ServoAngel.PICKUP.state);
+
         fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
+        fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fourBarMotor.setPower(0.5);
@@ -152,7 +154,7 @@ public class FourBarSystem{
         public void run() {
             if(m_Level == Level.PICKUP){
                 set4BarPositionByLevel(m_Level);
-                opMode.sleep(1000);
+                opMode.sleep(700);
                 setServoPosition(m_ServoAngle);
             }
             else {

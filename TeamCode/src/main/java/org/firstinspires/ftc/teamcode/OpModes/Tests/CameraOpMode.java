@@ -19,7 +19,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-@TeleOp(name = "Camera Prop")
+@TeleOp(name = "Camera Prop", group = "test")
 public class CameraOpMode extends LinearOpMode {
 
     //make more attributes & functions

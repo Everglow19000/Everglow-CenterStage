@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp(name = "Read4Bar")
+@TeleOp(name = "Read4Bar", group = "test")
 public class Read4Bar extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
