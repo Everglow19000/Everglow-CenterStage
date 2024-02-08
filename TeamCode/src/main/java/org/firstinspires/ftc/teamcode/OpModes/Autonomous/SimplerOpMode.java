@@ -62,7 +62,7 @@ public class SimplerOpMode extends LinearOpMode {
         }
     }
 
-    public static void runAfterInput(SimplerOpMode.StartPosition startPosition, CameraSystem.DetectionLocation propPlace) {
+    /*public static void runAfterInput(SimplerOpMode.StartPosition startPosition, CameraSystem.DetectionLocation propPlace) {
         Pose2d startLocation;
         final double RightLainMiddleX = 1.5 * squareSize;
         final double LeftLainMiddleX = 4.5 * squareSize;
@@ -114,17 +114,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, trustY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, trustY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, BackLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, trustY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(LeftLainMiddleX, BackLainMiddleY, East);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, trustY, East);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -135,17 +135,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(LeftLainMiddleX, FrontLainMiddleY, East);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, FrontLainMiddleY, East);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -156,17 +156,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, trustY, South);
                         SecondDropMiddlePoint = new Pose2d(1*squareSize, trustY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, BackLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, trustY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(RightLainMiddleX, BackLainMiddleY, West);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, trustY, West);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -177,24 +177,30 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(1*squareSize, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(RightLainMiddleX, FrontLainMiddleY, West);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, FrontLainMiddleY, West);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
         }
 
     }
+*/
 
+
+
+    public static void runAfterInput(SimplerOpMode.StartPosition startPosition, CameraSystem.DetectionLocation propPlace) {
+
+    }
 
 
     @Override
@@ -267,17 +273,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, trustY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, trustY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, BackLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, trustY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(LeftLainMiddleX, BackLainMiddleY, East);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, trustY, East);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -288,17 +294,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(LeftLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(LeftLainMiddleX, FrontLainMiddleY, East);
                         SecondDropMiddlePoint = new Pose2d(LeftLainMiddleX, FrontLainMiddleY, East);
-                        SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(LeftLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -309,17 +315,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, trustY, South);
                         SecondDropMiddlePoint = new Pose2d(1*squareSize, trustY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, BackLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, trustY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(RightLainMiddleX, BackLainMiddleY, West);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, trustY, West);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -330,17 +336,17 @@ public class SimplerOpMode extends LinearOpMode {
                     case LEFT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(1*squareSize, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX+distanceBetweenTags, FinalDropY, North);
                         break;
                     case RIGHT:
                         FirstDropLocation= new Pose2d(RightLainFirstDropX, FrontLainMiddleY, South);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, FrontLainMiddleY, South);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX-distanceBetweenTags, FinalDropY, North);
                         break;
                     default:
                         FirstDropLocation= new Pose2d(RightLainMiddleX, FrontLainMiddleY, West);
                         SecondDropMiddlePoint = new Pose2d(RightLainMiddleX, FrontLainMiddleY, West);
-                        SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
+                        //SecondDropLocation = new Pose2d(RightLainMiddleX, FinalDropY, North);
                         break;
                 }
                 break;
@@ -360,7 +366,7 @@ public class SimplerOpMode extends LinearOpMode {
         gWheelSystem.toggle(true);
         sleep(1000);
 
-        //drive(FirstDropLocation, SecondDropMiddlePoint); drive(SecondDropMiddlePoint, SecondDropLocation);
+        /*//drive(FirstDropLocation, SecondDropMiddlePoint); drive(SecondDropMiddlePoint, SecondDropLocation);
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .splineTo(SecondDropMiddlePoint.vec(),SecondDropMiddlePoint.getHeading())
                 .splineTo(SecondDropLocation.vec(),SecondDropLocation.getHeading())
@@ -382,6 +388,6 @@ public class SimplerOpMode extends LinearOpMode {
                 .build());
         fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
         sleep(1000);
-        fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
+        fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);*/
     }
 }

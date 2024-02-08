@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
+/*package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,4 +10,4 @@ public class BasicAutonomousBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MoveToConusAutonumous.AutonumousGeneral(false, this, MoveToConusAutonumous.StartPosition.BACKLEFT);
     }
-}
+}*/
