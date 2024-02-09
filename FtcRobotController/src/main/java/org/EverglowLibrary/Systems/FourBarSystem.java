@@ -19,7 +19,7 @@ public class FourBarSystem{
     }
 
     public enum Level {
-        START(-11), PICKUP(0), DROP(238), REST(172);
+        START(-9), PICKUP(0), DROP(238), REST(172);
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -29,7 +29,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.5), DROP(0.8), REST(0.27);
+        PICKUP(0.51), DROP(0.8), REST(0.27);
 
         public final double state;
 

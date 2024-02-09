@@ -47,12 +47,12 @@ public class MoveToConusAutonumous extends LinearOpMode {
     }
     @Override
     public void runOpMode() throws InterruptedException {
-       AutonumousGeneral(false, this, StartPosition.FRONTLEFT);
+       AutonumousGeneral(this, StartPosition.FRONTLEFT);
     }
 
-    public static void AutonumousGeneral(boolean isRed, LinearOpMode opMode, StartPosition startPosition){
+    public static void AutonumousGeneral(LinearOpMode opMode, StartPosition startPosition){
         GWheelSystem gWheelSystem = new GWheelSystem(opMode);
-        CameraSystem cameraSystem = new CameraSystem(opMode, isRed);
+        CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
         FourBarSystem fourBarSystem = new FourBarSystem(opMode);
         ElevatorSystem elevatorSystem = new ElevatorSystem(opMode);
         ClawSystem clawSystem = new ClawSystem(opMode);
@@ -135,8 +135,6 @@ public class MoveToConusAutonumous extends LinearOpMode {
                 gWheelSystem.setPower(0);
 
                 //start the second deployment//
-
-
 
             }
             ifrun = false;

@@ -17,7 +17,7 @@ public class ElevatorSystem{
     }
 
     public enum Level {
-        DOWN(35), UP(720); //down 35
+        DOWN(0), UP(720); //down 35
 
         public final int state;
 
