@@ -42,6 +42,11 @@ public class ExecutorTrajectories extends Executor {
     }
 
     @Override
+    public void stop() {
+
+    }
+
+    @Override
     public void run() {
         if(m_Trajectory == null){
             if(m_IsSync)

@@ -68,5 +68,10 @@ public class ClawSystem{
             opMode.sleep(800);
             return true;
         }
+
+        @Override
+        public void stop() {
+
+        }
     }
 }

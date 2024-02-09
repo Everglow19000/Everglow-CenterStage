@@ -10,6 +10,7 @@ import org.EverglowLibrary.Systems.Executor;
 import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.EverglowLibrary.ThreadHandleLib.Sequence;
+import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name = "SequenceControl", group = "OpMode")
@@ -22,7 +23,7 @@ public class SequenceControl extends LinearOpMode {
     private boolean upAndDown_toggle = false;
 
     private final Sequence getReadyToDropSeq;
-    private final Sequence setUpAndUnderBlockSeq;
+    private final SequenceInSequence setUpAndUnderBlockSeq;
     private final Sequence dropAndRetreatSeq;
     private final Sequence getUpAndReadyToDrop;
 
@@ -32,14 +33,16 @@ public class SequenceControl extends LinearOpMode {
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
                 , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP));
 
-        setUpAndUnderBlockSeq = new Sequence(false, clawSystem.getExecutor(false),
+        setUpAndUnderBlockSeq = new SequenceInSequence(
+                new Sequence(false, clawSystem.getExecutor(false),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
-                fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP),
-                elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
+                fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP)),
+                new Sequence(true,fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.REST),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)));
 
-        dropAndRetreatSeq = new Sequence(false, clawSystem.getExecutor(true),
-                fourBarSystem.getExecutor(FourBarSystem.Level.PICKUP, FourBarSystem.ServoAngel.PICKUP),
-                elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
+        dropAndRetreatSeq = new Sequence(false, fourBarSystem.getExecutor(FourBarSystem.Level.PICKUP
+                        , FourBarSystem.ServoAngel.PICKUP)
+                        , elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
         getUpAndReadyToDrop = new Sequence(true, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
                 fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP));
@@ -61,7 +64,6 @@ public class SequenceControl extends LinearOpMode {
 
         Sequence setUpAndUnderBlockSeq = new Sequence(false, clawSystem.getExecutor(false),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
-                Executor.sleep(1000),
                 fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
@@ -122,7 +124,7 @@ public class SequenceControl extends LinearOpMode {
         return getReadyToDropSeq;
     }
 
-    public Sequence SetUpAndUnderBlockSeq(){
+    public SequenceInSequence SetUpAndUnderBlockSeq(){
         return setUpAndUnderBlockSeq;
     }
 

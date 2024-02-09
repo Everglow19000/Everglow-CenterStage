@@ -19,7 +19,7 @@ public class FourBarSystem{
     }
 
     public enum Level {
-        START(-12), PICKUP(0), DROP(238), REST(195);
+        START(-11), PICKUP(0), DROP(238), REST(172);
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -29,7 +29,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.1), DROP(0.4);
+        PICKUP(0.5), DROP(0.8), REST(0.27);
 
         public final double state;
 
@@ -58,10 +58,11 @@ public class FourBarSystem{
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fourBarMotor.setPower(0.5);
+        clawAngelServo.resetDeviceConfigurationForOpMode();
     }
 
     public boolean isFinish(Level level){
-        int epsilon4Bar = 2;
+        int epsilon4Bar = 4;
         return (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
     }
@@ -153,11 +154,13 @@ public class FourBarSystem{
         @Override
         public void run() {
             if(m_Level == Level.PICKUP){
+                fourBarMotor.setPower(0.65);
                 set4BarPositionByLevel(m_Level);
-                opMode.sleep(700);
+                opMode.sleep(800);
                 setServoPosition(m_ServoAngle);
             }
             else {
+                fourBarMotor.setPower(0.6);
                 setServoPosition(m_ServoAngle);
                 set4BarPositionByLevel(m_Level);
             }
@@ -167,6 +170,11 @@ public class FourBarSystem{
         @Override
         public boolean isFinished() {
             return isFinish(m_Level);
+        }
+
+        @Override
+        public void stop() {
+            fourBarMotor.setPower(0);
         }
     }
 }

@@ -51,6 +51,11 @@ public class GWheelSystem{
         public boolean isFinished() {
             return true; //there is no logic here
         }
+
+        @Override
+        public void stop() {
+            setPower(0);
+        }
     }
 
 }

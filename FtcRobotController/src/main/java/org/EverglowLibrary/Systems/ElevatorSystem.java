@@ -10,6 +10,12 @@ public class ElevatorSystem{
     public Executor getExecutor(Level level) {
         return new ElevatorExecutor(level);
     }
+
+
+    public Executor getExecutor(Level level, double power) {
+        return new ElevatorExecutor(level, power);
+    }
+
     public enum Level {
         DOWN(35), UP(720); //down 35
 
@@ -91,6 +97,7 @@ public class ElevatorSystem{
 
     public class ElevatorExecutor extends Executor{
         private Level toRun = null;
+        private double Power = 0.4;
 
         public ElevatorExecutor(){
             //ElevatorCurrentLevel = Level.DOWN;
@@ -98,6 +105,11 @@ public class ElevatorSystem{
 
         public ElevatorExecutor(Level level){
             toRun = level;
+        }
+
+        public ElevatorExecutor(Level level, double power){
+            toRun = level;
+            Power = power;
         }
         @Override
         public void run() {
@@ -108,11 +120,11 @@ public class ElevatorSystem{
                 opMode.telemetry.addData("to run", toRun);
                 opMode.telemetry.update();
                 if(toRun == Level.UP) {
-                    setPower(0.4);
+                    setPower(Power);
                     ElevatorCurrentLevel = Level.UP;
                 }
                 else {
-                    setPower(-0.4);
+                    setPower(-Power);
                     ElevatorCurrentLevel = Level.DOWN;
                 }
                 goTo(toRun);
@@ -121,13 +133,19 @@ public class ElevatorSystem{
 
         @Override
         public boolean isFinished() {
-            final double epsilon = 5;
+            final double epsilon = 10;
             if(ElevatorCurrentLevel == Level.UP)
                 return left.getCurrentPosition() + epsilon >= Level.UP.state
                         && right.getCurrentPosition() + epsilon >= Level.UP.state;
             else
                 return left.getCurrentPosition() - epsilon <= Level.DOWN.state
                         && right.getCurrentPosition() - epsilon <= Level.DOWN.state;
+        }
+
+        @Override
+        public void stop() {
+            left.setPower(0);
+            right.setPower(0);
         }
     }
 }

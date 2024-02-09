@@ -17,7 +17,7 @@ public class Sequence {
     private Thread m_Thread = new Thread();
     private boolean m_IsRunAsync;
     private ExecutorService m_Service;
-    private Queue<Future> m_Futures = new LinkedList<>();;
+    private Queue<Future> m_Futures = new LinkedList<>();
 
 
     public Sequence(boolean isRunAsync, Executor... AllRuns) {
@@ -39,10 +39,13 @@ public class Sequence {
 
             for (int i = 0; i<m_Runs.size(); i++){
                 arrExe[i].run();
-                while (!arrExe[i].isFinished()){
+                while (!arrExe[i].isFinished() && !Thread.currentThread().isInterrupted()){
 
                 }
+                if(Thread.currentThread().isInterrupted())
+                    arrExe[i].stop();
             }
+
         });
     }
 
@@ -122,6 +125,10 @@ public class Sequence {
             return true;
         }
         return false;
+    }
+
+    public boolean isDone(){
+        return !m_Thread.isAlive();
     }
 
     public void interruptSequence(){

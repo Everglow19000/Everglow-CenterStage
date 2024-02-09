@@ -9,6 +9,7 @@ import org.EverglowLibrary.Systems.ElevatorSystem;
 import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.EverglowLibrary.ThreadHandleLib.Sequence;
+import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name = "TwoDrivers_Sequences", group = "drive")
@@ -19,6 +20,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
     private boolean seq3_toggle = false;
     private boolean seq4_toggle = false;
     private boolean gwheel_toggle = false;
+    private boolean claw_toggle = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,7 +32,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
-        Sequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
+        SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
         Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
         Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
 
@@ -44,7 +46,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 if(gamepad1.triangle){
                     getReadyToDropSeq.interruptSequence();
                     dropAndRetreatSeq.interruptSequence();
-                    setUpAndUnderBlockSeq.interruptSequence();
+                    setUpAndUnderBlockSeq.stopAll();
                     getUpSeq.interruptSequence();
                 }
 
@@ -59,7 +61,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 seq2_toggle = gamepad2.cross;
 
                 if(gamepad2.circle && !seq3_toggle){
-                    setUpAndUnderBlockSeq.startSequence();
+                    setUpAndUnderBlockSeq.RunAll();
                 }
                 seq3_toggle = gamepad2.circle;
 
@@ -72,6 +74,11 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 telemetry.addData("exeption", e);
                 telemetry.update();
             }
+
+            if(gamepad2.right_bumper && !claw_toggle){
+                clawSystem.toggle();
+            }
+            claw_toggle = gamepad2.right_bumper;
 
             if(gamepad1.right_bumper && !gwheel_toggle){
                 gWheelSystem.toggle(true);

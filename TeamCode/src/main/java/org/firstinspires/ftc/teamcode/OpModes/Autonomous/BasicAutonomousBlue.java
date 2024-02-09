@@ -8,6 +8,6 @@ public class BasicAutonomousBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        MoveToConusAutonumous.AutonumousGeneral(false, this, MoveToConusAutonumous.StartPosition.BACKLEFT);
+        MoveToConusAutonumous.AutonumousGeneral(false, this, MoveToConusAutonumous.StartPosition.FRONTLEFT);
     }
 }

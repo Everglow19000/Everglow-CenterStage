@@ -21,4 +21,9 @@ public class ExecutorSleep extends Executor {
     public boolean isFinished() {
         return true;
     }
+
+    @Override
+    public void stop() {
+
+    }
 }
