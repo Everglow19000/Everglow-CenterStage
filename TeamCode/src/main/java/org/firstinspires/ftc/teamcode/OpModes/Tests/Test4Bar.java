@@ -31,44 +31,31 @@ public class Test4Bar extends LinearOpMode {
 
          */
         waitForStart();
-        double positionServo = FourBarSystem.ServoAngel.PICKUP.state
-                , positionMotor = FourBarSystem.Level.REST.state;
-        double power4 = 0;
+        double positionServo = fourBarSystem.getCurrentServoPosition()
+                , positionMotor = fourBarSystem.getCurrentMotorPosition();
 
-
-        boolean arm1 = false;
-        boolean arm2 = false;
-        boolean servo1 = false;
-        boolean servo2 = false;
 
         while(opModeIsActive()) {
-            if(!servo1 && gamepad1.circle){
-                positionServo += 0.01;
-            }
-            servo1 = gamepad1.circle;
+            positionServo += gamepad1.right_stick_y / 1000;
+            positionMotor += gamepad1.left_stick_y / 20;
+            fourBarSystem.set4BarPosition((int)positionMotor);
+            fourBarSystem.setServoPosition(positionServo);
 
-            if(!servo2 && gamepad1.cross){
-                positionServo -= 0.01;
-            }
-            servo2 = gamepad1.cross;
+            if(gamepad1.triangle){
+                positionMotor = FourBarSystem.Level.DROP.state;
 
-            if(!arm1 && gamepad1.square){
-                positionMotor += 1;
             }
-            arm1 = gamepad1.square;
-            if(!arm2 && gamepad1.triangle){
-                positionMotor -= 1;
-            }
-            arm2 = gamepad1.triangle;
 
-            if(gamepad1.dpad_down){
-                fourBarSystem.setServoPosition(positionServo);
-                fourBarSystem.set4BarPosition((int)positionMotor);
+            if(gamepad1.circle){
+                positionMotor = FourBarSystem.Level.PICKUP.state;
+
             }
+
 
             telemetry.addData("motor:", positionMotor);
             telemetry.addData("servo:", positionServo);
             telemetry.update();
+            fourBarSystem.updateP(0.35);
         }
     }
 }

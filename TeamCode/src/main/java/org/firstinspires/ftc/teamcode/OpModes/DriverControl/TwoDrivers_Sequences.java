@@ -97,7 +97,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                     )
             );
             drive.update();
-            //fourBarSystem.updateP();
+            fourBarSystem.updateP(0.35);
         }
     }
 }

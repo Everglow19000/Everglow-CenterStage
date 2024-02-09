@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name = "MainDriver2Driver", group = "drive")
 public class MainDriver2Driver extends LinearOpMode {
+    public static final double SQUARE_SIZE = 60.5;
 
     private SampleMecanumDrive drive;
     private ElevatorSystem elevatorSystem;
@@ -67,11 +68,11 @@ public class MainDriver2Driver extends LinearOpMode {
 
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
                     sleep(500);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.PICKUP);
                     FourBarUp = true;
                 }
                 else {
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.DROP);
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
                     FourBarUp = false;
                 }
@@ -107,7 +108,7 @@ public class MainDriver2Driver extends LinearOpMode {
                     )
             );
             drive.update();
-            fourBarSystem.updateP();
+            //fourBarSystem.updateP();
         }
 
 

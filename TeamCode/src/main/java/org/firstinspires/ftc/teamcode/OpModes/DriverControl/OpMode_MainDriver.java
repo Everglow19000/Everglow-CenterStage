@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 
+import static org.apache.commons.math3.util.FastMath.cos;
+import static org.apache.commons.math3.util.FastMath.sin;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,6 +16,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(group = "drive", name = "OpMode_MainDriver")
 public class OpMode_MainDriver extends LinearOpMode{
+
+
+    SampleMecanumDrive drive;
     FourBarSystem fourBarSystem;
     Servo FlipServo, ClawR, ClawL;
     DcMotorEx SlideL, SlideR, FourBar, GagazMot;
@@ -25,11 +31,82 @@ public class OpMode_MainDriver extends LinearOpMode{
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
 
+    public double closestLaneGoingForward(double x, double y) {
+        double xOut = (int)x + 0.5;
+        if (y > 3 && (xOut == 2.5)) xOut = 1.5;
+        if (y > 3 && (xOut == 3.5)) xOut = 4.5;
+
+        return xOut;
+    }
+
+    public double foo(double delX, double delY,double Px,double Py) {
+        if(delY == 0) return delX * 0.4;
+        double outPx =(delX/Math.abs(delY))*Math.abs(Py);
+        return outPx;
+    }
+
+
+
+
+    public void driveWithOutHitting(Pose2d powers) {
+        double x = drive.getPoseEstimate().getX(), y = drive.getPoseEstimate().getY();
+        if (y > 4 || y < 1) {
+            driveByAxis(powers);
+            return;
+        }
+
+        if ((y > 3.6 && powers.getY() > -0.1) || (y < 1.4 && powers.getY() < 0.1)) {
+            driveByAxis(powers);
+            return;
+        }
+
+        double xTarget = closestLaneGoingForward(x, y);
+        double deviX = xTarget - x;
+
+        double deviY = 0;
+        if(y > 3.3) deviY = y - 3.3;
+        if(y <  1.7) deviY = 1.7 - y;
+        double Px = foo(deviX, deviY, powers.getX(), powers.getY());
+
+        drive.setWeightedDrivePower(new Pose2d(Px, powers.getY(), powers.getHeading()));
+    }
+
+
+
+
+    public void driveByAxis(Pose2d powers) {
+        final double currentAngle = drive.getPoseEstimate().getHeading();
+        final double cosAngle = cos(currentAngle);
+        final double sinAngle = sin(currentAngle);
+
+        Pose2d mecanumPowers = new Pose2d(
+                cosAngle * powers.getX() - sinAngle * powers.getY(),
+                cosAngle * powers.getY() + sinAngle * powers.getX(),
+                powers.getHeading()
+        );
+
+        drive.setWeightedDrivePower(mecanumPowers);
+    }
+
+    public void driveByAxisWithOutHitting(Pose2d powers) {
+        final double currentAngle = drive.getPoseEstimate().getHeading();
+        final double cosAngle = cos(currentAngle);
+        final double sinAngle = sin(currentAngle);
+
+        Pose2d mecanumPowers = new Pose2d(
+                cosAngle * powers.getX() - sinAngle * powers.getY(),
+                cosAngle * powers.getY() + sinAngle * powers.getX(),
+                powers.getHeading()
+        );
+
+        driveWithOutHitting(mecanumPowers);
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         fourBarSystem = new FourBarSystem(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // flip servo
@@ -65,6 +142,8 @@ public class OpMode_MainDriver extends LinearOpMode{
 
         // galal azikonim
         GagazMot = hardwareMap.get(DcMotorEx.class, "GagazMot");
+
+        //drive.setPoseEstimate(new Pose2d(5 * SQUA));
 
         waitForStart();
 
@@ -104,11 +183,11 @@ public class OpMode_MainDriver extends LinearOpMode{
             if(gamepad1.square && !square_toggle){ //
                 if(ClawExtended){
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.PICKUP);
                     ClawExtended = !ClawExtended;
                 } else {
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.DROP);
                     ClawExtended = !ClawExtended;
                 }
             }

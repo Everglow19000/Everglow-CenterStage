@@ -65,7 +65,7 @@ public class TEMP_FrontLeftcCheck extends LinearOpMode {
 
         //פריקה שנייה
         elevatorSystem.goTo(ElevatorSystem.Level.UP);
-        fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+        fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.PICKUP);
         fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
         sleep(2000);
         clawSystem.toggle();
@@ -75,7 +75,7 @@ public class TEMP_FrontLeftcCheck extends LinearOpMode {
         drive.followTrajectory(drive.trajectoryBuilder(traj2.end())
                 .forward(-20)
                 .build());
-        fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+        fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.PICKUP);
         sleep(1000);
         fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
 

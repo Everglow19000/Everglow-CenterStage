@@ -67,11 +67,11 @@ public class BasicOpMode extends LinearOpMode {
 
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
                     sleep(500);
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.PICKUP);
                     FourBarUp = true;
                 }
                 else {
-                    fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.DROP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.DROP);
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
                     FourBarUp = false;
                 }
@@ -106,7 +106,7 @@ public class BasicOpMode extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
-            fourBarSystem.updateP();
+            //fourBarSystem.updateP();
             drive.update();
         }
 

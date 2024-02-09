@@ -58,7 +58,7 @@ public class FourBarSystem{
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fourBarMotor.setPower(0.5);
-        clawAngelServo.resetDeviceConfigurationForOpMode();
+        //clawAngelServo.resetDeviceConfigurationForOpMode();
     }
 
     public boolean isFinish(Level level){
@@ -92,7 +92,7 @@ public class FourBarSystem{
         set4BarPosition(currentLevel.state);
     }
 
-    public void setServoPosition(ServoAngel targetServoAngel) {
+    public void setServoPositionByLevel(ServoAngel targetServoAngel) {
         currentServoAngel = targetServoAngel;
         clawAngelServo.setPosition(currentServoAngel.state);
     }
@@ -108,27 +108,27 @@ public class FourBarSystem{
 
     public void toggleAngleServo() {
         if(currentLevel == Level.START || currentLevel == Level.PICKUP) {
-            setServoPosition(ServoAngel.DROP);
+            setServoPositionByLevel(ServoAngel.DROP);
         }
         else{
-            setServoPosition(ServoAngel.PICKUP);
+            setServoPositionByLevel(ServoAngel.PICKUP);
         }
     }
 
     double last = 0;
     double change = 0;
 
-    public void updateP() {
-        final double modifair = 0.02, mod2 = 0.15;
+    public void updateP(double modifairG) {
+        final double mod2 = 0.15;
         final double restGravityPosition = 34;
         change = getCurrentMotorPosition() - last;
         last = getCurrentMotorPosition();
         double deviation = fourBarTarget - getCurrentMotorPosition();
-        double motorPower = -deviation / 100;
+        double motorPower = -deviation / 70;
 
         double AngleGravity = (getCurrentMotorPosition() - restGravityPosition) / 270 * PI;
-        double gravityPower =  modifair * Math.sin(AngleGravity);
-        motorPower += gravityPower * signum(motorPower) - mod2 * change;
+        double gravityPower =  modifairG * Math.sin(AngleGravity);
+        motorPower += gravityPower - mod2 * change;
 
         opMode.telemetry.addData("Target", fourBarTarget);
         opMode.telemetry.addData("deviation", deviation);
@@ -140,6 +140,7 @@ public class FourBarSystem{
         //if(deviation < 20) motorPower -= modifair;
         setMotorPower(motorPower);
     }
+
 
     public class FourBarExecutor extends Executor{
 
@@ -154,14 +155,14 @@ public class FourBarSystem{
         @Override
         public void run() {
             if(m_Level == Level.PICKUP){
-                fourBarMotor.setPower(0.65);
+                //fourBarMotor.setPower(0.65);
                 set4BarPositionByLevel(m_Level);
                 opMode.sleep(800);
-                setServoPosition(m_ServoAngle);
+                setServoPositionByLevel(m_ServoAngle);
             }
             else {
-                fourBarMotor.setPower(0.6);
-                setServoPosition(m_ServoAngle);
+                //fourBarMotor.setPower(0.6);
+                setServoPositionByLevel(m_ServoAngle);
                 set4BarPositionByLevel(m_Level);
             }
         }
@@ -176,5 +177,7 @@ public class FourBarSystem{
         public void stop() {
             fourBarMotor.setPower(0);
         }
+
+
     }
 }
