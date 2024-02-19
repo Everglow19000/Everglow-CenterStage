@@ -56,7 +56,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
         GWheelSystem gWheelSystem = new GWheelSystem(opMode);
         CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
         //Sequence drop = sequenceControl.DropAndRetreatSeq();
-        double xPoint = 85, yPoint = -15;
+        double xPoint = 100, yPoint = -15;
 
         Trajectory splneToMiddle = drive.trajectoryBuilder(new Pose2d(0,0, 0))
                 .splineTo(new Vector2d(xPoint,yPoint), 0)

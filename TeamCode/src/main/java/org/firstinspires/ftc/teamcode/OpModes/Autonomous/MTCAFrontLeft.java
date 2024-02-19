@@ -42,6 +42,7 @@ public class MTCAFrontLeft extends LinearOpMode {
 
         if(isStopRequested()) return;
         Trajectory secDrop;
+
         //double moveNearBoard = 0;
         while (opModeIsActive()) {
             if(!oneRun) {
@@ -72,13 +73,16 @@ public class MTCAFrontLeft extends LinearOpMode {
                 if (isStopRequested()) return;
 
 
-                Sequence getUp = sequenceControl.GetReadyToDropSeq();
+
                 //getUp = new Sequence(false, clawSystem.getExecutor(true))
+                Sequence getUp = sequenceControl.GetReadyToDropSeq();
                 getUp.startSequence();
-                drive.followTrajectory(secDrop);//to run parallel
+                //to run parallel
+
                 while (!getUp.isDone()){
                     fourBarSystem.updateP(0.35);
                 }
+                drive.followTrajectory(secDrop);
 
                 Sequence openClaw = new Sequence(false, clawSystem.getExecutor(true));
                 openClaw.startSequence();

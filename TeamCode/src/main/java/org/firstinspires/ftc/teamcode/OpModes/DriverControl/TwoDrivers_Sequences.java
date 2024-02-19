@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.EverglowLibrary.Systems.ClawSystem;
 import org.EverglowLibrary.Systems.ElevatorSystem;
@@ -31,6 +32,9 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         GWheelSystem gWheelSystem = new GWheelSystem(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
+        Servo planeServo = hardwareMap.get(Servo.class, "PlaneServo");
+        planeServo.setPosition(planeServo.getPosition());
+        double servoPos = planeServo.getPosition()+0.5;
         int pos = elevatorSystem.getCurrentPos().state;
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
@@ -44,7 +48,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
 
         while (opModeIsActive()){
             try {
-                if(gamepad1.triangle){
+                if(gamepad1.triangle || gamepad1.dpad_up){
                     getReadyToDropSeq.interruptSequence();
                     dropAndRetreatSeq.interruptSequence();
                     setUpAndUnderBlockSeq.stopAll();
@@ -74,7 +78,6 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                     pos = elevatorSystem.getCurrentPos().state;
                 }
                 seq4_toggle = gamepad2.triangle;
-
             }catch (Exception e){
                 telemetry.addData("exeption", e);
                 telemetry.update();
@@ -95,15 +98,21 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 gWheelSystem.toggle(true);
             }
 
+            if(gamepad2.dpad_up){
+                planeServo.setPosition(servoPos);
+            }
+
             if (gamepad1.left_bumper && !gwheel_toggle){
                 gWheelSystem.toggle(false);
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
 
-            if(gamepad1.cross && !elevator_toggle){
+            if(gamepad1.square && !elevator_toggle){
                 elevatorSystem.toggleMax();
             }
-            elevator_toggle = gamepad1.cross;
+            elevator_toggle = gamepad1.square;
+
+
 
             //if(gamepad2.)
             drive.setWeightedDrivePower(
