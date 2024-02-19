@@ -28,7 +28,7 @@ public class MTCAFtontRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         MoveToConusAutonumous autonumousGeneral = new MoveToConusAutonumous();
-        autonumousGeneral.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.FRONTRIGHT);
+        //autonumousGeneral.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.FRONTRIGHT);
 
     }
 

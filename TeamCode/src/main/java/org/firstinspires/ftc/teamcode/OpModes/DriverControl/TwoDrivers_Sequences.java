@@ -21,6 +21,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
     private boolean seq4_toggle = false;
     private boolean gwheel_toggle = false;
     private boolean claw_toggle = false;
+    private boolean elevator_toggle = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,6 +31,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         GWheelSystem gWheelSystem = new GWheelSystem(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
+        int pos = elevatorSystem.getCurrentPos().state;
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
         SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
@@ -42,7 +44,6 @@ public class TwoDrivers_Sequences extends LinearOpMode {
 
         while (opModeIsActive()){
             try {
-
                 if(gamepad1.triangle){
                     getReadyToDropSeq.interruptSequence();
                     dropAndRetreatSeq.interruptSequence();
@@ -52,21 +53,25 @@ public class TwoDrivers_Sequences extends LinearOpMode {
 
                 if(gamepad2.square && !seq1_toggle){
                     getReadyToDropSeq.startSequence();
+                    pos = elevatorSystem.getCurrentPos().state;
                 }
                 seq1_toggle = gamepad2.square;
 
                 if(gamepad2.cross && !seq2_toggle){
                     dropAndRetreatSeq.startSequence();
+                    pos = elevatorSystem.getCurrentPos().state;
                 }
                 seq2_toggle = gamepad2.cross;
 
                 if(gamepad2.circle && !seq3_toggle){
                     setUpAndUnderBlockSeq.RunAll();
+                    pos = elevatorSystem.getCurrentPos().state;
                 }
                 seq3_toggle = gamepad2.circle;
 
                 if(gamepad2.triangle && !seq4_toggle){
                     getUpSeq.startSequence();
+                    pos = elevatorSystem.getCurrentPos().state;
                 }
                 seq4_toggle = gamepad2.triangle;
 
@@ -74,6 +79,12 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 telemetry.addData("exeption", e);
                 telemetry.update();
             }
+
+            //if(gamepad1.circle){
+
+              //  elevatorSystem.goTo(pos);
+            //}
+            //pos += gamepad2.left_stick_y/10;
 
             if(gamepad2.right_bumper && !claw_toggle){
                 clawSystem.toggle();
@@ -89,6 +100,12 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
 
+            if(gamepad1.cross && !elevator_toggle){
+                elevatorSystem.toggleMax();
+            }
+            elevator_toggle = gamepad1.cross;
+
+            //if(gamepad2.)
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
@@ -96,6 +113,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
+            //telemetry.addData("elevator pos", pos);
             drive.update();
             fourBarSystem.updateP(0.35);
         }

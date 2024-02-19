@@ -33,7 +33,7 @@ public class SequenceControl extends LinearOpMode {
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
                 , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP));
 
-        setUpAndUnderBlockSeq = new SequenceInSequence(
+        setUpAndUnderBlockSeq = new SequenceInSequence(false,
                 new Sequence(false, clawSystem.getExecutor(false),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
                 fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP)),

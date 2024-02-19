@@ -17,7 +17,7 @@ public class ElevatorSystem{
     }
 
     public enum Level {
-        DOWN(0), UP(720); //down 35
+        DOWN(0), UP(825), MAX_UP(1480), TLIA(900); //TLIA 918
 
         public final int state;
 
@@ -28,8 +28,6 @@ public class ElevatorSystem{
 
     public OpMode opMode;
     Level ElevatorCurrentLevel = Level.DOWN;
-
-
     /**
      * The motors which control the left and right sides of the elevator.
      */
@@ -59,6 +57,11 @@ public class ElevatorSystem{
         right.setTargetPosition(level.state);
     }
 
+    public void goTo(int place){
+        left.setTargetPosition(place);
+        right.setTargetPosition(place);
+    }
+
     public void setPower(double power){
         final double scale = 1;
         left.setPower(power * scale);
@@ -77,6 +80,10 @@ public class ElevatorSystem{
         opMode.telemetry.update();
     }
 
+    public Level getCurrentPos(){
+        return ElevatorCurrentLevel;
+    }
+
     public void toggle(){
         final double downPower = -0.4;
         final double upPower = 0.4;
@@ -91,6 +98,23 @@ public class ElevatorSystem{
             right.setPower(downPower);
         }
 
+        goTo(ElevatorCurrentLevel);
+    }
+
+    public void toggleMax(){
+        final double downPower = -0.4;
+        final double upPower = 0.4;
+        if(ElevatorCurrentLevel != Level.MAX_UP)
+        {
+            ElevatorCurrentLevel = Level.MAX_UP;
+            left.setPower(upPower);
+            right.setPower(upPower);
+        }
+        else {
+            ElevatorCurrentLevel = Level.TLIA;
+            left.setPower(upPower);
+            right.setPower(upPower);
+        }
         goTo(ElevatorCurrentLevel);
     }
 

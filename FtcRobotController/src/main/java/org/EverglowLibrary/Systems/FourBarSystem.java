@@ -19,7 +19,7 @@ public class FourBarSystem{
     }
 
     public enum Level {
-        START(-9), PICKUP(0), DROP(238), REST(172);
+        START(-12), PICKUP(-12), DROP(344), REST(267);
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -29,7 +29,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.51), DROP(0.8), REST(0.27);
+        PICKUP(0.445), DROP(0.14), REST(0.66);
 
         public final double state;
 
@@ -53,7 +53,7 @@ public class FourBarSystem{
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
         clawAngelServo.setPosition(ServoAngel.PICKUP.state);
 
-        fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
+        //fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
         fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -130,12 +130,9 @@ public class FourBarSystem{
         double gravityPower =  modifairG * Math.sin(AngleGravity);
         motorPower += gravityPower - mod2 * change;
 
-        opMode.telemetry.addData("Target", fourBarTarget);
-        opMode.telemetry.addData("deviation", deviation);
-        opMode.telemetry.addData("motorPower", motorPower);
-
-
-
+        //opMode.telemetry.addData("Target", fourBarTarget);
+        //opMode.telemetry.addData("deviation", deviation);
+        //opMode.telemetry.addData("motorPower", motorPower);
         //if(deviation > 100) motorPower += modifair;
         //if(deviation < 20) motorPower -= modifair;
         setMotorPower(motorPower);

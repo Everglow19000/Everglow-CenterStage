@@ -55,16 +55,12 @@ public class Sequence {
             m_Service = Executors.newFixedThreadPool(m_Runs.size());
     }
 
-    public void startSequence() throws AsynchronousCloseException {
+    public void startSequence() {
         if (m_IsRunAsync) {
-            try {
-                Executor[] arrExe = m_Runs.toArray(new Executor[m_Runs.size()]);
-                for (int i = 0; i < m_Runs.size(); i++) {
-                    //run async the run method in order, save the Future class in Queue of the runs
-                    m_Futures.add(m_Service.submit(arrExe[i]));
-                }
-            } catch (Exception e) {
-                throw new AsynchronousCloseException();
+            Executor[] arrExe = m_Runs.toArray(new Executor[m_Runs.size()]);
+            for (int i = 0; i < m_Runs.size(); i++) {
+                //run async the run method in order, save the Future class in Queue of the runs
+                m_Futures.add(m_Service.submit(arrExe[i]));
             }
         } else{
             if(!m_Thread.isAlive()) {
@@ -125,6 +121,11 @@ public class Sequence {
             return true;
         }
         return false;
+    }
+
+    public Sequence addSequence(Sequence sequence){
+        m_Runs.addAll(sequence.m_Runs);
+        return this;
     }
 
     public boolean isDone(){

@@ -47,18 +47,14 @@ public class MoveToConusAutonumous extends LinearOpMode {
     }
     @Override
     public void runOpMode() throws InterruptedException {
-       AutonumousGeneral(this, StartPosition.FRONTLEFT);
+       //AutonumousGeneral(this, StartPosition.FRONTLEFT);
     }
 
-    public static void AutonumousGeneral(LinearOpMode opMode, StartPosition startPosition){
+    public static CameraSystem.DetectionLocation AutonumousGeneral(LinearOpMode opMode
+            , StartPosition startPosition, SampleMecanumDrive drive){
+        double angleRatio = 1;
         GWheelSystem gWheelSystem = new GWheelSystem(opMode);
         CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
-        FourBarSystem fourBarSystem = new FourBarSystem(opMode);
-        ElevatorSystem elevatorSystem = new ElevatorSystem(opMode);
-        ClawSystem clawSystem = new ClawSystem(opMode);
-        SampleMecanumDrive drive = new SampleMecanumDrive(opMode.hardwareMap);
-        SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
-        Sequence getReadyToDrop  = sequenceControl.GetReadyToDropSeq();
         //Sequence drop = sequenceControl.DropAndRetreatSeq();
         double xPoint = 82, yPoint = -15;
 
@@ -80,65 +76,61 @@ public class MoveToConusAutonumous extends LinearOpMode {
         opMode.telemetry.addData("startPos", startPosition.name());
         opMode.telemetry.update();
 
-        if (opMode.isStopRequested()) return;
-        double angle = -Math.PI/1.4;
+        if (opMode.isStopRequested()) return location;
+        double angle = -Math.PI/2;
 
         //first deployment
-        while(opMode.opModeIsActive()){
-            if(ifrun) {
-                drive.followTrajectory(splneToMiddle);
+        drive.followTrajectory(splneToMiddle);
 
-                // locate and put the first pixel //
-                switch (location){
-                    case RIGHT:
-                        if (!startPosition.isLeft() && startPosition.isFront()) {
-                            moveInYAxis += SQUARE_SIZE*2;
-                            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .strafeRight(moveInYAxis).build());
-                            drive.turn(angle);
-                            break;
-                        }
-                        angle = -1*angle;
-                        drive.turn(angle);
-                        break;
-
-                    case MIDDLE:
-                        if (!startPosition.isFront()) {
-                            moveInXAxis += SQUARE_SIZE;
-                            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .forward(moveInXAxis).build());
-                            drive.turn(2*angle);
-                        }
-                        break;
-
-                    case LEFT:{
-                        if (startPosition.isLeft() && startPosition.isFront()) {
-                            moveInYAxis += SQUARE_SIZE*2;
-                            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .strafeLeft(moveInYAxis).build());
-                            drive.turn(angle);
-                            break;
-                        }
-                        angle = -1*angle;
-                        drive.turn(angle);
-                        break;
-                    }
+        // locate and put the first pixel //
+        switch (location){
+            case RIGHT:
+                if (!startPosition.isLeft() && startPosition.isFront()) {
+                    moveInYAxis += SQUARE_SIZE*1.8;
+                    drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .strafeRight(moveInYAxis).build());
+                    drive.turn(angle);
+                    break;
                 }
+                drive.turn(angle);
+                break;
 
-                gWheelSystem.setPower(0.4);
-                if (opMode.isStopRequested()) return;
-                long time = System.currentTimeMillis();
-                while(!opMode.isStopRequested()){
-                    if(System.currentTimeMillis()-time > 1000)
-                        break;
+            case MIDDLE:
+                if (!startPosition.isFront()) {
+                    moveInXAxis += SQUARE_SIZE;
+                    drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .forward(moveInXAxis).build());
+                    drive.turn(2*angle);
                 }
-                gWheelSystem.setPower(0);
+                break;
 
-                //start the second deployment//
-
+            case LEFT:{
+                if (startPosition.isLeft() && startPosition.isFront()) {
+                    moveInYAxis += SQUARE_SIZE*1.8;
+                    drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .strafeLeft(moveInYAxis).build());
+                    drive.turn(angle);
+                    break;
+                }
+                angle = -1*angle;
+                drive.turn(angle);
+                break;
             }
-            ifrun = false;
         }
+        opMode.telemetry.addData("estimate pos", drive.getPoseEstimate());
+        opMode.telemetry.update();
+
+        gWheelSystem.setPower(0.4);
+        if (opMode.isStopRequested()) return location;
+        long time = System.currentTimeMillis();
+        while(!opMode.isStopRequested()){
+            if(System.currentTimeMillis()-time > 1000)
+                break;
+        }
+        gWheelSystem.setPower(0);
+
+        //start the second deployment//
+        return location;
     }
 }
 
