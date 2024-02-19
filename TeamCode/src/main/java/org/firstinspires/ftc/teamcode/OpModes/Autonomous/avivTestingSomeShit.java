@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.ExecutorUtils.ExecutorTrajectories;
 
-@Autonomous(name = "MTCAFrontLeft")
-public class MTCAFrontLeft extends LinearOpMode {
+@Autonomous(name = "avivTestingSomeShit")
+public class avivTestingSomeShit extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         boolean oneRun = false;
@@ -38,7 +38,7 @@ public class MTCAFrontLeft extends LinearOpMode {
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
         CameraSystem.DetectionLocation location =
                 MoveToConusAutonumous.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.FRONTLEFT
-                ,drive);
+                        ,drive);
 
         if(isStopRequested()) return;
         Trajectory secDrop;
@@ -48,22 +48,25 @@ public class MTCAFrontLeft extends LinearOpMode {
                 switch (location){
                     case RIGHT:
                         secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(SQUARE_SIZE*2).build();
+                                .back(SQUARE_SIZE*2)
+                                .build();
                         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .strafeRight(20).build());
                         break;
                     case MIDDLE:
                         Trajectory backAndTurn = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .splineTo(new Vector2d(-10,0), -PI/1.5).build();
+                                .splineTo(new Vector2d(-10,0), -PI/1.5).build();
                         drive.turn(Math.toRadians(-90));
                         drive.followTrajectory(backAndTurn);
                         secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(SQUARE_SIZE*2).build();
+                                .lineToConstantHeading(new Vector2d(SQUARE_SIZE*2,drive.getPoseEstimate().getY()))
+                                .build();
                         break;
                     default:
                     case LEFT:
                         secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(SQUARE_SIZE).build();
+                                .back(SQUARE_SIZE)
+                                .build();
                         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .strafeLeft(15).build());
 

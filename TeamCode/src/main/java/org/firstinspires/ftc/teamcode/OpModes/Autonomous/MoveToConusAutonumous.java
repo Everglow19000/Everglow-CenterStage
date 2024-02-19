@@ -56,7 +56,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
         GWheelSystem gWheelSystem = new GWheelSystem(opMode);
         CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
         //Sequence drop = sequenceControl.DropAndRetreatSeq();
-        double xPoint = 82, yPoint = -15;
+        double xPoint = 85, yPoint = -15;
 
         Trajectory splneToMiddle = drive.trajectoryBuilder(new Pose2d(0,0, 0))
                 .splineTo(new Vector2d(xPoint,yPoint), 0)
@@ -77,7 +77,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
         opMode.telemetry.update();
 
         if (opMode.isStopRequested()) return location;
-        double angle = -Math.PI/2;
+        double angle = Math.toRadians(-90);
 
         //first deployment
         drive.followTrajectory(splneToMiddle);
@@ -86,7 +86,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
         switch (location){
             case RIGHT:
                 if (!startPosition.isLeft() && startPosition.isFront()) {
-                    moveInYAxis += SQUARE_SIZE*1.8;
+                    moveInYAxis += SQUARE_SIZE*2;
                     drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
                             .strafeRight(moveInYAxis).build());
                     drive.turn(angle);
@@ -106,7 +106,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
 
             case LEFT:{
                 if (startPosition.isLeft() && startPosition.isFront()) {
-                    moveInYAxis += SQUARE_SIZE*1.8;
+                    moveInYAxis += SQUARE_SIZE*2;
                     drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
                             .strafeLeft(moveInYAxis).build());
                     drive.turn(angle);
