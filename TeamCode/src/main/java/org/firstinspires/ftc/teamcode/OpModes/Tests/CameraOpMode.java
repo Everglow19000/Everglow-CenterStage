@@ -28,7 +28,7 @@ public class CameraOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        CameraSystem cs = new CameraSystem(this);
+        CameraSystem cs = new CameraSystem(this, false);
         waitForStart();
         while (opModeIsActive()) {
             List<Recognition> recognitions = cs.DetectProp();

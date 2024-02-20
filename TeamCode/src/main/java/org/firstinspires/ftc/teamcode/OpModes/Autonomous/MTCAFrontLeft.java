@@ -49,9 +49,14 @@ public class MTCAFrontLeft extends LinearOpMode {
                 switch (location){
                     case RIGHT:
                         secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .splineTo(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE*2-20, -20)).vec()
+                                        ,drive.getPoseEstimate().headingVec().angle()).build();
+                        /*secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .back(SQUARE_SIZE*2).build();
                         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .strafeRight(20).build());
+                                .strafeLeft(20).build());
+
+                         */
                         break;
                     case MIDDLE:
                         Trajectory backAndTurn = drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -63,10 +68,15 @@ public class MTCAFrontLeft extends LinearOpMode {
                         break;
                     default:
                     case LEFT:
-                        secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        /*secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .back(SQUARE_SIZE).build();
                         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .strafeLeft(15).build());
+                                .strafeRight(40).build());
+
+                         */
+                        secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(-SQUARE_SIZE-20, 30)).vec()
+                                        ,0).build();
 
                 }
 
@@ -75,7 +85,9 @@ public class MTCAFrontLeft extends LinearOpMode {
 
 
                 //getUp = new Sequence(false, clawSystem.getExecutor(true))
-                Sequence getUp = sequenceControl.GetReadyToDropSeq();
+                Sequence getUp = new Sequence(false, clawSystem.getExecutor(false)
+                        ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+                        , fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.LOW));
                 getUp.startSequence();
                 //to run parallel
 
@@ -92,6 +104,11 @@ public class MTCAFrontLeft extends LinearOpMode {
                 while (!drop.isDone()){
                     fourBarSystem.updateP(0.35);
                 }
+
+                Trajectory park = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(20, 30)).vec(),0)
+                        .build();
+                drive.followTrajectory(park);
                 oneRun = true;
             }
         }

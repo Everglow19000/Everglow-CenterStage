@@ -19,7 +19,7 @@ public class FourBarSystem{
     }
 
     public enum Level {
-        START(-12), PICKUP(-12), DROP(344), REST(267);
+        START(-12), PICKUP(-12), DROP(344), REST(267), LOW(250);
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -29,7 +29,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.445), DROP(0.14), REST(0.66);
+        PICKUP(0.445), DROP(0.14), REST(0.66), LOW(0.3);
 
         public final double state;
 
@@ -62,7 +62,7 @@ public class FourBarSystem{
     }
 
     public boolean isFinish(Level level){
-        int epsilon4Bar = 4;
+        int epsilon4Bar = 8;
         return (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
     }

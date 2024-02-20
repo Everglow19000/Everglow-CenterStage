@@ -56,7 +56,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
         GWheelSystem gWheelSystem = new GWheelSystem(opMode);
         CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
         //Sequence drop = sequenceControl.DropAndRetreatSeq();
-        double xPoint = 100, yPoint = -15;
+        double xPoint = 85, yPoint = -15;
 
         Trajectory splneToMiddle = drive.trajectoryBuilder(new Pose2d(0,0, 0))
                 .splineTo(new Vector2d(xPoint,yPoint), 0)
@@ -86,10 +86,11 @@ public class MoveToConusAutonumous extends LinearOpMode {
         switch (location){
             case RIGHT:
                 if (!startPosition.isLeft() && startPosition.isFront()) {
-                    moveInYAxis += SQUARE_SIZE*2;
+                    moveInYAxis += SQUARE_SIZE+25;
+                    moveInXAxis += 20;
                     drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .strafeRight(moveInYAxis).build());
-                    drive.turn(angle);
+                            .splineTo(drive.getPoseEstimate().plus(new Pose2d(moveInXAxis, -moveInYAxis)).vec(), angle)
+                            .build());
                     break;
                 }
                 drive.turn(angle);
@@ -99,17 +100,18 @@ public class MoveToConusAutonumous extends LinearOpMode {
                 if (!startPosition.isFront()) {
                     moveInXAxis += SQUARE_SIZE;
                     drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .forward(moveInXAxis).build());
-                    drive.turn(2*angle);
+                            .splineTo(drive.getPoseEstimate().plus(new Pose2d(moveInXAxis,0)).vec(),2*angle)
+                            .build());
                 }
                 break;
 
             case LEFT:{
                 if (startPosition.isLeft() && startPosition.isFront()) {
-                    moveInYAxis += SQUARE_SIZE*2;
+                    moveInYAxis += SQUARE_SIZE+25;
+                    moveInXAxis += 20;
                     drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .strafeLeft(moveInYAxis).build());
-                    drive.turn(angle);
+                            .splineTo(drive.getPoseEstimate().plus(new Pose2d(moveInXAxis, moveInYAxis)).vec(), angle)
+                            .build());
                     break;
                 }
                 angle = -1*angle;
