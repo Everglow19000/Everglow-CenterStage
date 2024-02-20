@@ -14,10 +14,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class FourBarSystem{
 
-    public Executor getExecutor(Level level,ServoAngel servoAngel){
-        return new FourBarExecutor(servoAngel,level);
-    }
-
     public enum Level {
         START(-12), PICKUP(-12), DROP(344), REST(267), LOW(250);
         //start: -10, pickup: 210,235
@@ -57,7 +53,6 @@ public class FourBarSystem{
         fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fourBarMotor.setPower(0.5);
         //clawAngelServo.resetDeviceConfigurationForOpMode();
     }
 
@@ -138,27 +133,43 @@ public class FourBarSystem{
         setMotorPower(motorPower);
     }
 
+    public Executor getExecutor(Level level,ServoAngel servoAngel){
+        return new FourBarExecutor(servoAngel,level);
+    }
+
+    public Executor getExecutor(Level level,ServoAngel servoAngel, double power){
+        return new FourBarExecutor(servoAngel,level, power);
+    }
+
 
     public class FourBarExecutor extends Executor{
 
         private final ServoAngel m_ServoAngle;
         private final Level m_Level;
+        private final double m_Power;
 
         public FourBarExecutor(ServoAngel servoAngel, Level level) {
             m_ServoAngle = servoAngel;
             m_Level = level;
+            m_Power = 0.5;
+        }
+
+        public FourBarExecutor(ServoAngel servoAngel, Level level, double power) {
+            m_ServoAngle = servoAngel;
+            m_Level = level;
+            m_Power = power;
         }
 
         @Override
         public void run() {
             if(m_Level == Level.PICKUP){
-                //fourBarMotor.setPower(0.65);
+                fourBarMotor.setPower(m_Power);
                 set4BarPositionByLevel(m_Level);
                 opMode.sleep(800);
                 setServoPositionByLevel(m_ServoAngle);
             }
             else {
-                //fourBarMotor.setPower(0.6);
+                fourBarMotor.setPower(m_Power);
                 setServoPositionByLevel(m_ServoAngle);
                 set4BarPositionByLevel(m_Level);
             }

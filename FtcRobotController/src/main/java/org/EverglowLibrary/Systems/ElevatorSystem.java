@@ -141,8 +141,6 @@ public class ElevatorSystem{
                 toggle();
             }
             else{
-                opMode.telemetry.addData("to run", toRun);
-                opMode.telemetry.update();
                 if(toRun == Level.UP) {
                     setPower(Power);
                     ElevatorCurrentLevel = Level.UP;

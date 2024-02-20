@@ -19,8 +19,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-@TeleOp(name = "Camera Prop blue", group = "test")
-public class CameraOpMode extends LinearOpMode {
+@TeleOp(name = "Camera Prop Red", group = "test")
+public class CameraPropRed extends LinearOpMode {
 
     //make more attributes & functions
     VisionPortal camera;
@@ -28,7 +28,7 @@ public class CameraOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        CameraSystem cs = new CameraSystem(this, false);
+        CameraSystem cs = new CameraSystem(this, true);
         telemetry.addLine("ready");
         telemetry.update();
         waitForStart();

@@ -27,8 +27,7 @@ public class MTCABackLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //drop the first pixel//
-        //MoveToConusAutonumous.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.BACKLEFT);
-
-
+        MoveToConusAutonumous.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.BACKLEFT
+                ,new SampleMecanumDrive(hardwareMap));
     }
 }

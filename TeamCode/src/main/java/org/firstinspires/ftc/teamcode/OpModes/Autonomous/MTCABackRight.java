@@ -27,7 +27,8 @@ public class MTCABackRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         MoveToConusAutonumous autonumousGeneral = new MoveToConusAutonumous();
-        //autonumousGeneral.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.BACKRIGHT);
+        MoveToConusAutonumous.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.BACKRIGHT
+                ,new SampleMecanumDrive(hardwareMap));
 
     }
 }

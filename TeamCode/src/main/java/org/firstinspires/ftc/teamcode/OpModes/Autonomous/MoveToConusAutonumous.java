@@ -67,28 +67,45 @@ public class MoveToConusAutonumous extends LinearOpMode {
         boolean oneRun = false;
 
         //Sequence drop = sequenceControl.DropAndRetreatSeq();
-        double xPoint = 90, yPoint = -10;
+        double xPoint = 85, yPoint = -10;
+        if((!startPosition.isLeft() && startPosition.isFront()) ||
+                (startPosition.isLeft() && !startPosition.isFront()))
+            yPoint += 5;
 
         Trajectory splneToMiddle = drive.trajectoryBuilder(new Pose2d(0,0, 0))
                 .splineTo(new Vector2d(xPoint,yPoint), 0)
                 .build();
 
-        boolean ifrun = true;
         double moveInYAxis = 0;
         double moveInXAxis = 0;
+        double angle = Math.toRadians(-90);
 
-        Trajectory splineTofinalPos;
+        opMode.telemetry.addLine("build trajectories...");
+        opMode.telemetry.update();
 
+        Trajectory leftTrag =drive.trajectoryBuilder(drive.getPoseEstimate())
+                .splineTo(drive.getPoseEstimate().plus(new Pose2d(25, SQUARE_SIZE+10)).vec(), angle)
+                .build();
+        Trajectory MiddleTrag = drive.trajectoryBuilder(drive.getPoseEstimate())
+                .splineTo(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE,0)).vec(),2.1*angle)
+                .build();
+        Trajectory rightTrag = drive.trajectoryBuilder(drive.getPoseEstimate())
+                .splineTo(drive.getPoseEstimate().plus(new Pose2d(25, -(SQUARE_SIZE+10))).vec(), -(Math.toRadians(5)+angle))
+                .build();
+        Sequence getUp = new Sequence(false, clawSystem.getExecutor(false)
+                , elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+                , fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.LOW));
+
+        opMode.telemetry.addLine("ready");
+        opMode.telemetry.update();
         opMode.waitForStart();
-
-
+        fourBarSystem.setMotorPower(0.5);
         CameraSystem.DetectionLocation location  = cameraSystem.DetectAndFindPropLocation();
         opMode.telemetry.addData("Target", location);
         opMode.telemetry.addData("startPos", startPosition.name());
         opMode.telemetry.update();
 
         if (opMode.isStopRequested()) return location;
-        double angle = Math.toRadians(-90);
 
         //first deployment
         drive.followTrajectory(splneToMiddle);
@@ -97,13 +114,11 @@ public class MoveToConusAutonumous extends LinearOpMode {
         switch (location){
             case RIGHT:
                 if (!startPosition.isLeft() && startPosition.isFront()) {
+                    //if you star in the front and right
                     moveInYAxis += SQUARE_SIZE+10;
                     moveInYAxis = -moveInYAxis;
                     moveInXAxis += 30;
-                    drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .splineTo(drive.getPoseEstimate().plus(new Pose2d(moveInXAxis, moveInYAxis)).vec(),
-                                    Math.toRadians(5)+angle)
-                            .build());
+                    drive.followTrajectory(rightTrag);
                     break;
                 }
                 drive.turn(angle);
@@ -111,10 +126,9 @@ public class MoveToConusAutonumous extends LinearOpMode {
 
             case MIDDLE:
                 if (!startPosition.isFront()) {
+                    //if in the back
                     moveInXAxis += SQUARE_SIZE+10;
-                    drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .splineTo(drive.getPoseEstimate().plus(new Pose2d(moveInXAxis,0)).vec(),2*angle)
-                            .build());
+                    drive.followTrajectory(MiddleTrag);
                 }
                 break;
 
@@ -122,9 +136,7 @@ public class MoveToConusAutonumous extends LinearOpMode {
                 if (startPosition.isLeft() && startPosition.isFront()) {
                     moveInYAxis += SQUARE_SIZE+10;
                     moveInXAxis += 30;
-                    drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .splineTo(drive.getPoseEstimate().plus(new Pose2d(moveInXAxis, moveInYAxis)).vec(), angle)
-                            .build());
+                    drive.followTrajectory(leftTrag);
                     break;
                 }
                 angle = -1*angle;
@@ -156,19 +168,13 @@ public class MoveToConusAutonumous extends LinearOpMode {
                     if(!oneRun) {
                         switch (location){
                             case RIGHT:
-                                /*secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .splineTo(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE*2, -40)).vec()
-                                                ,drive.getPoseEstimate().headingVec().angle()).build();
-                        secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(SQUARE_SIZE*2).build();
-                        drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .strafeLeft(20).build());
-
-                         */     return location;
-
+                                secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE, SQUARE_SIZE*2)).vec(),0)
+                                        .build();
+                              break;
                             case MIDDLE:
                                 Trajectory backAndTurn = drive.trajectoryBuilder(new Pose2d())
-                                        .lineToConstantHeading(new Vector2d(-SQUARE_SIZE,SQUARE_SIZE*2)).build();
+                                        .lineToConstantHeading(new Vector2d(-SQUARE_SIZE,SQUARE_SIZE*2-5)).build();
                                 //drive.turn(Math.toRadians(-90));
                                 drive.followTrajectory(backAndTurn);
                                 secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -176,26 +182,15 @@ public class MoveToConusAutonumous extends LinearOpMode {
                                 break;
                             default:
                             case LEFT:
-                        /*secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(SQUARE_SIZE).build();
-                        drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .strafeRight(40).build());
-
-                         */
                                 secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(-SQUARE_SIZE, 40)).vec()
-                                                ,0).build();
+                                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(-SQUARE_SIZE, 40)).vec(),0)
+                                        .build();
 
                         }
 
                         if (opMode.isStopRequested()) return location;
 
-
-
                         //getUp = new Sequence(false, clawSystem.getExecutor(true))
-                        Sequence getUp = new Sequence(false, clawSystem.getExecutor(false)
-                                ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
-                                , fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.LOW));
                         getUp.startSequence();
                         //to run parallel
 
@@ -223,170 +218,74 @@ public class MoveToConusAutonumous extends LinearOpMode {
                     }
                 }
             }
+            case FRONTRIGHT:
+            {
+
+                if(opMode.isStopRequested()) return location;
+                Trajectory secDrop;
+
+                //double moveNearBoard = 0;
+                while (opMode.opModeIsActive()) {
+                    if (!oneRun) {
+                        switch (location) {
+                            case RIGHT:
+                                secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(-SQUARE_SIZE, -40)).vec()
+                                                , 0).build();
+                                break;
+
+                            case MIDDLE:
+                                Trajectory backAndTurn = drive.trajectoryBuilder(new Pose2d())
+                                        .lineToConstantHeading(new Vector2d(-SQUARE_SIZE, -SQUARE_SIZE * 2)).build();
+                                //drive.turn(Math.toRadians(-90));
+                                drive.followTrajectory(backAndTurn);
+                                secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                        .lineToLinearHeading(drive.getPoseEstimate().plus(new Pose2d((SQUARE_SIZE * 2 + 15), -(SQUARE_SIZE * 2 - 10)
+                                                , -angle))).build();
+                                break;
+                            default:
+                            case LEFT:
+                                secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE, -SQUARE_SIZE*2)).vec(),0)
+                                        .build();
+                                break;
+                        }
+
+                        if (opMode.isStopRequested()) return location;
+
+
+                        //getUp = new Sequence(false, clawSystem.getExecutor(true))
+
+                        getUp.startSequence();
+                        //to run parallel
+
+                        while (!getUp.isDone()) {
+                            fourBarSystem.updateP(0.35);
+                        }
+                        drive.followTrajectory(secDrop);
+
+                        Sequence openClaw = new Sequence(false, clawSystem.getExecutor(true));
+                        openClaw.startSequence();
+                        opMode.sleep(800);
+                        Sequence drop = sequenceControl.DropAndRetreatSeq();
+                        drop.startSequence();
+                        while (!drop.isDone()) {
+                            fourBarSystem.updateP(0.35);
+                        }
+
+                        Trajectory park = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .splineToLinearHeading(drive.getPoseEstimate().plus(new Pose2d((SQUARE_SIZE + moveInXAxis),
+                                                        -(30 + moveInYAxis)))
+                                        , Math.toRadians(90))
+                                .build();
+                        //drive.followTrajectory(park);
+                        oneRun = true;
+                    }
+                }
+            }
         }
 
         //start the second deployment//
         return location;
     }
 }
-
- /*
-package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
-
-
-import static java.lang.Math.PI;
-
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.EverglowLibrary.Systems.CameraSystem;
-import org.EverglowLibrary.Systems.ClawSystem;
-import org.EverglowLibrary.Systems.ElevatorSystem;
-import org.EverglowLibrary.Systems.FourBarSystem;
-import org.EverglowLibrary.Systems.GWheelSystem;
-import org.EverglowLibrary.ThreadHandleLib.Sequence;
-import org.EverglowLibrary.utils.Pose;
-import org.firstinspires.ftc.teamcode.OpModes.DriverControl.SequenceControl;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.util.ExecutorUtils.ExecutorTrajectories;
-
-@Autonomous(name = "Basic Autunumous Red")
-public class MoveToConusAutonumous extends LinearOpMode {
-
-    static boolean IsFirstRun = true;
-    public static final double SQUARE_SIZE = 60.5;
-
-    static final double North = 0;
-    static final double East = -PI/2;
-    static final double West = PI/2;
-    static final double South = PI;
-
-    public enum StartPosition{
-        FRONTLEFT(new Vector2d(0, 0)), FRONTRIGHT(new Vector2d(0, 0))
-        , BACKLEFT(new Vector2d(0, SQUARE_SIZE*2)), BACKRIGHT(new Vector2d(0, SQUARE_SIZE*2));
-
-        public final Vector2d startPositionVector;
-        StartPosition(Vector2d startPosition) {
-            this.startPositionVector = startPosition;
-        }
-
-        public boolean isLeft() {
-            if(this == FRONTLEFT || this == BACKLEFT)
-                return true;
-            else
-                return false;
-        }
-
-        public boolean isFront() {
-            if(this == FRONTLEFT || this == FRONTRIGHT)
-                return true;
-            else
-                return false;
-        }
-    }
-    @Override
-    public void runOpMode() throws InterruptedException {
-        //AutonumousGeneral(this, StartPosition.FRONTLEFT);
-    }
-
-
-    public static void AutonumousGeneral(LinearOpMode opMode, StartPosition startPosition) {
-        // inlasation //
-        GWheelSystem gWheelSystem = new GWheelSystem(opMode);
-        CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
-        FourBarSystem fourBarSystem = new FourBarSystem(opMode);
-        ElevatorSystem elevatorSystem = new ElevatorSystem(opMode);
-        ClawSystem clawSystem = new ClawSystem(opMode);
-        SampleMecanumDrive drive = new SampleMecanumDrive(opMode.hardwareMap);
-        SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
-        Sequence getReadyToDrop = sequenceControl.GetReadyToDropSeq();
-        Sequence drop = sequenceControl.DropAndRetreatSeq();
-
-        //before waitForStart //
-        Pose2d startLocation = new Pose2d();
-        if (startPosition.isLeft()) startLocation = new Pose2d(0, 0, East);
-        else startLocation = new Pose2d(0, 0, West);
-
-        opMode.waitForStart();
-
-        // start opMode - calculations //
-
-        CameraSystem.DetectionLocation teamProptIden = cameraSystem.DetectAndFindPropLocation();
-        opMode.telemetry.addData("Target", teamProptIden);
-        opMode.telemetry.addData("startPos", startPosition.name());
-
-
-        double purpleDropXPoint = 82, purpleDropYPoint = -15, purpleDropAngle = East;
-        switch (teamProptIden) {
-            case RIGHT:
-                purpleDropAngle = South;
-            case LEFT:
-                purpleDropAngle = North;
-        }
-
-        if (!startPosition.isLeft()) {
-            if (teamProptIden == CameraSystem.DetectionLocation.MIDDLE) purpleDropAngle = West;
-            purpleDropXPoint = -purpleDropXPoint;
-        }
-
-        Pose2d purpleDropLocation = new Pose2d(purpleDropXPoint, purpleDropYPoint, purpleDropAngle);
-
-
-        opMode.telemetry.addData("purpleDropXPoint", purpleDropXPoint);
-        opMode.telemetry.addData("purpleDropYPoint", purpleDropYPoint);
-        opMode.telemetry.addData("angle", purpleDropAngle);
-        opMode.telemetry.addData("startLocation:", startLocation);
-        opMode.telemetry.update();
-
-        Trajectory trajectoryPurpleDrop = drive.trajectoryBuilder(startLocation)
-                .splineTo(new Vector2d(purpleDropXPoint, purpleDropYPoint), purpleDropAngle)
-                .build();
-
-
-        // seconed Drop
-
-        double yellowDropXPoint = 75;
-        if (!startPosition.isLeft()) yellowDropXPoint = -yellowDropXPoint;
-        double tagXDistance = 15;
-        switch (teamProptIden) {
-            case LEFT:
-                yellowDropXPoint += tagXDistance;
-            case RIGHT:
-                yellowDropXPoint -= tagXDistance;
-        }
-
-        double yellowDropYPoint = 100;
-        if (!startPosition.isFront()) yellowDropYPoint += 2 * SQUARE_SIZE;
-
-        Trajectory trajectoryYellowDrop = drive.trajectoryBuilder(purpleDropLocation)
-                .splineTo(new Vector2d(purpleDropXPoint, purpleDropYPoint), North)
-                .build();
-
-
-        // run everything //
-
-        if (opMode.isStopRequested()) return;
-
-        drive.followTrajectory(trajectoryPurpleDrop);
-
-        if (opMode.isStopRequested()) return;
-
-        opMode.sleep(3000);
-        gWheelSystem.toggle(true);
-        opMode.sleep(3000);
-
-        gWheelSystem.toggle(true);
-
-        if (opMode.isStopRequested()) return;
-
-        drive.followTrajectory(trajectoryYellowDrop);
-
-    }
-}
-
-  */

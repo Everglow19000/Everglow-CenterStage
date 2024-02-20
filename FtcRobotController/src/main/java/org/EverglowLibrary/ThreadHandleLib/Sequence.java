@@ -45,8 +45,11 @@ public class Sequence {
                 if(Thread.currentThread().isInterrupted())
                     arrExe[i].stop();
             }
-
         });
+    }
+
+    public Executor[] GetRuns(){
+        return m_Runs.toArray(new Executor[m_Runs.size()]);
     }
 
 
