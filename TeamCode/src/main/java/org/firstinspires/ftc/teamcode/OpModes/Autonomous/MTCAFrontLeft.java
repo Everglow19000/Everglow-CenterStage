@@ -30,16 +30,18 @@ public class MTCAFrontLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         boolean oneRun = false;
-        FourBarSystem fourBarSystem = new FourBarSystem(this);
-        ElevatorSystem elevatorSystem = new ElevatorSystem(this);
-        ClawSystem clawSystem = new ClawSystem(this);
-        clawSystem.ChangePos(true);
+        //FourBarSystem fourBarSystem = new FourBarSystem(this);
+        //ElevatorSystem elevatorSystem = new ElevatorSystem(this);
+        //ClawSystem clawSystem = new ClawSystem(this);
+        //clawSystem.ChangePos(true);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
+        //SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
+        //Sequence closeClaw = new Sequence(false, clawSystem.getExecutor(false));
+        //closeClaw.startSequence();
         CameraSystem.DetectionLocation location =
                 MoveToConusAutonumous.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.FRONTLEFT
                 ,drive);
-
+        /*
         if(isStopRequested()) return;
         Trajectory secDrop;
 
@@ -49,14 +51,14 @@ public class MTCAFrontLeft extends LinearOpMode {
                 switch (location){
                     case RIGHT:
                         secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .splineTo(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE*2-20, -20)).vec()
+                                .splineTo(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE*2, -40)).vec()
                                         ,drive.getPoseEstimate().headingVec().angle()).build();
                         /*secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .back(SQUARE_SIZE*2).build();
                         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .strafeLeft(20).build());
 
-                         */
+
                         break;
                     case MIDDLE:
                         Trajectory backAndTurn = drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -73,9 +75,9 @@ public class MTCAFrontLeft extends LinearOpMode {
                         drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .strafeRight(40).build());
 
-                         */
+
                         secDrop = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(-SQUARE_SIZE-20, 30)).vec()
+                                .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(-SQUARE_SIZE, 40)).vec()
                                         ,0).build();
 
                 }
@@ -106,11 +108,13 @@ public class MTCAFrontLeft extends LinearOpMode {
                 }
 
                 Trajectory park = drive.trajectoryBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(drive.getPoseEstimate().plus(new Pose2d(20, 30)).vec(),0)
+                        .splineToLinearHeading(drive.getPoseEstimate().plus(new Pose2d(SQUARE_SIZE, 30))
+                                ,Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(park);
                 oneRun = true;
             }
         }
+        */
     }
 }
