@@ -14,11 +14,8 @@ import org.EverglowLibrary.ThreadHandleLib.Sequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import java.sql.Time;
-import java.util.Timer;
-
-@TeleOp(name = "TwoDrivers_Sequences", group = "drive")
-public class TwoDrivers_Sequences extends LinearOpMode {
+@TeleOp(name = "TwoDrivers_SequencesCheck", group = "drive")
+public class TwoDrivers_SequenceCheck extends LinearOpMode {
 
     private boolean seq1_toggle = false;
     private boolean seq2_toggle = false;
@@ -27,6 +24,9 @@ public class TwoDrivers_Sequences extends LinearOpMode {
     private boolean gwheel_toggle = false;
     private boolean claw_toggle = false;
     private boolean elevator_toggle = false;
+    private Executor[] m_Runs = null;
+    private int runnableAction;
+    private boolean isInteraptedSeq = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,14 +54,60 @@ public class TwoDrivers_Sequences extends LinearOpMode {
 
         while (opModeIsActive()){
 
+            //telemetry
+            telemetry.addData("m_Runs == null?", m_Runs == null);
+            telemetry.addData("runnable action:", runnableAction);
+            telemetry.addData("is interapted", isInteraptedSeq);
+            telemetry.update();
+
+            if(m_Runs != null){
+                if(isInteraptedSeq)
+                {
+                    m_Runs[runnableAction].stop();
+                    resetSeq();
+                    continue;
+                }
+
+                //telemetry
+                telemetry.addLine("check if finished");
+                telemetry.update();
+
+                if(m_Runs[runnableAction].isFinished()){
+                    runnableAction++;
+
+                    //telemetry
+                    telemetry.addData("now check if to run second, num:", runnableAction);
+                    telemetry.addData("length:", m_Runs.length);
+                    telemetry.update();
+
+                    if(m_Runs.length == runnableAction){
+                        resetSeq();
+                        continue;
+                    }
+                    else {
+                        //StopMove(drive);
+                        m_Runs[runnableAction].run();
+                    }
+                }
+            }
+
             try {
                 if(gamepad2.square && !seq1_toggle){
-                    getReadyToDropSeq.startSequence();
+                    if(m_Runs == null) {
+                        m_Runs = getReadyToDropSeq.GetRuns();
+                        m_Runs[runnableAction].run();
+                    }
+                    //getReadyToDropSeq.startSequence();
                 }
                 seq1_toggle = gamepad2.square;
 
                 if(gamepad2.cross && !seq2_toggle){
-                    dropAndRetreatSeq.startSequence();
+                    if(m_Runs == null) {
+                        m_Runs = dropAndRetreatSeq.GetRuns();
+                        //StopMove(drive);
+                        m_Runs[runnableAction].run();
+                    }
+                    //dropAndRetreatSeq.startSequence();
                 }
                 seq2_toggle = gamepad2.cross;
 
@@ -125,6 +171,11 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         getUpSeq.interruptSequence();
 
         sleep(1000);
+    }
+
+    private void resetSeq(){
+        m_Runs = null;
+        runnableAction = 0;
     }
 
     private void StopMove(SampleMecanumDrive drive){
