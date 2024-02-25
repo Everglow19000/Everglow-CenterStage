@@ -55,7 +55,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
 
         waitForStart();
 
-        fourBarSystem.setMotorPower(0.5);
+        fourBarSystem.setMotorPower(0.85);
 
         while (opModeIsActive()){
             /*
