@@ -50,7 +50,7 @@ public class TwoDrivers_SequenceCheck extends LinearOpMode {
 
         waitForStart();
 
-        fourBarSystem.setMotorPower(0.5);
+        fourBarSystem.setMotorPower(0.85);
 
         while (opModeIsActive()){
 
@@ -163,7 +163,7 @@ public class TwoDrivers_SequenceCheck extends LinearOpMode {
 
              */
             drive.update();
-            fourBarSystem.updateP(0.35);
+            //fourBarSystem.updateP(0.35);
         }
         getReadyToDropSeq.interruptSequence();
         dropAndRetreatSeq.interruptSequence();

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class FourBarSystem{
@@ -53,6 +54,14 @@ public class FourBarSystem{
         fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        PIDFCoefficients pid = fourBarMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        pid.i = 1.5;
+        pid.p = 10;
+        pid.d = 2;
+        pid.f = 0;
+
+        fourBarMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
+
         //clawAngelServo.resetDeviceConfigurationForOpMode();
     }
 
@@ -151,7 +160,7 @@ public class FourBarSystem{
         public FourBarExecutor(ServoAngel servoAngel, Level level) {
             m_ServoAngle = servoAngel;
             m_Level = level;
-            m_Power = 0.5;
+            m_Power = 0.85;
         }
 
         public FourBarExecutor(ServoAngel servoAngel, Level level, double power) {
