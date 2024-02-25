@@ -1,5 +1,7 @@
 package org.EverglowLibrary.ThreadHandleLib;
 
+import org.EverglowLibrary.Systems.Executor;
+
 import java.nio.channels.AsynchronousCloseException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +32,10 @@ public class SequenceInSequence{
                 }
             });
         }
+    }
+
+    public Sequence[] GetAllSequences(){
+        return sequenceQueue.toArray(sequenceQueue.toArray(new Sequence[sequenceQueue.size()]));
     }
 
     public void add(Sequence sequence){

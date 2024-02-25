@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.Calendar;
+
 
 public class ClawSystem{
     private boolean open = false;
@@ -41,6 +43,8 @@ public class ClawSystem{
 
     public class ClawExecutor extends Executor{
         private final boolean toClose;
+        private long startTime;
+        private final int waitTime = 800; //in milliseconds
 
         public ClawExecutor(boolean toClose){
             this.toClose = toClose;
@@ -49,24 +53,12 @@ public class ClawSystem{
         @Override
         public void run() {
             ChangePos(toClose);
+            startTime = Calendar.getInstance().getTimeInMillis();
         }
 
         @Override
         public boolean isFinished() {
-            /*
-            final double epsilon = 0.15;
-            opMode.telemetry.addData("right:", ClawR.getPosition());
-            opMode.telemetry.addData("Left:", ClawL.getPosition());
-            opMode.telemetry.addData("open:", open);
-            opMode.telemetry.update();
-            if(open)
-                return ClawR.getPosition() + epsilon >= rightOpen && ClawL.getPosition() - epsilon <= leftOpen;
-            else
-                return ClawR.getPosition() - epsilon <= rightClosed && ClawL.getPosition() + epsilon >= leftClosed;
-        }
-             */
-            opMode.sleep(800);
-            return true;
+            return Calendar.getInstance().getTimeInMillis() - startTime >= waitTime;
         }
 
         @Override

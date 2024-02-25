@@ -163,7 +163,7 @@ public class TwoDrivers_SequenceCheck extends LinearOpMode {
 
              */
             drive.update();
-            fourBarSystem.updateP(0.35);
+            fourBarSystem.updateP(0.8);
         }
         getReadyToDropSeq.interruptSequence();
         dropAndRetreatSeq.interruptSequence();
@@ -176,13 +176,5 @@ public class TwoDrivers_SequenceCheck extends LinearOpMode {
     private void resetSeq(){
         m_Runs = null;
         runnableAction = 0;
-    }
-
-    private void StopMove(SampleMecanumDrive drive){
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        0,0,0
-                )
-        );
     }
 }
