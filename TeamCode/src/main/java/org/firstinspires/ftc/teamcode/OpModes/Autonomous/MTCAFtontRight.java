@@ -27,8 +27,9 @@ import org.firstinspires.ftc.teamcode.util.ExecutorUtils.ExecutorTrajectories;
 public class MTCAFtontRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MoveToConusAutonumous autonumousGeneral = new MoveToConusAutonumous();
-        autonumousGeneral.AutonumousGeneral(this, MoveToConusAutonumous.StartPosition.FRONTRIGHT);
+        FourtyFivePoints autonumous = new FourtyFivePoints();
+        autonumous.firstCall(this, FourtyFivePoints.StartPosition.FRONT_RIGHT);
+
 
     }
 
