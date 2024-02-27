@@ -9,8 +9,6 @@ public class TestServo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Servo servo = hardwareMap.get(Servo.class, "PlaneServo");
-        boolean zero = false;
-        boolean one = false;
         double positionServo = 0;
 
 
