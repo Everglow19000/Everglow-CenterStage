@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 //more imports
 
 @TeleOp(name = "Encoder tests", group = "test")
-public class OpMode_Modle extends LinearOpMode {
+public class EncoderTest extends LinearOpMode {
 
     //make more attributes & functions
     final double TicksToCm = 0.0586;

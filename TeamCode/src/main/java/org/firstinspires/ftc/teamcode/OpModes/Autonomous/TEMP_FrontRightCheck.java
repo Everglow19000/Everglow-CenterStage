@@ -16,7 +16,7 @@ import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous(group = "Autonomous", name = "TEMP_FrontRightCheck")
+@Autonomous(group = "test", name = "TEMP_FrontRightCheck")
 public class TEMP_FrontRightCheck extends LinearOpMode {
     SampleMecanumDrive drive;
     ElevatorSystem elevatorSystem;

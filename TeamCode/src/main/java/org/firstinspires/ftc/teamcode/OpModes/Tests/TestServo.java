@@ -8,23 +8,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TestServo extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Servo servo = hardwareMap.get(Servo.class, "FlipServo");
+        Servo servo = hardwareMap.get(Servo.class, "PlaneServo");
         boolean zero = false;
         boolean one = false;
+        double positionServo = 0;
+
 
         waitForStart();
 
         while (opModeIsActive()){
-            if(gamepad1.cross && !zero){
-                servo.setPosition(0);
-            }
-            zero = gamepad1.cross;
-
-            if(gamepad1.circle && !one){
-                servo.setPosition(1);
-            }
-            one = gamepad1.circle;
-
+            positionServo += gamepad1.right_stick_y / 1000;
+            servo.setPosition(positionServo);
+            telemetry.addData("position:", positionServo);
+            telemetry.update();
         }
     }
 }
