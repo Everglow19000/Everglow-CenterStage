@@ -19,10 +19,7 @@ import org.EverglowLibrary.ThreadHandleLib.Sequence;
 import org.firstinspires.ftc.teamcode.OpModes.DriverControl.SequenceControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-
-@Autonomous(group = "Autonomous", name = "FourtyFivePoints")
 public class FourtyFivePoints {
-
 
     ///////////////////////////////
     ///////////////////////////////
@@ -114,7 +111,7 @@ public class FourtyFivePoints {
      * @return new Pose2d to use
      */
     public Pose2d tryRight(Pose2d pose) {
-        if(isRight()) {
+        if(isRight() && pose.getY() > 3 * TILE_LENGTH) {
             pose = mirrorToRight(pose);
         }
         return pose;
@@ -133,7 +130,7 @@ public class FourtyFivePoints {
         return new Pose2d(2 * middleOfTrust - pose.getX(), pose.getY(), -PI - pose.getHeading());
     }
 
-    public Trajectory splineToPose(Pose2d poseStart, Pose2d poseFinish) {
+    public Trajectory trajToPose(Pose2d poseStart, Pose2d poseFinish) {
         return drive.trajectoryBuilder(poseStart)
                 .splineTo(new Vector2d(poseFinish.getX(), poseFinish.getY()), poseFinish.getHeading())
                 .build();
@@ -168,9 +165,9 @@ public class FourtyFivePoints {
         }
 
         public void createTrajectories() {
-            trajMiddle = splineToPose(tryRight(startLocations.poseMiddle), tryRight(endLocations.poseMiddle));
-            trajLeft = splineToPose(tryRight(startLocations.poseLeft), tryRight(endLocations.poseLeft));
-            trajRight = splineToPose(tryRight(startLocations.poseRight), tryRight(endLocations.poseRight));
+            trajMiddle = trajToPose(startLocations.poseMiddle, endLocations.poseMiddle);
+            trajLeft = trajToPose(startLocations.poseLeft, endLocations.poseLeft);
+            trajRight = trajToPose(startLocations.poseRight, endLocations.poseRight);
         }
 
 
@@ -196,6 +193,7 @@ public class FourtyFivePoints {
     /////////////
     /////////////
 
+    LinearOpMode opMode;
     SequenceControl sequenceControl;
     SampleMecanumDrive drive;
     ElevatorSystem elevatorSystem;
@@ -213,7 +211,6 @@ public class FourtyFivePoints {
     ///////////////
     ///////////////
 
-    static double squareSize = 60.5; //in cm
     static double distanceOfPropFromRobot = 67; //in cm
     static double distanceBetweenTags=15.0; //in cm
     static double distanceBuffer=0;
@@ -238,7 +235,7 @@ public class FourtyFivePoints {
 
     Sequence getReadyToDrop, returnSystemsToStart;
     StartPosition startPosition = StartPosition.FRONT_LEFT;
-    CameraSystem.DetectionLocation propPlace = CameraSystem.DetectionLocation.LEFT;
+    CameraSystem.DetectionLocation propPlace = CameraSystem.DetectionLocation.RIGHT;
 
     Trajectory trajLeftYellow, trajRightYellow, trajMiddleYellow, splineToPurple;
     Trajectory trajParkMiddle, trajParkLeft, trajParkRight;
@@ -248,7 +245,7 @@ public class FourtyFivePoints {
     ThreeTrajectories threeYellowDropTrajectories = new ThreeTrajectories();
     ThreeTrajectories threeParkTrajectories = new ThreeTrajectories();
 
-    LinearOpMode opMode;
+
 
 
 
@@ -295,18 +292,22 @@ public class FourtyFivePoints {
 
 
         // Trajectory Calculations //
-        Pose2d startLocation = PoseInTiles(3.6, 5.6, East);
+        Pose2d startLocation = PoseInTiles(3.636, 5.667, East);
         if(isBack()) {
             startLocation.minus(PoseInTiles(2, 0, 0));
         }
+        if(isRight()) {
+            startLocation.minus(PoseInTiles(0.27, 0, 0));
+        }
         drive.setPoseEstimate(tryRight(startLocation));
 
-        double xPoint = -15, yPoint = -82;
-        Pose2d middleDropLocation = startLocation.plus(new Pose2d(xPoint,yPoint, 0));
-        splineToPurple = splineToPose(tryRight(startLocation), tryRight(middleDropLocation));
 
 
-        threeYellowDropTrajectories.endLocations.poseMiddle = PoseInTiles(5, 4.5, South);
+        Pose2d middleDropLocation = PoseInTiles(3.5, 4.5, East);
+        splineToPurple = trajToPose(tryRight(startLocation), tryRight(middleDropLocation));
+
+        threeYellowDropTrajectories.setStartPose(tryRight(middleDropLocation));
+        threeYellowDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(5, 4.5, South));
         threeYellowDropTrajectories.endLocations.poseLeft = threeYellowDropTrajectories.endLocations.poseMiddle.plus(new Pose2d(0, -distanceBetweenTags, 0));
         threeYellowDropTrajectories.endLocations.poseRight = threeYellowDropTrajectories.endLocations.poseMiddle.plus(new Pose2d(0, distanceBetweenTags, 0));
         threeYellowDropTrajectories.createTrajectories();
@@ -329,10 +330,8 @@ public class FourtyFivePoints {
 
         runAfterInput();
     }
-
-
-
-
+    
+    
     public void runAfterInput() {
 
         // set the correct start location
@@ -387,13 +386,13 @@ public class FourtyFivePoints {
 
 
 
-        opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations);
-        opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations);
+        opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations.poseMiddle);
+        opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
 
-        opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations);
+
         opMode.telemetry.update();
+        sleep(3000);
 
-        sleep(900000000);
         //threeYellowDropTrajectories.driveCorrectTrajectory();
 
         /*getReadyToDrop.startSequence();
