@@ -6,6 +6,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -42,9 +43,9 @@ public class TestControlledDrive extends LinearOpMode {
 
     private double anglePower(double angle) {
         double targetAngle = 0;
-        if(angle >= PI/4) {
+        if(angle >= PI/2) {
             targetAngle = PI;
-        } else if(angle <= -PI/4){
+        } else if(angle <= -PI/2){
             targetAngle = -PI;
         }
         if(abs(targetAngle - angle) < 3 / 180 * PI) return 0;
@@ -60,9 +61,13 @@ public class TestControlledDrive extends LinearOpMode {
         double deviationY = chooseLain(robotTileLocation) - Y;
 
         double Py = 0; // deviationY * 0.4
-        if(deviationX != 0) Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
+        double Pr = 0;
+        if(deviationX != 0){
+            Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
+            Pr = anglePower(robotTileLocation.getHeading());
+        }
 
-        return new Pose2d(axisPowers.getX(), Py, anglePower(robotTileLocation.getHeading()));
+        return new Pose2d(axisPowers.getX(), Py, Pr);
         //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
     }
 
@@ -114,6 +119,7 @@ public class TestControlledDrive extends LinearOpMode {
         drive.setPoseEstimate(PoseInTiles(4, 4, 0));
 
         waitForStart();
+        Pose2d lastLocation=new Pose2d(0, 0, 0);
         while(opModeIsActive()) {
             double Px = -gamepad1.left_stick_y,
                    Py = -gamepad1.left_stick_x,
@@ -129,6 +135,7 @@ public class TestControlledDrive extends LinearOpMode {
 
 
             Pose2d currentLocation = locationInTiles();
+            double deltaX = sqrt((currentLocation.getX()-lastLocation.getX()));
             telemetry.addData("Location ", currentLocation);
             telemetry.addData("powers ", powers);
 
@@ -138,6 +145,8 @@ public class TestControlledDrive extends LinearOpMode {
             drive.setWeightedDrivePower(adjustedPowers(controlledPowers));
             telemetry.update();
             drive.update();
+
+            lastLocation=currentLocation;
         }
     }
 }
