@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.EverglowLibrary.Systems.CameraSystem;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -18,7 +19,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-@TeleOp(name = "Camera")
+@TeleOp(name = "Camera Prop", group = "test")
 public class CameraOpMode extends LinearOpMode {
 
     //make more attributes & functions
@@ -29,37 +30,16 @@ public class CameraOpMode extends LinearOpMode {
     public void runOpMode(){
         CameraSystem cs = new CameraSystem(this);
         waitForStart();
+        while (opModeIsActive()) {
+            List<Recognition> recognitions = cs.DetectProp();
 
-        Dictionary<CameraSystem.AprilTagLocation, AprilTagDetection> DTL;
-        CameraSystem.AprilTagLocation Key;
-        Enumeration<CameraSystem.AprilTagLocation> AE;
-        List<AprilTagDetection> detections;
-        while (opModeIsActive()){
-            try {
-                detections = cs.DetectAprilTags();
-                DTL = cs.GetAprilTagLocation(detections);
-                AE = DTL.keys();
-
-                if(AE.hasMoreElements())
-                    Key = AE.nextElement();
-                else
-                    continue;
-
-                telemetry.addData("amount places:", DTL.size());
-                telemetry.addData("amount total detection:", detections.size());
-                while (AE.hasMoreElements()) {
-                    telemetry.addData(Key.name() + ":", DTL.get(Key).id);
-                    Key = AE.nextElement();
-                }
-                telemetry.update();
-                sleep(200);
+            for (Recognition rec :
+                    recognitions) {
+                telemetry.addData("rec -> x: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, true)));
+                telemetry.addData("y: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, false)));
             }
-            catch (Exception e){
-                telemetry.addData("Exception:", e);
+            if (!gamepad1.x)
                 telemetry.update();
-                cs.CloseCamera();
-                break;
-            }
         }
     }
 }

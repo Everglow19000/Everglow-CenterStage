@@ -1,13 +1,8 @@
 package org.EverglowLibrary.OpModeTests;
 
-import android.util.Pair;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.EverglowLibrary.Systems.CameraSystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -15,29 +10,23 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 
-@TeleOp(name = "Camera")
+@TeleOp(name = "Camera AprilTag")
 public class CameraOpMode extends LinearOpMode {
-
-    //make more attributes & functions
-    VisionPortal camera;
-    AprilTagProcessor aprilTag;
-
     @Override
     public void runOpMode(){
         CameraSystem cs = new CameraSystem(this);
         waitForStart();
 
-        Dictionary<CameraSystem.AprilTagLocation, AprilTagDetection> DTL;
-        CameraSystem.AprilTagLocation Key;
-        Enumeration<CameraSystem.AprilTagLocation> AE;
+        Dictionary<AprilTagDetection, CameraSystem.DetectionLocation> DTL;
+        AprilTagDetection Key;
+        Enumeration<AprilTagDetection> AE;
         List<AprilTagDetection> detections;
         while (opModeIsActive()){
             try {
                 detections = cs.DetectAprilTags();
-                DTL = cs.GetAprilTagLocation(detections);
+                DTL = cs.GetDetectionLocation(detections);
                 AE = DTL.keys();
 
                 if(AE.hasMoreElements())
@@ -48,7 +37,7 @@ public class CameraOpMode extends LinearOpMode {
                 telemetry.addData("amount places:", DTL.size());
                 telemetry.addData("amount total detection:", detections.size());
                 while (AE.hasMoreElements()) {
-                    telemetry.addData(Key.name() + ":", DTL.get(Key).id);
+                    telemetry.addData(DTL.get(Key).name() + ":", Key.id);
                     Key = AE.nextElement();
                 }
                 telemetry.update();

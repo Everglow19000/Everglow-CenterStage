@@ -14,8 +14,9 @@ import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "BasicOpMode", group = "OpMode")
-public class BasicOpMode extends LinearOpMode {
+@TeleOp(name = "MainDriver2Driver", group = "drive")
+public class MainDriver2Driver extends LinearOpMode {
+    public static final double SQUARE_SIZE = 60.5;
 
     private SampleMecanumDrive drive;
     private ElevatorSystem elevatorSystem;
@@ -56,13 +57,13 @@ public class BasicOpMode extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            if(gamepad1.dpad_up) { gWheelSystem.toggle(true); }
-            else if(gamepad1.dpad_down) { gWheelSystem.toggle(false); }
+            if(gamepad2.dpad_up) { gWheelSystem.toggle(true); }
+            else if(gamepad2.dpad_down) { gWheelSystem.toggle(false); }
 
-            if(gamepad1.right_bumper) { clawSystem.toggle(); }
+            if(gamepad2.right_bumper) { clawSystem.toggle(); }
 
-            //if(gamepad1.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
-            if(gamepad1.square && !isPressed) {
+            //if(gamepad2.dpad_down) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START); }
+            if(gamepad2.square && !isPressed) {
                 if(!FourBarUp) {
 
                     fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.PICKUP);
@@ -77,11 +78,11 @@ public class BasicOpMode extends LinearOpMode {
                 }
             }
 
-            isPressed = gamepad1.square;
-            //if(gamepad1.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
+            isPressed = gamepad2.square;
+            //if(gamepad2.dpad_right) { fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.REST); }
 
 
-            if(gamepad1.circle && !circle_toggle){
+            if(gamepad2.circle && !circle_toggle){
                 if(!SlideUp){ //get elevator up
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
@@ -106,8 +107,8 @@ public class BasicOpMode extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
-            //fourBarSystem.updateP();
             drive.update();
+            //fourBarSystem.updateP();
         }
 
 

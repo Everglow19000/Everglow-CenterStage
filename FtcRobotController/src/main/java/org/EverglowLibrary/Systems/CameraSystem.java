@@ -19,21 +19,40 @@ import java.util.List;
 
 
 public class CameraSystem {
-
-    private AprilTagProcessor m_AprilTag;
+    private final AprilTagProcessor m_AprilTag;
     private final OpMode m_OpMode;
-    private VisionPortal m_Camera;
-    private TfodProcessor m_Prop;
-    private List<Recognition> LastRecognitions;
+    private final VisionPortal m_Camera;
+    private final TfodProcessor m_Prop;
 
-    public enum AprilTagLocation{
+
+    private final double MIN_RIGHT_LOCATION = 300;
+
+    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
+    private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueModle.tflite";
+    // Define the labels recognized in the model for TFOD (must be in training order!)
+    private static final String[] LABEL_RED = {
+            "RedConus"
+    };
+
+    private static final String[] LABEL_BLUE = {
+            "BlueConus"
+    };
+
+    public enum DetectionLocation{
         LEFT, MIDDLE, RIGHT
     }
-
     public CameraSystem(OpMode opMode){
         m_OpMode = opMode;
+        m_Prop = new TfodProcessor
+                .Builder()
+                .setModelFileName(TFOD_MODEL_FILE_RED)
+                .setModelLabels(LABEL_RED)
+                .setIsModelTensorFlow2(true)
+                .setIsModelQuantized(true)
+                .setModelInputSize(300)
+                .setModelAspectRatio(16.0 / 9.0)
+                .build();
 
-        m_Prop = new TfodProcessor.Builder().build();
         m_AprilTag = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
@@ -42,7 +61,49 @@ public class CameraSystem {
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(m_OpMode.hardwareMap.get(WebcamName.class, "webcam"));
+        builder.addProcessor(m_AprilTag);
+        builder.addProcessor(m_Prop);
+        //builder.addProcessor(m_BlueProp);
 
+        m_Camera =  builder.build();
+    }
+
+    public CameraSystem(OpMode opMode, boolean isRedProp)
+    {
+
+        m_OpMode = opMode;
+        if(isRedProp)
+        {
+            m_Prop = new TfodProcessor
+                    .Builder()
+                    .setModelFileName(TFOD_MODEL_FILE_RED)
+                    .setModelLabels(LABEL_BLUE)
+                    .setIsModelTensorFlow2(true)
+                    .setIsModelQuantized(true)
+                    .setModelInputSize(300)
+                    .setModelAspectRatio(16.0 / 9.0)
+                    .build();
+        }
+        else {
+            m_Prop = new TfodProcessor
+                    .Builder()
+                    .setModelFileName(TFOD_MODEL_FILE_BLUE)
+                    .setModelLabels(LABEL_BLUE)
+                    .setIsModelTensorFlow2(true)
+                    .setIsModelQuantized(true)
+                    .setModelInputSize(300)
+                    .setModelAspectRatio(16.0 / 9.0)
+                    .build();
+        }
+
+        m_AprilTag = new AprilTagProcessor.Builder()
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        builder.setCamera(m_OpMode.hardwareMap.get(WebcamName.class, "webcam"));
         builder.addProcessor(m_AprilTag);
         builder.addProcessor(m_Prop);
 
@@ -53,12 +114,12 @@ public class CameraSystem {
         return m_AprilTag.getDetections();
     }
 
-    public Dictionary<AprilTagLocation,AprilTagDetection> GetAprilTagLocation(List<AprilTagDetection> detections){
+    public Dictionary<AprilTagDetection,DetectionLocation> GetDetectionLocation(List<AprilTagDetection> detections){
         if(detections.size() == 0)
-            return new Hashtable<AprilTagLocation, AprilTagDetection>();
+            return new Hashtable<AprilTagDetection,DetectionLocation>();
 
-        Dictionary<AprilTagLocation,AprilTagDetection> detectionToLocation =
-                new Hashtable<>();
+        Dictionary<AprilTagDetection, DetectionLocation> detectionToLocation =
+                new Hashtable<AprilTagDetection, DetectionLocation>();
 
         Dictionary<Double, AprilTagDetection> doubleToDetection = new Hashtable<Double, AprilTagDetection>();
 
@@ -76,54 +137,107 @@ public class CameraSystem {
 
         try {
             posDouble = Arrays.stream(posDouble).sorted().toArray();
+
         }catch (NullPointerException nullEX){
             return null;
         }
 
         if(posDouble.length == 1) {
-            detectionToLocation.put(AprilTagLocation.MIDDLE, doubleToDetection.get(posDouble[0]));
+            detectionToLocation.put(doubleToDetection.get(posDouble[0]), DetectionLocation.MIDDLE);
             return detectionToLocation;
         }
         for (int i =0; i<doubleToDetection.size(); i++){
             switch (i){
                 case 0: {
-                    detectionToLocation.put(AprilTagLocation.LEFT, doubleToDetection.get(posDouble[0]));
+                    detectionToLocation.put(doubleToDetection.get(posDouble[0]), DetectionLocation.LEFT);
                     break;
                 }
                 case 1:{
-                    detectionToLocation.put(AprilTagLocation.MIDDLE, doubleToDetection.get(posDouble[1]));
+                    detectionToLocation.put(doubleToDetection.get(posDouble[1]), DetectionLocation.MIDDLE);
                     break;
                 }
                 case 2:{
-                    detectionToLocation.put(AprilTagLocation.RIGHT, doubleToDetection.get(posDouble[2]));
+                    detectionToLocation.put(doubleToDetection.get(posDouble[2]), DetectionLocation.RIGHT);
                 }
             }
         }
+
         return detectionToLocation;
     }
 
-    public Dictionary<AprilTagLocation, AprilTagDetection> GetAprilTagLocation() {
-        return GetAprilTagLocation(DetectAprilTags());
+    public Dictionary<AprilTagDetection,DetectionLocation> GetDetectionLocation() {
+        return GetDetectionLocation(DetectAprilTags());
     }
 
-    public double recognitionToDistance(Recognition rec, boolean isX){
+    public List<Recognition> DetectProp(){
+        return m_Prop.getRecognitions();
+    }
+
+    public Recognition getClosetRecognition(List<Recognition> recognitions){
+        Recognition lowestRec = recognitions.get(0);
+        double lowY = 10000, y;
+        for (Recognition rec:recognitions) {
+            y = ConvertInchToCm(ConvertRecognitionToPos(rec, false));
+            if(y < lowY)
+            {
+                lowestRec = rec;
+                lowY = y;
+            }
+        }
+        return lowestRec;
+    }
+
+    public DetectionLocation DetectAndFindPropLocation(){
+        //takes time!
+
+        DetectionLocation detectionLocation = null;
+        long start = System.currentTimeMillis();
+        final int TIME_WAIT_MILL = 3 * 1000;
+        boolean isTimeEnd = false;
+        List<Recognition> recognitions;
+
+        m_OpMode.telemetry.addLine("start detecting...");
+        m_OpMode.telemetry.update();
+        while (detectionLocation == null && !isTimeEnd){
+            recognitions = DetectProp();
+            if(recognitions.size() != 0){
+                detectionLocation = RecognitionToLocation(recognitions.get(0));
+            }
+            isTimeEnd = (System.currentTimeMillis() - start) >= TIME_WAIT_MILL;
+        }
+
+        if(isTimeEnd)
+            detectionLocation = DetectionLocation.RIGHT;
+
+        m_OpMode.telemetry.addData("finished detection; point:", detectionLocation.name());
+        m_OpMode.telemetry.update();
+        return detectionLocation;
+    }
+
+    public DetectionLocation RecognitionToLocation(Recognition recognition){
+
+        if(recognition == null){
+            return DetectionLocation.LEFT;
+        }
+
+        double distanceFromCameraX;
+        distanceFromCameraX = ConvertRecognitionToPos(recognition, true);
+
+        if(distanceFromCameraX <= MIN_RIGHT_LOCATION)
+            return DetectionLocation.LEFT;
+        else
+            return DetectionLocation.MIDDLE;
+
+    }
+    public double ConvertRecognitionToPos(Recognition rec, boolean isX){
         if(isX)
             return (rec.getLeft() + rec.getRight()) / 2 ;
         else
-            return (rec.getTop()  + rec.getBottom()) / 2 ;
+            return (rec.getTop()  + rec.getBottom()) / 2;
     }
 
-    public double[] getRecognitionsDistance(boolean isX){
-        double[] allDistances = new double[LastRecognitions.size()];
-        for (int i = 0; i < LastRecognitions.size(); i++){
-            allDistances[i] = recognitionToDistance(LastRecognitions.get(i), isX);
-        }
-        return allDistances;
+    public static double ConvertInchToCm(double inch){
+        return inch*2.54;
     }
-    public List<Recognition> detectAllPixels(){
-        LastRecognitions = m_Prop.getRecognitions();
-        return LastRecognitions;
-    }
-
     public void CloseCamera() { m_Camera.close();}
 }

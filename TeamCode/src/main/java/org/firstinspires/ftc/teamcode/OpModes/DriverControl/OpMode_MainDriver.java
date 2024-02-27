@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 
+import static org.apache.commons.math3.util.FastMath.cos;
+import static org.apache.commons.math3.util.FastMath.sin;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,10 +11,15 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.EverglowLibrary.Systems.FourBarSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(group = "drive", name = "MainDrive No Systems")
+@TeleOp(group = "drive", name = "OpMode_MainDriver")
 public class OpMode_MainDriver extends LinearOpMode{
+
+
+    SampleMecanumDrive drive;
+    FourBarSystem fourBarSystem;
     Servo FlipServo, ClawR, ClawL;
     DcMotorEx SlideL, SlideR, FourBar, GagazMot;
     boolean SlideUp = false;
@@ -24,11 +31,82 @@ public class OpMode_MainDriver extends LinearOpMode{
     boolean right_bumper_toggle = false;
     boolean square_toggle = false;
 
-    boolean isFourBarRun = false;
+    public double closestLaneGoingForward(double x, double y) {
+        double xOut = (int)x + 0.5;
+        if (y > 3 && (xOut == 2.5)) xOut = 1.5;
+        if (y > 3 && (xOut == 3.5)) xOut = 4.5;
+
+        return xOut;
+    }
+
+    public double foo(double delX, double delY,double Px,double Py) {
+        if(delY == 0) return delX * 0.4;
+        double outPx =(delX/Math.abs(delY))*Math.abs(Py);
+        return outPx;
+    }
+
+
+
+
+    public void driveWithOutHitting(Pose2d powers) {
+        double x = drive.getPoseEstimate().getX(), y = drive.getPoseEstimate().getY();
+        if (y > 4 || y < 1) {
+            driveByAxis(powers);
+            return;
+        }
+
+        if ((y > 3.6 && powers.getY() > -0.1) || (y < 1.4 && powers.getY() < 0.1)) {
+            driveByAxis(powers);
+            return;
+        }
+
+        double xTarget = closestLaneGoingForward(x, y);
+        double deviX = xTarget - x;
+
+        double deviY = 0;
+        if(y > 3.3) deviY = y - 3.3;
+        if(y <  1.7) deviY = 1.7 - y;
+        double Px = foo(deviX, deviY, powers.getX(), powers.getY());
+
+        drive.setWeightedDrivePower(new Pose2d(Px, powers.getY(), powers.getHeading()));
+    }
+
+
+
+
+    public void driveByAxis(Pose2d powers) {
+        final double currentAngle = drive.getPoseEstimate().getHeading();
+        final double cosAngle = cos(currentAngle);
+        final double sinAngle = sin(currentAngle);
+
+        Pose2d mecanumPowers = new Pose2d(
+                cosAngle * powers.getX() - sinAngle * powers.getY(),
+                cosAngle * powers.getY() + sinAngle * powers.getX(),
+                powers.getHeading()
+        );
+
+        drive.setWeightedDrivePower(mecanumPowers);
+    }
+
+    public void driveByAxisWithOutHitting(Pose2d powers) {
+        final double currentAngle = drive.getPoseEstimate().getHeading();
+        final double cosAngle = cos(currentAngle);
+        final double sinAngle = sin(currentAngle);
+
+        Pose2d mecanumPowers = new Pose2d(
+                cosAngle * powers.getX() - sinAngle * powers.getY(),
+                cosAngle * powers.getY() + sinAngle * powers.getX(),
+                powers.getHeading()
+        );
+
+        driveWithOutHitting(mecanumPowers);
+    }
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        fourBarSystem = new FourBarSystem(this);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // flip servo
@@ -65,15 +143,11 @@ public class OpMode_MainDriver extends LinearOpMode{
         // galal azikonim
         GagazMot = hardwareMap.get(DcMotorEx.class, "GagazMot");
 
+        //drive.setPoseEstimate(new Pose2d(5 * SQUA));
+
         waitForStart();
 
         while (!isStopRequested()) {
-            /*
-            if(isFourBarRun){
-                FourBar.setPositionPIDFCoefficients();
-                FourBar.setPower(powerFourBar);
-            }
-             */
 
             if(gamepad1.circle && !circle_toggle){
                 if(SlideUp){ //get elevator up
@@ -85,8 +159,8 @@ public class OpMode_MainDriver extends LinearOpMode{
                 } else { //get elevator down
                     SlideR.setPower(0.4);
                     SlideL.setPower(0.4);
-                    SlideR.setTargetPosition(0);
-                    SlideL.setTargetPosition(0);
+                    SlideR.setTargetPosition(35);
+                    SlideL.setTargetPosition(35);
                     SlideUp = !SlideUp;
                 }
             }
@@ -108,38 +182,34 @@ public class OpMode_MainDriver extends LinearOpMode{
 
             if(gamepad1.square && !square_toggle){ //
                 if(ClawExtended){
-                    FlipServo.setPosition(0.5);
-                    FourBar.setPower(0.3);
-                    FourBar.setTargetPosition(270);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.PICKUP);
                     ClawExtended = !ClawExtended;
                 } else {
-                    FourBar.setPower(0.15);
-                    FourBar.setTargetPosition(-10);
-                    sleep(500);
-                    FlipServo.setPosition(0);
+                    fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.DROP);
+                    fourBarSystem.setServoPositionByLevel(FourBarSystem.ServoAngel.DROP);
                     ClawExtended = !ClawExtended;
                 }
             }
             square_toggle = gamepad1.square;
 
-            if(!DpadUp_toggle && gamepad1.dpad_up) { //galgal azikonim
+            if(!DpadUp_toggle && (gamepad1.dpad_up || gamepad2.dpad_up)) { //galgal azikonim
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(-1);
                 } else {
                     GagazMot.setPower(0);
                 }
             }
-            DpadUp_toggle = gamepad1.dpad_up;
+            DpadUp_toggle = (gamepad1.dpad_up || gamepad2.dpad_up);
 
-            if(!DpadDown_toggle && gamepad1.dpad_down) { //galgal azikonim, revers
+            if(!DpadDown_toggle && (gamepad1.dpad_down || gamepad2.dpad_down)) { //galgal azikonim, revers
                 if (GagazMot.getPower() == 0) {
                     GagazMot.setPower(1);
                 }else {
                     GagazMot.setPower(0);
                 }
             }
-
-            DpadDown_toggle = gamepad1.dpad_down;
+            DpadDown_toggle = (gamepad1.dpad_down || gamepad2.dpad_down);
 
             drive.setWeightedDrivePower(
                     new Pose2d(
