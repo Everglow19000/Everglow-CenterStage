@@ -29,7 +29,7 @@ public class TestControlledDrive extends LinearOpMode {
      *
      * @return new Pose2d in CM Units
      */
-    public Pose2d PoseInTiles(double x, double y, double Heading) {
+    public static Pose2d PoseInTiles(double x, double y, double Heading) {
         return new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading);
     }
 
@@ -71,14 +71,14 @@ public class TestControlledDrive extends LinearOpMode {
         //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
     }
 
-    Pose2d driveByAxis(Pose2d inputPowers, double heading) {
+    public static Pose2d driveByAxis(Pose2d inputPowers, double heading) {
         double powerX =  inputPowers.getX() * cos(heading) + inputPowers.getY() * sin(heading);
         double powerY =  -inputPowers.getX() * sin(heading) + inputPowers.getY() * cos(heading);
         return new Pose2d(powerX, powerY, inputPowers.getHeading());
     }
 
 
-    Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d inputPowers) {
+    public Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d inputPowers) {
         Pose2d axisPowers = driveByAxis(inputPowers, robotTileLocation.getHeading());
         telemetry.addData("axisPowers ", axisPowers);
         final double X = robotTileLocation.getX();
@@ -99,15 +99,15 @@ public class TestControlledDrive extends LinearOpMode {
         Pose2d pos = drive.getPoseEstimate();
         return new Pose2d(pos.getX() / TILE_LENGTH, pos.getY() / TILE_LENGTH, realAngle(pos.getHeading()));
     }
-
     SampleMecanumDrive drive;
 
-    double realAngle(double angle) {
-        if(angle > PI) angle -= 2 * PI;
+    public static double realAngle(double angle) {
+        if(angle > PI)
+            angle -= 2 * PI;
         return angle;
     }
 
-    public Pose2d adjustedPowers(Pose2d Powers) {
+    public static Pose2d adjustedPowers(Pose2d Powers) {
         return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getHeading() * 1.0);
     }
 
