@@ -11,6 +11,7 @@ public class SequenceRunner {
     private int CurrentRun = 0;
     private boolean isInterapted = false;
     private boolean isSync;
+    private Thread RunThread; //makes longer runs without
 
     public SequenceRunner(Sequence sequence){
         TrySetSequence(sequence);
@@ -18,6 +19,10 @@ public class SequenceRunner {
 
     public SequenceRunner(){
 
+    }
+
+    public SequenceRunner(boolean isSync, Executor... executors){
+        this(new Sequence(isSync, executors));
     }
 
     public SequenceRunner(Sequence... sequences){
@@ -41,7 +46,8 @@ public class SequenceRunner {
         if(m_Runs[CurrentRun].isFinished() || !isSync){
             CurrentRun++;
             if(CurrentRun < m_Runs.length){
-                m_Runs[CurrentRun].run();
+                RunThread = new Thread(m_Runs[CurrentRun]);
+                RunThread.start();
             }
             else{
                 SequenceIndex++;
@@ -67,7 +73,9 @@ public class SequenceRunner {
             m_Runs = m_RunningSequence.GetRuns();
             isSync = m_RunningSequence.isSequenceSync();
             CurrentRun = 0;
-            m_Runs[CurrentRun].run();
+            //m_Runs[CurrentRun].run();
+            RunThread = new Thread(m_Runs[CurrentRun]);
+            RunThread.start();
         }
     }
 

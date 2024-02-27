@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
 
 import static java.lang.Math.PI;
@@ -194,7 +195,7 @@ public class SimplerOpMode extends LinearOpMode {
         }
 
     }
-*/
+
 
 
 
@@ -366,7 +367,7 @@ public class SimplerOpMode extends LinearOpMode {
         gWheelSystem.toggle(true);
         sleep(1000);
 
-        /*//drive(FirstDropLocation, SecondDropMiddlePoint); drive(SecondDropMiddlePoint, SecondDropLocation);
+        //drive(FirstDropLocation, SecondDropMiddlePoint); drive(SecondDropMiddlePoint, SecondDropLocation);
         Trajectory traj2 = drive.trajectoryBuilder(traj1.end())
                 .splineTo(SecondDropMiddlePoint.vec(),SecondDropMiddlePoint.getHeading())
                 .splineTo(SecondDropLocation.vec(),SecondDropLocation.getHeading())
@@ -388,6 +389,7 @@ public class SimplerOpMode extends LinearOpMode {
                 .build());
         fourBarSystem.setServoPosition(FourBarSystem.ServoAngel.PICKUP);
         sleep(1000);
-        fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);*/
+        fourBarSystem.set4BarPositionByLevel(FourBarSystem.Level.START);
     }
 }
+*/

@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 @TeleOp(name = "Camera Prop blue", group = "test")
-public class CameraOpMode extends LinearOpMode {
+public class CameraPropBlue extends LinearOpMode {
 
     //make more attributes & functions
     VisionPortal camera;

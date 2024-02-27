@@ -99,7 +99,7 @@ public class Sequence {
     }
 
     public boolean isSequenceSync() {
-        return m_IsRunAsync;
+        return !m_IsRunAsync;
     }
 
     public void setRuns(Queue<Executor> runs) {

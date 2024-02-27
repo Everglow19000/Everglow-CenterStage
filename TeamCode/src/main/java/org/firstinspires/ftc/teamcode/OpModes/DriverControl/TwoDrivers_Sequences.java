@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 
-import android.icu.util.Calendar;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,16 +7,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.EverglowLibrary.Systems.ClawSystem;
 import org.EverglowLibrary.Systems.ElevatorSystem;
-import org.EverglowLibrary.Systems.Executor;
 import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.EverglowLibrary.ThreadHandleLib.Sequence;
+import org.EverglowLibrary.ThreadHandleLib.SequenceControl;
 import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-import java.sql.Time;
-import java.util.Timer;
 
 @TeleOp(name = "TwoDrivers_Sequences", group = "drive")
 public class TwoDrivers_Sequences extends LinearOpMode {
@@ -42,8 +37,6 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         Servo planeServo = hardwareMap.get(Servo.class, "PlaneServo");
         planeServo.setPosition(0); //close servo mode
         double servoPos = 0.15; //open servo mode
-        //long startTime = Calendar.getInstance().getTimeInMillis();
-        //long deltaTime;
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
         SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
@@ -58,13 +51,6 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         fourBarSystem.setMotorPower(0.85);
 
         while (opModeIsActive()){
-            /*
-            deltaTime = -startTime + Calendar.getInstance().getTimeInMillis();
-            telemetry.addData("time:", -deltaTime);
-            telemetry.addData("gampade1 left stick y:",gamepad1.left_stick_y);
-            telemetry.update();
-             */
-
             try {
                 if(gamepad2.square && !seq1_toggle){
                     sequenceRunner.RunSequence(getReadyToDropSeq);

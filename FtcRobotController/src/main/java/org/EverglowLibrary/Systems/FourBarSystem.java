@@ -174,7 +174,7 @@ public class FourBarSystem{
             if(m_Level == Level.PICKUP){
                 fourBarMotor.setPower(m_Power);
                 set4BarPositionByLevel(m_Level);
-                opMode.sleep(800);
+                opMode.sleep(800); //problems
                 setServoPositionByLevel(m_ServoAngle);
             }
             else {
