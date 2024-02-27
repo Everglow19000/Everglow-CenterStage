@@ -15,7 +15,7 @@ import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "TwoDrivers_Sequences", group = "drive")
+@TeleOp(name = "TwoDrivers_Sequences", group = "main-drive")
 public class TwoDrivers_Sequences extends LinearOpMode {
 
     private boolean seq1_toggle = false;
