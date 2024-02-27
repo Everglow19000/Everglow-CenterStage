@@ -13,7 +13,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-@TeleOp(name = "TensorTest")
+@TeleOp(name = "TensorTest", group = "test")
 public class Tensor extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
