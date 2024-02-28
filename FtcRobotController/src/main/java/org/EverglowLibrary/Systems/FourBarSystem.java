@@ -45,6 +45,7 @@ public class FourBarSystem{
     double fourBarTarget = 0;
 
     public FourBarSystem(LinearOpMode opMode){
+
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
@@ -58,7 +59,7 @@ public class FourBarSystem{
         pid.i = 1.5;
         pid.p = 10;
         pid.d = 2;
-        pid.f = 0;
+        pid.f = 1;
 
         fourBarMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
 
@@ -69,6 +70,9 @@ public class FourBarSystem{
         int epsilon4Bar = 12;
         return (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
+    }
+    public DcMotorEx getFourBarMotor(){
+        return this.fourBarMotor;
     }
 
     public int getCurrentMotorPosition() {
