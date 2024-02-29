@@ -120,7 +120,8 @@ public class TestControlledDrive extends LinearOpMode {
         drive.setPoseEstimate(PoseInTiles(4, 4, 0));
 
         waitForStart();
-        Pose2d lastLocation=new Pose2d(0, 0, 0);
+        Pose2d lastLocation=locationInTiles();
+        double maxDeltaPose=0;
         while(opModeIsActive()) {
             double Px = -gamepad1.left_stick_y,
                    Py = -gamepad1.left_stick_x,
@@ -139,10 +140,10 @@ public class TestControlledDrive extends LinearOpMode {
             double deltaPose = sqrt(
                     pow((currentLocation.getX()-lastLocation.getX()),2)
                             +pow((currentLocation.getY()-lastLocation.getY()),2));
-
+            maxDeltaPose=Math.max(maxDeltaPose,deltaPose);
             telemetry.addData("Location ", currentLocation);
             telemetry.addData("powers ", powers);
-            telemetry.addData("deltaPose in tiles", deltaPose);
+            telemetry.addData("deltaPose in tiles", maxDeltaPose);
 
             Pose2d controlledPowers = driveByAxis(powers, currentLocation.getHeading());
             //Pose2d controlledPowers = controlledDriving(currentLocation, powers);
