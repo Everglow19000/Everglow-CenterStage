@@ -82,6 +82,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             claw_toggle = gamepad2.right_bumper;
 
             if(gamepad1.right_bumper && !gwheel_toggle){
+                clawSystem.ChangePos(false);
                 gWheelSystem.toggle(true);
             }
 
@@ -90,6 +91,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper && !gwheel_toggle){
+                clawSystem.ChangePos(false);
                 gWheelSystem.toggle(false);
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
