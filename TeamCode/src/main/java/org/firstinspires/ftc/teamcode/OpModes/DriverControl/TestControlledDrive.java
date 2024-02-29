@@ -5,6 +5,7 @@ import static org.apache.commons.math3.stat.StatUtils.max;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
@@ -48,7 +49,7 @@ public class TestControlledDrive extends LinearOpMode {
         } else if(angle <= -PI/2){
             targetAngle = -PI;
         }
-        if(abs(targetAngle - angle) < 3 / 180 * PI) return 0;
+        if(abs(targetAngle - angle) < 3.0 / 180.0 * PI) return 0;
         return (targetAngle - angle) * 3;
     }
 
@@ -71,7 +72,7 @@ public class TestControlledDrive extends LinearOpMode {
         //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
     }
 
-    Pose2d driveByAxis(Pose2d inputPowers, double heading) {
+    public static Pose2d driveByAxis(Pose2d inputPowers, double heading) {
         double powerX =  inputPowers.getX() * cos(heading) + inputPowers.getY() * sin(heading);
         double powerY =  -inputPowers.getX() * sin(heading) + inputPowers.getY() * cos(heading);
         return new Pose2d(powerX, powerY, inputPowers.getHeading());
@@ -102,7 +103,7 @@ public class TestControlledDrive extends LinearOpMode {
 
     SampleMecanumDrive drive;
 
-    double realAngle(double angle) {
+    public static double realAngle(double angle) {
         if(angle > PI) angle -= 2 * PI;
         return angle;
     }
@@ -125,19 +126,23 @@ public class TestControlledDrive extends LinearOpMode {
                    Py = -gamepad1.left_stick_x,
                    Pangle = -gamepad1.right_stick_x;
             if(gamepad1.left_stick_button) {
-                Px /= 3;
-                Py /= 3;
+                Px /= 3.0;
+                Py /= 3.0;
             }
             if(gamepad1.right_stick_button) {
-                Pangle /= 5;
+                Pangle /= 5.0;
             }
             Pose2d powers = new Pose2d(Px, Py, Pangle);
 
 
             Pose2d currentLocation = locationInTiles();
-            double deltaX = sqrt((currentLocation.getX()-lastLocation.getX()));
+            double deltaPose = sqrt(
+                    pow((currentLocation.getX()-lastLocation.getX()),2)
+                            +pow((currentLocation.getY()-lastLocation.getY()),2));
+
             telemetry.addData("Location ", currentLocation);
             telemetry.addData("powers ", powers);
+            telemetry.addData("deltaPose in tiles", deltaPose);
 
             Pose2d controlledPowers = driveByAxis(powers, currentLocation.getHeading());
             //Pose2d controlledPowers = controlledDriving(currentLocation, powers);
