@@ -73,7 +73,6 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 seq4_toggle = gamepad2.triangle;
             }catch (Exception e){
                 telemetry.addData("exeption", e);
-                telemetry.update();
             }
 
             if(gamepad2.right_bumper && !claw_toggle){
@@ -109,7 +108,12 @@ public class TwoDrivers_Sequences extends LinearOpMode {
 
             drive.update();
             sequenceRunner.Update();
-            fourBarSystem.updateP(0.8);
+            if(fourBarSystem.getTargetPosition() == FourBarSystem.Level.DROP)
+                fourBarSystem.set4BarPositionByLevel(fourBarSystem.getTargetPosition());
+            telemetry.addData("is finished?",
+                    fourBarSystem.isFinish(fourBarSystem.getTargetPosition()));
+            //fourBarSystem.updateP(0.8);
+            telemetry.update();
         }
         sequenceRunner.Interapt();
         sleep(1000);

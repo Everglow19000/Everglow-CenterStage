@@ -57,8 +57,8 @@ public class FourBarSystem{
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         PIDFCoefficients pid = fourBarMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
         pid.i = 1.5;
-        pid.p = 10;
-        pid.d = 2;
+        pid.p = 40;
+        pid.d = 5;
         pid.f = 1;
 
         fourBarMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
@@ -70,6 +70,10 @@ public class FourBarSystem{
         int epsilon4Bar = 12;
         return (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
+    }
+
+    public Level getTargetPosition(){
+        return currentLevel;
     }
     public DcMotorEx getFourBarMotor(){
         return this.fourBarMotor;
@@ -93,7 +97,14 @@ public class FourBarSystem{
 
     public void set4BarPosition(int target) {
         fourBarTarget = target;
-        fourBarMotor.setTargetPosition(target);
+        if (fourBarTarget == Level.DROP.state && !isFinish(Level.DROP)) {
+            currentLevel = Level.DROP;
+            fourBarMotor.setTargetPosition(target+50);
+            opMode.telemetry.addLine("To virtual");
+        } else {
+            fourBarMotor.setTargetPosition(target);
+            opMode.telemetry.addLine("To actual");
+        }
     }
     public void set4BarPositionByLevel(Level targetLevel) {
         currentLevel = targetLevel;
@@ -191,6 +202,7 @@ public class FourBarSystem{
 
         @Override
         public boolean isFinished() {
+            //set4BarPositionByLevel(m_Level);
             return isFinish(m_Level);
         }
 
