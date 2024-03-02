@@ -121,7 +121,7 @@ public class ElevatorSystem{
 
     public class ElevatorExecutor extends Executor{
         private Level toRun = null;
-        private double Power = 0.4;
+        private double Power = 0.6;
 
         public ElevatorExecutor(){
             //ElevatorCurrentLevel = Level.DOWN;

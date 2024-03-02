@@ -63,7 +63,7 @@ public class ClawSystem{
             //in milliseconds
             int waitTime = 800;
 
-            if(Calendar.getInstance().getTimeInMillis() - startTime >= waitTime) {
+            if(Calendar.getInstance().getTimeInMillis() - startTime >= waitTime || (toClose && !open)) {
                 startTime = -1;
                 return true;
             }

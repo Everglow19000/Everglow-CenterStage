@@ -110,6 +110,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             sequenceRunner.Update();
             if(fourBarSystem.getTargetPosition() == FourBarSystem.Level.DROP)
                 fourBarSystem.set4BarPositionByLevel(fourBarSystem.getTargetPosition());
+
             telemetry.addData("is finished?",
                     fourBarSystem.isFinish(fourBarSystem.getTargetPosition()));
             //fourBarSystem.updateP(0.8);
