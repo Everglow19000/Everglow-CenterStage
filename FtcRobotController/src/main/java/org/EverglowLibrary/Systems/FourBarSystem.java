@@ -51,6 +51,7 @@ public class FourBarSystem{
         clawAngelServo.setPosition(ServoAngel.PICKUP.state);
 
         //fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
+
         fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
