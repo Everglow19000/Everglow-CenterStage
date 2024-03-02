@@ -6,12 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 //more imports
 
 @TeleOp(name = "Encoder tests", group = "test")
 public class EncoderTest extends LinearOpMode {
+    SampleMecanumDrive drive;
 
     //make more attributes & functions
     final double TicksToCm = 0.0586;
@@ -19,10 +21,11 @@ public class EncoderTest extends LinearOpMode {
     BNO055IMU imu;
     @Override
     public void runOpMode(){
+        drive = new SampleMecanumDrive(hardwareMap);
         LE = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
         RE = new Encoder(hardwareMap.get(DcMotorEx.class, "GagazMot"));
         FE = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
-        RE.setDirection(Encoder.Direction.REVERSE);
+
 
         waitForStart();
         while (!isStopRequested()) {

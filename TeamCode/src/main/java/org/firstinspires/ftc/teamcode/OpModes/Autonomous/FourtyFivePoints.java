@@ -277,17 +277,17 @@ public class FourtyFivePoints {
         CameraSystem cameraSystem = new CameraSystem(opMode, isRight());
 
 
-        /*elevatorSystem = new ElevatorSystem(this);
-        clawSystem = new ClawSystem(this);
-        fourBarSystem = new FourBarSystem(this);
-        gWheelSystem = new GWheelSystem(this);
+        elevatorSystem = new ElevatorSystem(opMode);
+        clawSystem = new ClawSystem(opMode);
+        fourBarSystem = new FourBarSystem(opMode);
+        gWheelSystem = new GWheelSystem(opMode);
 
         sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
 
         // Create all Sequences //
 
         getReadyToDrop  = sequenceControl.GetReadyToDropSeq();
-        returnSystemsToStart = sequenceControl.DropAndRetreatSeq();*/
+        returnSystemsToStart = sequenceControl.DropAndRetreatSeq();
 
 
         // Trajectory Calculations //
@@ -338,14 +338,16 @@ public class FourtyFivePoints {
         drive.followTrajectory(splineToPurple);
 
         // GWheel - Drop Purple
-        /*switch (propPlace) {
+        switch (propPlace) {
             case LEFT:
                 if(isRight()) {
                     drive.turn(PI / 2);
                 }
                 else {
+
                     drive.turn(-PI / 2);
                 }
+                break;
 
             case RIGHT:
                 if(isRight()) {
@@ -354,12 +356,13 @@ public class FourtyFivePoints {
                 else {
                     drive.turn(PI / 2);
                 }
+                break;
         }
 
         gWheelSystem.setPower(0.4);
         if (opMode.isStopRequested()) return;
         long time = System.currentTimeMillis();
-        while(opMode.isStopRequested()){
+        while(!opMode.isStopRequested()){
             if(System.currentTimeMillis()-time > 1000)
                 break;
         }
@@ -373,6 +376,7 @@ public class FourtyFivePoints {
                 else {
                     drive.turn(PI / 2);
                 }
+                break;
 
             case RIGHT:
                 if(isRight()) {
@@ -381,7 +385,8 @@ public class FourtyFivePoints {
                 else {
                     drive.turn(-PI / 2);
                 }
-        }*/
+                break;
+        }
 
 
 

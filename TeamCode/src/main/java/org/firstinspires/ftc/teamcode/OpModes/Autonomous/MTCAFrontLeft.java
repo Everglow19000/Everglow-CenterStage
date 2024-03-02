@@ -14,6 +14,5 @@ public class MTCAFrontLeft extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         FourtyFivePoints autonumous = new FourtyFivePoints();
         autonumous.firstCall(this, FourtyFivePoints.StartPosition.FRONT_LEFT);
-
     }
 }

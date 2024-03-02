@@ -23,15 +23,24 @@ public class SplineTest extends LinearOpMode {
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(0,0))
                 .splineTo(new Vector2d(100, 100),0)
                 .build();
-
         drive.followTrajectory(traj);
 
-        sleep(2000);
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("firstX", poseEstimate.getX());
+        telemetry.addData("firstY", poseEstimate.getY());
+        telemetry.addData("firstHeading", poseEstimate.getHeading());
+        telemetry.update();
+
+        /*sleep(2000);
         drive.followTrajectory(
                 drive.trajectoryBuilder(traj.end(), true)
                         .splineTo(new Vector2d(0, 0), Math.toRadians(180))
                         .build()
         );
+        telemetry.addData("finalX", poseEstimate.getX());
+        telemetry.addData("finalY", poseEstimate.getY());
+        telemetry.addData("finalHeading", poseEstimate.getHeading());
+        telemetry.update();*/
 
     }
 }
