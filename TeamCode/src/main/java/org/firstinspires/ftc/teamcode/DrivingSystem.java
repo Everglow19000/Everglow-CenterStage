@@ -7,17 +7,18 @@ import static java.lang.Math.sin;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-public class DrivingSystem {
-    SampleMecanumDrive drive;
+public class DrivingSystem extends SampleMecanumDrive {
     LinearOpMode opMode;
     
     public DrivingSystem(LinearOpMode opMode) {
+        super(opMode.hardwareMap);
         this.opMode = opMode;
-        drive = new SampleMecanumDrive(opMode.hardwareMap);
+        setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public static double TILE_LENGTH = 60.5;
@@ -35,6 +36,7 @@ public class DrivingSystem {
         return new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading);
     }
 
+
     private double chooseLain(Pose2d robotTileLocation) {
         double tileY = (int)robotTileLocation.getY() + 0.5;
         if((robotTileLocation.getX() > 3.5) && (tileY == 2.5)) tileY = 1.5;
@@ -50,7 +52,7 @@ public class DrivingSystem {
         } else if(angle <= -PI/2){
             targetAngle = -PI;
         }
-        if(abs(targetAngle - angle) < 3 / 180 * PI) return 0;
+        if(abs(targetAngle - angle) < 3 / 180.0 * PI) return 0;
         return (targetAngle - angle) * 3;
     }
 
@@ -103,13 +105,13 @@ public class DrivingSystem {
     }
 
     public Pose2d locationInTiles() {
-        Pose2d pos = drive.getPoseEstimate();
+        Pose2d pos = getPoseEstimate();
         return new Pose2d(pos.getX() / TILE_LENGTH, pos.getY() / TILE_LENGTH, realAngle(pos.getHeading()));
     }
 
 
     public void regularDrive(Pose2d powers) {
-        drive.setWeightedDrivePower(powers);
+        this.setWeightedDrivePower(powers);
     }
 
 
@@ -121,24 +123,25 @@ public class DrivingSystem {
     public void allDrives(Pose2d inputPowers, boolean adjusted, boolean byAxis, boolean controlled) {
         opMode.telemetry.addData("input Powers ", inputPowers);
         Pose2d robotTileLocation = locationInTiles();
+        Pose2d finalPower = new Pose2d();
         if(controlled) {
-            inputPowers = controlledDriving(inputPowers, robotTileLocation);
+            finalPower = controlledDriving(inputPowers, robotTileLocation);
         }
         else if(byAxis) {
-            inputPowers = driveByAxisPowers(inputPowers, robotTileLocation.getHeading());
+            opMode.telemetry.addLine("input drive by axis");
+            finalPower = driveByAxisPowers(inputPowers, robotTileLocation.getHeading());
         }
 
         if(adjusted) {
-            inputPowers = adjustedPowers(inputPowers);
+            finalPower = adjustedPowers(inputPowers);
         }
 
-        opMode.telemetry.addData("final Powers ", inputPowers);
-        opMode.telemetry.update();
-        regularDrive(inputPowers);
+        opMode.telemetry.addData("final Powers ", finalPower);
+        regularDrive(finalPower);
     }
 
-    public void setLocation(double x, double y, double Heading) {
-        drive.setPoseEstimate(new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading));
+    public void setLocationInTiles(double x, double y, double Heading) {
+        setPoseEstimate(new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading));
     }
 
 

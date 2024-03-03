@@ -12,7 +12,7 @@ public class TestDrivingSystem extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DrivingSystem drivingSystem = new DrivingSystem(this);
-        //drivingSystem.setLocation(4, 4, 0);
+        drivingSystem.setLocationInTiles(4, 4, 0);
 
         waitForStart();
 
@@ -24,10 +24,13 @@ public class TestDrivingSystem extends LinearOpMode {
             if(gamepad1.square) control = !control;
 
             if(ajust) telemetry.addLine("Ajusted powers is On");
-            if(ajust) telemetry.addLine("Axis powers is On");
-            if(ajust) telemetry.addLine("Controlled powers is On");
+            if(axis) telemetry.addLine("Axis powers is On");
+            if(control) telemetry.addLine("Controlled powers is On");
 
-
+            Pose2d location = drivingSystem.getPoseEstimate();
+            telemetry.addData("X ", location.getX());
+            telemetry.addData("Y ", location.getY());
+            telemetry.addData("Heading ", location.getHeading());
 
             double Px = -gamepad1.left_stick_y,
                     Py = -gamepad1.left_stick_x,
@@ -42,7 +45,7 @@ public class TestDrivingSystem extends LinearOpMode {
             Pose2d powers = new Pose2d(Px, Py, Pangle);
 
             drivingSystem.allDrives(powers, ajust, axis, control);
-
+            telemetry.update();
 
         }
 

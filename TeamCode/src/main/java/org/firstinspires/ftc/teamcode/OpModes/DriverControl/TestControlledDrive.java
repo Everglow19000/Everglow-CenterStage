@@ -145,8 +145,8 @@ public class TestControlledDrive extends LinearOpMode {
             telemetry.addData("powers ", powers);
             telemetry.addData("deltaPose in tiles", maxDeltaPose);
 
-            Pose2d controlledPowers = driveByAxis(powers, currentLocation.getHeading());
-            //Pose2d controlledPowers = controlledDriving(currentLocation, powers);
+            //Pose2d controlledPowers = driveByAxis(powers, currentLocation.getHeading());
+            Pose2d controlledPowers = controlledDriving(currentLocation, powers);
             telemetry.addData("controlledPowers", controlledPowers);
             drive.setWeightedDrivePower(adjustedPowers(controlledPowers));
             telemetry.update();
