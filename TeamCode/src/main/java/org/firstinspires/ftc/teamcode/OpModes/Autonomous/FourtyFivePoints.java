@@ -16,6 +16,7 @@ import org.EverglowLibrary.Systems.FourBarSystem;
 import org.EverglowLibrary.Systems.GWheelSystem;
 import org.EverglowLibrary.ThreadHandleLib.Sequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceControl;
+import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class FourtyFivePoints {
@@ -272,7 +273,7 @@ public class FourtyFivePoints {
         this.opMode = opMode;
         this.startPosition = startPosition;
         drive = new SampleMecanumDrive(opMode.hardwareMap);
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         CameraSystem cameraSystem = new CameraSystem(opMode, isRight());
 
@@ -291,7 +292,7 @@ public class FourtyFivePoints {
 
 
         // Trajectory Calculations //
-        Pose2d startLocation = PoseInTiles(3.636, 5.667, East);
+        Pose2d startLocation = PoseInTiles(3.61, 5.667, East);
         if(isBack()) {
             startLocation.minus(PoseInTiles(2, 0, 0));
         }
@@ -307,8 +308,12 @@ public class FourtyFivePoints {
 
         threeYellowDropTrajectories.setStartPose(tryRight(middleDropLocation));
         threeYellowDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(5, 4.5, South));
-        threeYellowDropTrajectories.endLocations.poseLeft = threeYellowDropTrajectories.endLocations.poseMiddle.plus(new Pose2d(0, -distanceBetweenTags, 0));
-        threeYellowDropTrajectories.endLocations.poseRight = threeYellowDropTrajectories.endLocations.poseMiddle.plus(new Pose2d(0, distanceBetweenTags, 0));
+        threeYellowDropTrajectories.endLocations.poseLeft =
+                threeYellowDropTrajectories.endLocations.poseMiddle.plus(
+                        new Pose2d(0, -distanceBetweenTags, 0));
+        threeYellowDropTrajectories.endLocations.poseRight
+                = threeYellowDropTrajectories.endLocations.poseMiddle.plus(
+                        new Pose2d(0, distanceBetweenTags, 0));
         threeYellowDropTrajectories.createTrajectories();
 
 
@@ -318,7 +323,7 @@ public class FourtyFivePoints {
         threeParkTrajectories.startLocations = threeYellowDropTrajectories.endLocations;
         threeParkTrajectories.createTrajectories();
 
-
+        //
 
         opMode.telemetry.addLine("Ready!!!!! ");
         opMode.telemetry.update();
@@ -332,61 +337,53 @@ public class FourtyFivePoints {
     
     
     public void runAfterInput() {
+        SequenceRunner sequenceRunner = new SequenceRunner();
 
         // set the correct start location
 
         drive.followTrajectory(splineToPurple);
 
-        // GWheel - Drop Purple
+       /* // GWheel - Drop Purple
         switch (propPlace) {
             case LEFT:
-                if(isRight()) {
-                    drive.turn(PI / 2);
-                }
-                else {
-
-                    drive.turn(-PI / 2);
-                }
+                drive.turn(PI / 2); //todo: if the turn is oposside (-Pi/2) then change it like it
                 break;
 
             case RIGHT:
-                if(isRight()) {
-                    drive.turn(-PI / 2);
-                }
-                else {
-                    drive.turn(PI / 2);
-                }
+                drive.turn(-PI / 2); //todo: if the turn is oposside Pi/2 then change it like it
                 break;
         }
 
         gWheelSystem.setPower(0.4);
-        if (opMode.isStopRequested()) return;
+
         long time = System.currentTimeMillis();
         while(!opMode.isStopRequested()){
             if(System.currentTimeMillis()-time > 1000)
                 break;
         }
-        gWheelSystem.setPower(0); // G Wheel
+        if(opMode.isStopRequested())
+            return;
+        gWheelSystem.setPower(0); // G Wheel*/
 
-        switch (propPlace) {
-            case LEFT:
-                if(isRight()) {
-                    drive.turn(-PI / 2);
-                }
-                else {
-                    drive.turn(PI / 2);
-                }
-                break;
-
-            case RIGHT:
-                if(isRight()) {
-                    drive.turn(PI / 2);
-                }
-                else {
-                    drive.turn(-PI / 2);
-                }
-                break;
-        }
+//        switch (propPlace) {
+//            case LEFT:
+//                if(isRight()) {
+//                    drive.turn(-PI / 2);
+//                }
+//                else {
+//                    drive.turn(PI / 2);
+//                }
+//                break;
+//
+//            case RIGHT:
+//                if(isRight()) {
+//                    drive.turn(PI / 2);
+//                }
+//                else {
+//                    drive.turn(-PI / 2);
+//                }
+//                break;
+//        }
 
 
 
@@ -395,46 +392,10 @@ public class FourtyFivePoints {
 
 
         opMode.telemetry.update();
-        sleep(3000);
+        sleep(30000);
 
-        //threeYellowDropTrajectories.driveCorrectTrajectory();
+        threeYellowDropTrajectories.driveCorrectTrajectory();
 
-        /*getReadyToDrop.startSequence();
-
-        // Yellow Drop Location
-        switch(propPlace) {
-            case MIDDLE:
-                drive.followTrajectory(trajMiddleYellow);
-
-            case LEFT:
-                drive.followTrajectory(trajLeftYellow);
-
-            case RIGHT:
-                drive.followTrajectory(trajRightYellow);
-
-        }
-
-        clawSystem.toggle();
-
-        returnSystemsToStart.startSequence();
-
-
-        switch(propPlace) {
-            case MIDDLE:
-                drive.followTrajectory(trajParkMiddle);
-
-            case LEFT:
-                drive.followTrajectory(trajParkLeft);
-
-            case RIGHT:
-                drive.followTrajectory(trajParkRight);
-
-        }*/
-
-
-        // spline to drop Purple
-
-        // Drop Purple
     }
 
 }

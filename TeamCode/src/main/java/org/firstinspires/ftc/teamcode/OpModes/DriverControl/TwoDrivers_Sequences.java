@@ -75,10 +75,10 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 telemetry.addData("exeption", e);
             }
 
-            if(gamepad2.right_bumper && !claw_toggle){
+            if(gamepad2.left_bumper && !claw_toggle){
                 clawSystem.toggle();
             }
-            claw_toggle = gamepad2.right_bumper;
+            claw_toggle = gamepad2.left_bumper;
 
             if(gamepad1.right_bumper && !gwheel_toggle){
                 gWheelSystem.toggle(true);
