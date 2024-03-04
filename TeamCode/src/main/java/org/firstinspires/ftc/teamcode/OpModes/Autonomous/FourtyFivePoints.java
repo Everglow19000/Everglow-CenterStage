@@ -275,7 +275,7 @@ public class FourtyFivePoints {
         drive = new SampleMecanumDrive(opMode.hardwareMap);
         //drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        CameraSystem cameraSystem = new CameraSystem(opMode, isRight());
+        CameraSystem cameraSystem = new CameraSystem(opMode, isRight(), isBack());
 
 
         elevatorSystem = new ElevatorSystem(opMode);

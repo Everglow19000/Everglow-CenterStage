@@ -28,7 +28,7 @@ public class CameraPropRed extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        CameraSystem cs = new CameraSystem(this, true);
+        CameraSystem cs = new CameraSystem(this, false, false);
         telemetry.addLine("ready");
         telemetry.update();
         waitForStart();
