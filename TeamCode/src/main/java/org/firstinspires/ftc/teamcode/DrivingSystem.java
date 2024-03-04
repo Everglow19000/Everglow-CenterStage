@@ -8,6 +8,7 @@ import static java.lang.Math.sin;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -78,6 +79,8 @@ public class DrivingSystem extends SampleMecanumDrive {
     Pose2d driveByAxisPowers(Pose2d inputPowers, double heading) {
         double powerX =  inputPowers.getX() * cos(heading) + inputPowers.getY() * sin(heading);
         double powerY =  -inputPowers.getX() * sin(heading) + inputPowers.getY() * cos(heading);
+
+        opMode.telemetry.addData("final", new Pose2d(powerX, powerY, inputPowers.getHeading()));
         return new Pose2d(powerX, powerY, inputPowers.getHeading());
     }
 
@@ -109,18 +112,15 @@ public class DrivingSystem extends SampleMecanumDrive {
         return new Pose2d(pos.getX() / TILE_LENGTH, pos.getY() / TILE_LENGTH, realAngle(pos.getHeading()));
     }
 
-
-    public void regularDrive(Pose2d powers) {
-        this.setWeightedDrivePower(powers);
-    }
-
-
     public Pose2d adjustedPowers(Pose2d Powers) {
         return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getHeading() * 1.0);
     }
 
 
     public void allDrives(Pose2d inputPowers, boolean adjusted, boolean byAxis, boolean controlled) {
+        //update the location
+        update();
+
         opMode.telemetry.addData("input Powers ", inputPowers);
         Pose2d robotTileLocation = locationInTiles();
         Pose2d finalPower = new Pose2d();
@@ -132,18 +132,15 @@ public class DrivingSystem extends SampleMecanumDrive {
             finalPower = driveByAxisPowers(inputPowers, robotTileLocation.getHeading());
         }
 
-        if(adjusted) {
-            finalPower = adjustedPowers(inputPowers);
-        }
+        //if(adjusted) {
+        //    finalPower = adjustedPowers(inputPowers);
+        //}
 
-        opMode.telemetry.addData("final Powers ", finalPower);
-        regularDrive(finalPower);
+        setWeightedDrivePower(finalPower);
     }
 
     public void setLocationInTiles(double x, double y, double Heading) {
         setPoseEstimate(new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading));
     }
-
-
     
 }
