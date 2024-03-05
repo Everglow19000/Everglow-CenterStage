@@ -343,7 +343,7 @@ public class FourtyFivePoints {
 
         drive.followTrajectory(splineToPurple);
 
-       /* // GWheel - Drop Purple
+       // GWheel - Drop Purple
         switch (propPlace) {
             case LEFT:
                 drive.turn(PI / 2); //todo: if the turn is oposside (-Pi/2) then change it like it
@@ -361,9 +361,11 @@ public class FourtyFivePoints {
             if(System.currentTimeMillis()-time > 1000)
                 break;
         }
+
+        gWheelSystem.setPower(0); // G Wheel
+
         if(opMode.isStopRequested())
             return;
-        gWheelSystem.setPower(0); // G Wheel*/
 
 //        switch (propPlace) {
 //            case LEFT:
