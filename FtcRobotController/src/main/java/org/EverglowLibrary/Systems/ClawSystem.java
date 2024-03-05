@@ -44,7 +44,6 @@ public class ClawSystem{
     public class ClawExecutor extends Executor{
         private final boolean toClose;
         private long startTime = -1;
-        private final int waitTime = 800; //in milliseconds
 
         public ClawExecutor(boolean toClose){
             this.toClose = toClose;
@@ -60,7 +59,16 @@ public class ClawSystem{
         public boolean isFinished() {
             if(startTime == -1)
                 opMode.sleep(10);
-            return Calendar.getInstance().getTimeInMillis() - startTime >= waitTime;
+
+            //in milliseconds
+            int waitTime = 800;
+
+            if(Calendar.getInstance().getTimeInMillis() - startTime >= waitTime || (toClose && !open)) {
+                startTime = -1;
+                return true;
+            }
+            else
+                return false;
         }
 
         @Override
