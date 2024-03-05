@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -87,15 +89,30 @@ public class DrivingSystem extends SampleMecanumDrive {
         return new Pose2d(powerX, powerY, inputPowers.getHeading());
     }
 
+
+
     Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d axisPowers) {
 
         //telemetry.addData("axisPowers ", axisPowers);
         final double X = robotTileLocation.getX();
-        opMode.telemetry.addData("hitCheack", axisPowers.getX() -  (0.1 + (5.0 - X) / 4));
-        if(X > 4 && X < 5 && axisPowers.getX() > 0.1 + (5.0 - X) / 4) {
 
-            return new Pose2d(0.1 + (5.0 - X) / 4, axisPowers.getY(), axisPowers.getHeading());
+        //pMode.telemetry.addData("hitCheack", axisPowers.getX() -  (0.1 + (5.0 - X) / 4));
+        if((X > 4 && axisPowers.getX() > 0) || (X < 1.5 && axisPowers.getX() < 0)) {
+            final double minPower = 0.1, scalerDistance = 0.35;
+            double px = axisPowers.getX();
+
+            if(X > 4) {
+                double distanceTo = max(5 - X, 0);
+                px = min(px, minPower + scalerDistance * distanceTo);
+            }
+            else {
+                double distanceTo = max(X - 0.5, 0);
+                px = max(px, -minPower - scalerDistance * distanceTo);
+            }
+
+            return new Pose2d(px, axisPowers.getY(), axisPowers.getHeading());
         }
+
 
         if(X > 4 || X < 1) return axisPowers;
         if((X > 3.5 && axisPowers.getX() >= 0) || (X < 1.5 && axisPowers.getX() <= 0)) return axisPowers;
@@ -125,7 +142,7 @@ public class DrivingSystem extends SampleMecanumDrive {
 
 
     public Pose2d adjustedPowers(Pose2d Powers) {
-        return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getHeading() * 1.0);
+        return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getX() * -0.06 + Powers.getHeading() * 1.0);
     }
 
 
