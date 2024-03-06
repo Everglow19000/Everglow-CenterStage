@@ -90,6 +90,11 @@ public class FourtyFivePoints {
         return new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading);
     }
 
+    public Pose2d LocationInTiles() {
+        Pose2d location = drive.getPoseEstimate();
+        return new Pose2d(location.getX() / TILE_LENGTH, location.getY() / TILE_LENGTH, location.getY());
+    }
+
 
     /**
      * Mirrors any Pose2d from the left side to the right side
@@ -201,6 +206,10 @@ public class FourtyFivePoints {
     FourBarSystem fourBarSystem;
     GWheelSystem gWheelSystem;
 
+    CameraSystem cameraSystem;
+
+    SequenceRunner sequenceRunner;
+
 
 
 
@@ -237,13 +246,14 @@ public class FourtyFivePoints {
     StartPosition startPosition = StartPosition.FRONT_LEFT;
     CameraSystem.DetectionLocation propPlace = CameraSystem.DetectionLocation.RIGHT;
 
-    Trajectory trajLeftYellow, trajRightYellow, trajMiddleYellow, splineToPurple;
-    Trajectory trajParkMiddle, trajParkLeft, trajParkRight;
+    Trajectory splineToPurple;
+
 
     //ThreePose yellowDropLocations = new ThreePose();
 
     ThreeTrajectories threeYellowDropTrajectories = new ThreeTrajectories();
     ThreeTrajectories threeParkTrajectories = new ThreeTrajectories();
+    ThreeTrajectories threeMiddleForBackTrajectories = new ThreeTrajectories();
 
 
 
@@ -268,6 +278,13 @@ public class FourtyFivePoints {
     }
 
 
+    private  void Sleep(double seconeds) {
+        double time = 1000000 * seconeds;
+        sleep((int)time);
+    }
+
+
+
     public void firstCall(LinearOpMode opMode, StartPosition startPosition) throws InterruptedException{
         // Initalize Systems //
         this.opMode = opMode;
@@ -275,7 +292,7 @@ public class FourtyFivePoints {
         drive = new SampleMecanumDrive(opMode.hardwareMap);
         //drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        CameraSystem cameraSystem = new CameraSystem(opMode, isRight(), isBack());
+        cameraSystem = new CameraSystem(opMode, isRight(), isBack());
 
 
         elevatorSystem = new ElevatorSystem(opMode);
@@ -301,25 +318,43 @@ public class FourtyFivePoints {
         }
         drive.setPoseEstimate(tryRight(startLocation));
 
-
-
-        Pose2d middleDropLocation = PoseInTiles(3.5, 4.5, East);
+        Pose2d middleDropLocation = PoseInTiles(3.5, 4.5, South);
         splineToPurple = trajToPose(tryRight(startLocation), tryRight(middleDropLocation));
 
-        threeYellowDropTrajectories.setStartPose(tryRight(middleDropLocation));
+        if(isBack()) {
+            threeMiddleForBackTrajectories.setStartPose(tryRight(middleDropLocation));
+
+        }
+
+        else{
+            threeYellowDropTrajectories.setStartPose(tryRight(middleDropLocation));
+            Pose2d waitPosition = PoseInTiles(3.5, 3.5, South);
+            threeYellowDropTrajectories.setEndPose(tryRight(waitPosition));
+        }
+
+
+
+
+
+
+
+
         threeYellowDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(5, 4.5, South));
         threeYellowDropTrajectories.endLocations.poseLeft =
                 threeYellowDropTrajectories.endLocations.poseMiddle.plus(
                         new Pose2d(0, -distanceBetweenTags, 0));
         threeYellowDropTrajectories.endLocations.poseRight
                 = threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                        new Pose2d(0, distanceBetweenTags, 0));
+                new Pose2d(0, distanceBetweenTags, 0));
         threeYellowDropTrajectories.createTrajectories();
 
 
 
         Pose2d parkLocation = PoseInTiles(5.55, 5.6, South);
-        threeParkTrajectories.setEndPose(parkLocation);
+        if(isBack()) {
+            parkLocation.minus(PoseInTiles(0, 2, 0));
+        }
+        threeParkTrajectories.setEndPose(tryRight(parkLocation));
         threeParkTrajectories.startLocations = threeYellowDropTrajectories.endLocations;
         threeParkTrajectories.createTrajectories();
 
@@ -330,20 +365,36 @@ public class FourtyFivePoints {
 
         opMode.waitForStart();
 
-        propPlace = cameraSystem.DetectAndFindPropLocation();
-
-        runAfterInput();
     }
     
     
     public void runAfterInput() {
-        SequenceRunner sequenceRunner = new SequenceRunner();
+
+
+        propPlace = cameraSystem.DetectAndFindPropLocation();
+        opMode.telemetry.addData("Detectio ", propPlace);
+        opMode.telemetry.update();
+        Sleep(2);
+
+
+
+
+
+        sequenceRunner = new SequenceRunner();
 
         // set the correct start location
 
         drive.followTrajectory(splineToPurple);
 
-       // GWheel - Drop Purple
+        opMode.telemetry.addData("Location ", LocationInTiles());
+        opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations.poseMiddle);
+        opMode.telemetry.update();
+
+        Sleep(7);
+
+        drive.turnAsync(South);
+
+/*       // GWheel - Drop Purple
         switch (propPlace) {
             case LEFT:
                 drive.turn(PI / 2); //todo: if the turn is oposside (-Pi/2) then change it like it
@@ -385,18 +436,24 @@ public class FourtyFivePoints {
 //                    drive.turn(-PI / 2);
 //                }
 //                break;
-//        }
+//        }*/
 
 
 
-        opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations.poseMiddle);
+
         opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
 
-
         opMode.telemetry.update();
-        sleep(30000);
+
+        Sleep(3);
+
 
         threeYellowDropTrajectories.driveCorrectTrajectory();
+
+        opMode.telemetry.addData("Location ", LocationInTiles());
+        opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
+        opMode.telemetry.update();
+        Sleep(10);
 
     }
 
