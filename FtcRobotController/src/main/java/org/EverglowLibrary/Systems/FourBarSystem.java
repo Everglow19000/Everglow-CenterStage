@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem{
 
     public enum Level {
-        START(0), PICKUP(20), DROP(-630), REST(-541), LOW(-435); //344
+        START(15), PICKUP(15), DROP(-620), REST(-541), LOW(-435); //344
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -26,7 +26,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.55), DROP(0), REST(1), LOW(1);
+        PICKUP(0.55), DROP(0), REST(0.66), LOW(0.3);
 
         public final double state;
 
@@ -97,14 +97,15 @@ public class FourBarSystem{
 
     public void set4BarPosition(int target) {
         fourBarTarget = target;
-        if (fourBarTarget == Level.DROP.state && !isFinish(Level.DROP)) {
-            currentLevel = Level.DROP;
-            fourBarMotor.setTargetPosition(target+75);
-            opMode.telemetry.addLine("To virtual");
-        } else {
-            fourBarMotor.setTargetPosition(target);
-            opMode.telemetry.addLine("To actual");
-        }
+        fourBarMotor.setTargetPosition(target);
+//        if (fourBarTarget == Level.DROP.state && !isFinish(Level.DROP)) {
+//            currentLevel = Level.DROP;
+//            fourBarMotor.setTargetPosition(target+75);
+//            opMode.telemetry.addLine("To virtual");
+//        } else {
+//            fourBarMotor.setTargetPosition(target);
+//            opMode.telemetry.addLine("To actual");
+//        }
     }
     public void set4BarPositionByLevel(Level targetLevel) {
         currentLevel = targetLevel;
