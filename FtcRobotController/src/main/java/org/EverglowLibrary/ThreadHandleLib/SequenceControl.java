@@ -30,7 +30,7 @@ public class SequenceControl {
                         , FourBarSystem.ServoAngel.PICKUP)
                         , elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
-        getUpAndReadyToDrop = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+        getUpAndReadyToDrop = new Sequence(true, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
                 fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP,1));
     }
 
