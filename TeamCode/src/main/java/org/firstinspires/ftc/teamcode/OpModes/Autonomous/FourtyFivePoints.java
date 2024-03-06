@@ -301,6 +301,8 @@ public class FourtyFivePoints {
         gWheelSystem = new GWheelSystem(opMode);
 
         sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
+        sequenceRunner = new SequenceRunner();
+
 
         // Create all Sequences //
 
@@ -380,7 +382,6 @@ public class FourtyFivePoints {
 
 
 
-        sequenceRunner = new SequenceRunner();
 
         // set the correct start location
 
