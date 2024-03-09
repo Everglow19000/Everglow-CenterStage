@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.apache.commons.math3.analysis.function.Atan;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
@@ -124,13 +125,24 @@ public class TestControlledDrive extends LinearOpMode {
             double Px = -gamepad1.left_stick_y,
                    Py = -gamepad1.left_stick_x,
                    Pangle = -gamepad1.right_stick_x;
-            if(gamepad1.left_stick_button) {
+            if(Py != 0 && Px != 0){
+                if(abs(Py / Px) < 0.268) { // 15 degrees
+                    Py = 0;
+                }
+                else if(abs(Px / Py) < 0.1763) { // 10 degrees
+                    Px = 0;
+                }
+            }
+
+
+            if(gamepad1.right_bumper) { // little movements
                 Px /= 3;
                 Py /= 3;
-            }
-            if(gamepad1.right_stick_button) {
                 Pangle /= 5;
             }
+
+
+
             Pose2d powers = new Pose2d(Px, Py, Pangle);
 
 
