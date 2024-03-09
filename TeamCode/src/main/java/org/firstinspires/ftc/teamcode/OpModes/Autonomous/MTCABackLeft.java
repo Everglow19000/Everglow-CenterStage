@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class MTCABackLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        //FourtyFivePoints autonumous = new FourtyFivePoints();
-        //autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_LEFT);
+        FourtyFivePoints autonumous = new FourtyFivePoints();
+        autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_LEFT);
 
 
     }
