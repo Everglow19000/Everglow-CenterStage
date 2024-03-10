@@ -108,7 +108,7 @@ public class TestControlledDrive extends LinearOpMode {
         return angle;
     }
 
-    public Pose2d adjustedPowers(Pose2d Powers) {
+    public static Pose2d adjustedPowers(Pose2d Powers) {
         return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getHeading() * 1.0);
     }
 

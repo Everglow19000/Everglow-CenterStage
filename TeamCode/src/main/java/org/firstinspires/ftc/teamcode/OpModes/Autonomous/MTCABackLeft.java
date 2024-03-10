@@ -10,13 +10,25 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.EverglowLibrary.Systems.CameraSystem;
+
 @Autonomous(name = "MTCABackLeft")
 public class MTCABackLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         //FourtyFivePoints autonumous = new FourtyFivePoints();
         //autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_LEFT);
+        CameraSystem cs = new CameraSystem(this, true, true);
 
+        waitForStart();
 
+        cs.DetectAndFindPropLocation();
+        telemetry.update();
+        while (opModeIsActive()){
+            if(gamepad1.x){
+                cs.DetectAndFindPropLocation();
+                telemetry.update();
+            }
+        }
     }
 }

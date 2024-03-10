@@ -25,6 +25,8 @@ public class TwoDrivers_Sequences extends LinearOpMode {
     private boolean gwheel_toggle = false;
     private boolean claw_toggle = false;
     private boolean elevator_toggle = false;
+    private boolean left_Claw = false;
+    private boolean right_claw = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -71,7 +73,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 }
                 seq3_toggle = gamepad2.circle;
 
-                if(gamepad2.triangle && !seq4_toggle){
+                if(gamepad2.triangle && !seq4_toggle && !isRest){
                     sequenceRunner.RunSequence(getUpSeq);
                 }
                 seq4_toggle = gamepad2.triangle;
@@ -104,13 +106,15 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             elevator_toggle = gamepad1.square;
 
-            if(gamepad2.left_trigger > 0.8){
-                clawSystem.MoveOneClaw(true);
-            }
-
-            if(gamepad2.right_trigger > 0.8){
+            if(gamepad2.left_trigger > 0.8 && !left_Claw){
                 clawSystem.MoveOneClaw(false);
             }
+            left_Claw = gamepad2.left_trigger > 0.8;
+
+            if(gamepad2.right_trigger > 0.8 && !right_claw){
+                clawSystem.MoveOneClaw(true);
+            }
+            right_claw = gamepad2.right_trigger > 0.8;
 
             drive.setWeightedDrivePower(
                     new Pose2d(

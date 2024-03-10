@@ -26,6 +26,17 @@ public class MTCABackRight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //FourtyFivePoints autonumous = new FourtyFivePoints();
         //autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_RIGHT);
+        CameraSystem cs = new CameraSystem(this, false,true);
 
+        waitForStart();
+
+        cs.DetectAndFindPropLocation();
+        telemetry.update();
+        while (opModeIsActive()){
+            if(gamepad1.x){
+                cs.DetectAndFindPropLocation();
+                telemetry.update();
+            }
+        }
     }
 }
