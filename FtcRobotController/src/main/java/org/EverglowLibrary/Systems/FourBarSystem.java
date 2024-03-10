@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem{
 
     public enum Level {
-        START(-12), PICKUP(-12), DROP(344), REST(267), LOW(250);
+        START(0), PICKUP(0), DROP(-600), REST(-541), LOW(-435); //344
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -26,7 +26,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.445), DROP(0.14), REST(0.66), LOW(0.3);
+        PICKUP(0.55), DROP(0), REST(1), LOW(1);
 
         public final double state;
 
@@ -45,6 +45,7 @@ public class FourBarSystem{
     double fourBarTarget = 0;
 
     public FourBarSystem(LinearOpMode opMode){
+
         this.opMode = opMode;
         fourBarMotor = opMode.hardwareMap.get(DcMotorEx .class, "4Bar");
         clawAngelServo = opMode.hardwareMap.get(Servo.class, "FlipServo");
@@ -57,9 +58,9 @@ public class FourBarSystem{
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         PIDFCoefficients pid = fourBarMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
         pid.i = 1.5;
-        pid.p = 10;
-        pid.d = 2;
-        pid.f = 0;
+        pid.p = 40;
+        pid.d = 5;
+        pid.f = 1;
 
         fourBarMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
 
@@ -67,9 +68,16 @@ public class FourBarSystem{
     }
 
     public boolean isFinish(Level level){
-        int epsilon4Bar = 12;
+        int epsilon4Bar = 5;
         return (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
+    }
+
+    public Level getTargetPosition(){
+        return currentLevel;
+    }
+    public DcMotorEx getFourBarMotor(){
+        return this.fourBarMotor;
     }
 
     public int getCurrentMotorPosition() {
@@ -90,7 +98,14 @@ public class FourBarSystem{
 
     public void set4BarPosition(int target) {
         fourBarTarget = target;
-        fourBarMotor.setTargetPosition(target);
+        if (fourBarTarget == Level.DROP.state && !isFinish(Level.DROP)) {
+            currentLevel = Level.DROP;
+            fourBarMotor.setTargetPosition(target+75);
+            opMode.telemetry.addLine("To virtual");
+        } else {
+            fourBarMotor.setTargetPosition(target);
+            opMode.telemetry.addLine("To actual");
+        }
     }
     public void set4BarPositionByLevel(Level targetLevel) {
         currentLevel = targetLevel;
@@ -192,6 +207,7 @@ public class FourBarSystem{
 
         @Override
         public boolean isFinished() {
+            //set4BarPositionByLevel(m_Level);
             return isFinish(m_Level);
         }
 

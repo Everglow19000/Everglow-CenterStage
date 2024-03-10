@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 
+import static org.firstinspires.ftc.teamcode.OpModes.DriverControl.TestControlledDrive.PoseInTiles;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,8 +17,8 @@ import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "TwoDrivers_Sequences", group = "main-drive")
-public class TwoDrivers_Sequences extends LinearOpMode {
+@TeleOp(name = "DriveByAxis_Sequence", group = "main-drive")
+public class DriveByAxis_Sequence extends LinearOpMode {
 
     private boolean seq1_toggle = false;
     private boolean seq2_toggle = false;
@@ -39,29 +41,27 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         double servoPos = 0.15; //open servo mode
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
-        Sequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
+        SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
         Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
         Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
         SequenceRunner sequenceRunner = new SequenceRunner();
-
-        boolean isRest;
+        Pose2d powerSet;
 
         sequenceControl = null; // no more use for that
 
         waitForStart();
 
         fourBarSystem.setMotorPower(0.85);
+        //drive.setPoseEstimate(PoseInTiles(4, 4, 0));
 
         while (opModeIsActive()){
-            isRest = elevatorSystem.getCurrentPos() == ElevatorSystem.Level.DOWN
-                    && fourBarSystem.getTargetLevel() == FourBarSystem.Level.PICKUP;
             try {
                 if(gamepad2.square && !seq1_toggle){
                     sequenceRunner.RunSequence(getReadyToDropSeq);
                 }
                 seq1_toggle = gamepad2.square;
 
-                if(gamepad2.cross && !seq2_toggle && !isRest){
+                if(gamepad2.cross && !seq2_toggle){
                     sequenceRunner.RunSequence(dropAndRetreatSeq);
                 }
                 seq2_toggle = gamepad2.cross;
@@ -77,15 +77,15 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 seq4_toggle = gamepad2.triangle;
             }catch (Exception e){
                 telemetry.addData("exeption", e);
+                telemetry.update();
             }
 
-            if(gamepad2.left_bumper && !claw_toggle){
+            if(gamepad2.right_bumper && !claw_toggle){
                 clawSystem.toggle();
             }
-            claw_toggle = gamepad2.left_bumper;
+            claw_toggle = gamepad2.right_bumper;
 
             if(gamepad1.right_bumper && !gwheel_toggle){
-                clawSystem.ChangePos(false);
                 gWheelSystem.toggle(true);
             }
 
@@ -94,7 +94,6 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper && !gwheel_toggle){
-                clawSystem.ChangePos(false);
                 gWheelSystem.toggle(false);
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
@@ -104,34 +103,19 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             elevator_toggle = gamepad1.square;
 
-            if(gamepad2.left_trigger > 0.8){
-                clawSystem.MoveOneClaw(true);
-            }
+            powerSet = TestControlledDrive.driveByAxis(new Pose2d(-gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x), TestControlledDrive.realAngle(drive.getPoseEstimate().getHeading()));
 
-            if(gamepad2.right_trigger > 0.8){
-                clawSystem.MoveOneClaw(false);
-            }
-
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
-                    )
-            );
+            drive.setWeightedDrivePower(TestControlledDrive.adjustedPowers(powerSet));
 
             drive.update();
             sequenceRunner.Update();
-            if(fourBarSystem.getTargetPosition() == FourBarSystem.Level.DROP)
-                fourBarSystem.set4BarPositionByLevel(fourBarSystem.getTargetPosition());
-
-            telemetry.addData("is finished?",
-                    fourBarSystem.isFinish(fourBarSystem.getTargetPosition()));
-            //fourBarSystem.updateP(0.8);
-            telemetry.update();
+            fourBarSystem.updateP(0.8);
         }
         sequenceRunner.Interapt();
         sleep(1000);
     }
 
 }
+

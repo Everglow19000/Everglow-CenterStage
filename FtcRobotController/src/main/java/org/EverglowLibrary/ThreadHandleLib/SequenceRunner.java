@@ -2,6 +2,8 @@ package org.EverglowLibrary.ThreadHandleLib;
 
 import org.EverglowLibrary.Systems.Executor;
 
+import java.util.Calendar;
+
 public class SequenceRunner {
     private boolean m_IsFinished = true;
     private Sequence m_RunningSequence;
@@ -12,6 +14,7 @@ public class SequenceRunner {
     private boolean isInterapted = false;
     private boolean isSync;
     private Thread RunThread; //makes longer runs without
+    private Long startTime;
 
     public SequenceRunner(Sequence sequence){
         TrySetSequence(sequence);
@@ -34,6 +37,7 @@ public class SequenceRunner {
     }
 
     public void Update(){
+        int countInSec = 3;
         if(m_Runs == null)
             return;
 
@@ -43,7 +47,8 @@ public class SequenceRunner {
             return;
         }
 
-        if(m_Runs[CurrentRun].isFinished() || !isSync){
+        if(m_Runs[CurrentRun].isFinished() || !isSync
+                || Calendar.getInstance().getTimeInMillis() - startTime >= countInSec*1000){
             CurrentRun++;
             if(CurrentRun < m_Runs.length){
                 RunThread = new Thread(m_Runs[CurrentRun]);
@@ -69,6 +74,7 @@ public class SequenceRunner {
     public void RunSequence(){
         if(m_IsFinished && m_RunningSequence != null)
         {
+            startTime = Calendar.getInstance().getTimeInMillis();
             m_IsFinished = false;
             m_Runs = m_RunningSequence.GetRuns();
             isSync = m_RunningSequence.isSequenceSync();

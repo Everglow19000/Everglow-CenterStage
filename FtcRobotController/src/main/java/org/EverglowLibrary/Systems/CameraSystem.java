@@ -23,9 +23,7 @@ public class CameraSystem {
     private final OpMode m_OpMode;
     private final VisionPortal m_Camera;
     private final TfodProcessor m_Prop;
-
-
-    private final double MIN_RIGHT_LOCATION = 300;
+    private final boolean m_IsBack;
 
     private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/RedRocketFile.tflite"; //model_20240130_235607
     private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueCubeFile.tflite";
@@ -42,6 +40,7 @@ public class CameraSystem {
         LEFT, MIDDLE, RIGHT
     }
     public CameraSystem(OpMode opMode){
+        m_IsBack = false;
         m_OpMode = opMode;
         m_Prop = new TfodProcessor
                 .Builder()
@@ -68,16 +67,16 @@ public class CameraSystem {
         m_Camera =  builder.build();
     }
 
-    public CameraSystem(OpMode opMode, boolean isRedProp)
+    public CameraSystem(OpMode opMode, boolean isRedProp, boolean isBack)
     {
-
+        m_IsBack = isBack;
         m_OpMode = opMode;
         if(isRedProp)
         {
             m_Prop = new TfodProcessor
                     .Builder()
                     .setModelFileName(TFOD_MODEL_FILE_RED)
-                    .setModelLabels(LABEL_BLUE)
+                    .setModelLabels(LABEL_RED)
                     .setIsModelTensorFlow2(true)
                     .setIsModelQuantized(true)
                     .setModelInputSize(300)
@@ -189,7 +188,6 @@ public class CameraSystem {
 
     public DetectionLocation DetectAndFindPropLocation(){
         //takes time!
-
         DetectionLocation detectionLocation = null;
         long start = System.currentTimeMillis();
         final int TIME_WAIT_MILL = 3 * 1000;
@@ -210,12 +208,13 @@ public class CameraSystem {
             detectionLocation = DetectionLocation.RIGHT;
 
         m_OpMode.telemetry.addData("finished detection; point:", detectionLocation.name());
-        m_OpMode.telemetry.update();
+
         return detectionLocation;
     }
 
     public DetectionLocation RecognitionToLocation(Recognition recognition){
-
+        double MIN_RIGHT_LOCATION = 300;
+        double MIN_LEFT_LOCATION = 500;
         if(recognition == null){
             return DetectionLocation.LEFT;
         }
@@ -223,12 +222,26 @@ public class CameraSystem {
         double distanceFromCameraX;
         distanceFromCameraX = ConvertRecognitionToPos(recognition, true);
 
-        if(distanceFromCameraX <= MIN_RIGHT_LOCATION)
-            return DetectionLocation.LEFT;
-        else
-            return DetectionLocation.MIDDLE;
+        if(m_IsBack){
+            m_OpMode.telemetry.addLine("In the Back");
+            m_OpMode.telemetry.addData("distance", distanceFromCameraX);
+            MIN_RIGHT_LOCATION = 180;
+            if(distanceFromCameraX <= MIN_LEFT_LOCATION && distanceFromCameraX >= MIN_RIGHT_LOCATION)
+                return DetectionLocation.MIDDLE;
+            else if (distanceFromCameraX <= MIN_RIGHT_LOCATION)
+                return DetectionLocation.LEFT;
+            else
+                return DetectionLocation.RIGHT;
+        }
+        else {
+            if (distanceFromCameraX <= MIN_RIGHT_LOCATION)
+                return DetectionLocation.LEFT;
+            else
+                return DetectionLocation.MIDDLE;
+        }
 
     }
+
     public double ConvertRecognitionToPos(Recognition rec, boolean isX){
         if(isX)
             return (rec.getLeft() + rec.getRight()) / 2 ;

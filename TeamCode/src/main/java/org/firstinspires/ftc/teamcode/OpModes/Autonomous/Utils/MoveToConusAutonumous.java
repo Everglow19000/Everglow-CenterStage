@@ -46,7 +46,7 @@ public class MoveToConusAutonumous{
             , StartPosition startPosition, SampleMecanumDrive drive){
         double angleRatio = 1;
         GWheelSystem gWheelSystem = new GWheelSystem(opMode);
-        CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft());
+        CameraSystem cameraSystem = new CameraSystem(opMode, !startPosition.isLeft(), !startPosition.isFront());
         FourBarSystem fourBarSystem = new FourBarSystem(opMode);
         ElevatorSystem elevatorSystem = new ElevatorSystem(opMode);
         ClawSystem clawSystem = new ClawSystem(opMode);
