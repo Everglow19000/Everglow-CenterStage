@@ -18,12 +18,14 @@ public class TestDrivingSystem extends LinearOpMode {
 
         waitForStart();
 
-        boolean ajust = true, axis = true, control = false;
+        boolean ajust = true, axis = true, control = false, slow = false;
 
         while(opModeIsActive()) {
             if(gamepad1.circle) ajust = !ajust;
             if(gamepad1.triangle) axis = !axis;
             if(gamepad1.square) control = !control;
+
+            if(gamepad1.circle) slow = !slow;
 
             if(ajust) telemetry.addLine("Ajusted powers is On");
             if(axis) telemetry.addLine("Axis powers is On");
@@ -48,7 +50,7 @@ public class TestDrivingSystem extends LinearOpMode {
                 }
             }
 
-            if(gamepad1.right_bumper) { // little movements
+            if(slow) { // little movements
                 Px /= 3;
                 Py /= 3;
                 Pangle /= 5;
