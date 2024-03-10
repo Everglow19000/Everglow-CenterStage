@@ -111,6 +111,10 @@ public class FourBarSystem{
         }
     }
 
+    public Level getTargetLevel() {
+        return currentLevel;
+    }
+
     public void toggleAngleServo() {
         if(currentLevel == Level.START || currentLevel == Level.PICKUP) {
             setServoPositionByLevel(ServoAngel.DROP);

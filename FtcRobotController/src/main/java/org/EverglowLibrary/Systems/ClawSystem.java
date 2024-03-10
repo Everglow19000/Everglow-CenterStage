@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 public class ClawSystem{
     private boolean open = false;
-    final private double leftClosed = 0.7, leftOpen = 0, rightClosed = 0.4, rightOpen = 1;
+    private final double leftClosed = 0.7, leftOpen = 0, rightClosed = 0.4, rightOpen = 1;
     private final LinearOpMode opMode;
 
     Servo ClawR, ClawL;
@@ -37,6 +37,52 @@ public class ClawSystem{
         ChangePos(!open);
     }
 
+    public void MoveOneClaw(boolean isLeft, boolean toOpen){
+        if(toOpen){
+            if (isLeft){
+                ClawL.setPosition(leftOpen);
+            }
+            else {
+                ClawR.setPosition(rightOpen);
+            }
+        }
+        else{
+            if (isLeft){
+                ClawL.setPosition(leftClosed);
+            }
+            else{
+                ClawR.setPosition(rightClosed);
+            }
+        }
+
+        if(ClawR.getPosition() == rightClosed && ClawL.getPosition() == leftClosed){
+            open = false;
+        }
+        else if(ClawR.getPosition() == rightOpen && ClawL.getPosition() == leftOpen){
+            open = true;
+        }
+    }
+
+    public void MoveOneClaw(boolean isLeft){
+        if(isLeft){
+            if(ClawL.getPosition() == leftOpen){
+                MoveOneClaw(isLeft,false);
+            }
+            else
+            {
+                MoveOneClaw(isLeft,true);
+            }
+        }
+        else {
+            if(ClawR.getPosition() == rightOpen){
+                MoveOneClaw(isLeft,false);
+            }
+            else
+            {
+                MoveOneClaw(isLeft,true);
+            }
+        }
+    }
     public Executor getExecutor(boolean toOpen){
         return new ClawExecutor(toOpen);
     }

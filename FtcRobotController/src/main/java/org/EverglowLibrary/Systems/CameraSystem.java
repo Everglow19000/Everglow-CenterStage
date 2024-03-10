@@ -27,15 +27,15 @@ public class CameraSystem {
 
     private final double MIN_RIGHT_LOCATION = 300;
 
-    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
-    private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueModle.tflite";
+    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/RedRocketFile.tflite"; //model_20240130_235607
+    private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueCubeFile.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABEL_RED = {
-            "RedConus"
+            "RedRocket"
     };
 
     private static final String[] LABEL_BLUE = {
-            "BlueConus"
+            "BlueCube"
     };
 
     public enum DetectionLocation{

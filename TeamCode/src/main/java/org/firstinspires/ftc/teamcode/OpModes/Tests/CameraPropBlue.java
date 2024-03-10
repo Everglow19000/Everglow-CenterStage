@@ -36,7 +36,6 @@ public class CameraPropBlue extends LinearOpMode {
         telemetry.update();
         while (opModeIsActive()) {
             List<Recognition> recognitions = cs.DetectProp();
-
             for (Recognition rec :
                     recognitions) {
                 telemetry.addData("rec -> x: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, true)));
