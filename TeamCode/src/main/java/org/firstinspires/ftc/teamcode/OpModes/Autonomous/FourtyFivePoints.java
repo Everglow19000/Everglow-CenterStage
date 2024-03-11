@@ -327,7 +327,7 @@ public class FourtyFivePoints {
     StartPosition startPosition = StartPosition.FRONT_LEFT;
     CameraSystem.DetectionLocation propPlace = CameraSystem.DetectionLocation.RIGHT;
 
-    Trajectory splineToPurple;
+    Trajectory splineToPurple, trajMiddleForBack;
 
     ThreeTrajectories threePurpleDropTrajectories = new ThreeTrajectories();
 
@@ -371,7 +371,7 @@ public class FourtyFivePoints {
         // Create all Sequences //
         dropPurpleSeq  = new Sequence(false,
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
-                fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.LOW),
+                fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.DROP),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)
         );
 
@@ -417,7 +417,7 @@ public class FourtyFivePoints {
             threeMiddleForBackTrajectories.setEndPose(tryRight(waitLocation));
             threeMiddleForBackTrajectories.createMiddleTrajectories();*/
 
-            Trajectory trajMiddleForBack = trajMiddleLinearHeading(tryRight(new Pose2d(middleDropLocation.getX(), middleDropLocation.getY(), South)),
+            trajMiddleForBack = trajMiddleLinearHeading(tryRight(new Pose2d(middleDropLocation.getX(), middleDropLocation.getY(), South)),
                     tryRight(waitMiddleLocation),
                     tryRight(waitLocation));
 
@@ -523,24 +523,41 @@ public class FourtyFivePoints {
         opMode.telemetry.addData("Detection ", propPlace);
         opMode.telemetry.update();
 
-        dropPurpleSeq.startSequence();
 
-        drive.followTrajectory(splineToPurple);
+        sleep(1000 * 1);
+
+        drive.setPoseEstimate(PoseInTiles(3.5, 4.5, South));
+
+        drive.followTrajectory(threeYellowDropTrajectories.trajMiddle);
+
+
+
+        opMode.telemetry.addLine("finished");
+        opMode.telemetry.update();
+
+
+        while(opMode.opModeIsActive()){
+
+        }
+
+       /* drive.followTrajectory(splineToPurple);
         //threePurpleDropTrajectories.driveCorrectTrajectory();
 
-        /*opMode.telemetry.addData("Location ", LocationInTiles());
+        *//*opMode.telemetry.addData("Location ", LocationInTiles());
         opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations.poseMiddle);
         opMode.telemetry.update();
-*/
+*//*
 
-        /*if(isBack()) {
+        *//*if(isBack()) {
             drive.turnAsync(South);
         }
         else{
             drive.turnAsync(North);
-        }*/
+        }*//*
 
         // Drop Purple
+        dropPurpleSeq.startSequence();
+
         switch (propPlace) {
             case LEFT:
                 drive.turn(-PI/2);
@@ -556,7 +573,7 @@ public class FourtyFivePoints {
         while (!opMode.isStopRequested()){
             if(dropPurpleSeq.isDone()){
                 clawSystem.ChangePos(true);
-                sleep(600);
+                sleep(1000);
                 break;
             }
         }
@@ -573,15 +590,16 @@ public class FourtyFivePoints {
         }
 
         if(isBack()) {
-            threeMiddleForBackTrajectories.driveCorrectTrajectory();
+            drive.followTrajectory(trajMiddleForBack);
+            //threeMiddleForBackTrajectories.driveCorrectTrajectory();
             opMode.sleep(10 * 1000);
         }
 
         // drop Yellow Sequance
-        dropYellow.startSequence();
 
-        /*opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
-        opMode.telemetry.update();*/
+
+        *//*opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
+        opMode.telemetry.update();*//*
 
         threeYellowDropTrajectories.driveCorrectTrajectory();
 
@@ -601,10 +619,8 @@ public class FourtyFivePoints {
             }
         }
 
-        threeParkTrajectories.driveCorrectTrajectory();
+        threeParkTrajectories.driveCorrectTrajectory();*/
 
     }
 
 }
-
-

@@ -59,6 +59,11 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                     && fourBarSystem.getTargetLevel() == FourBarSystem.Level.PICKUP;
             try {
                 if(gamepad2.square && !seq1_toggle){
+                    if(!isRest && sequenceRunner.IsSequenceDone()){
+                        elevatorSystem.goTo(ElevatorSystem.Level.UP.state);
+                        seq1_toggle = gamepad2.square;
+                        continue;
+                    }
                     sequenceRunner.RunSequence(getReadyToDropSeq);
                 }
                 seq1_toggle = gamepad2.square;
@@ -69,14 +74,25 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 seq2_toggle = gamepad2.cross;
 
                 if(gamepad2.circle && !seq3_toggle){
+                    if(!isRest && sequenceRunner.IsSequenceDone()){
+                        elevatorSystem.goTo(ElevatorSystem.Level.DOWN.state);
+                        seq3_toggle = gamepad2.circle;
+                        continue;
+                    }
                     sequenceRunner.RunSequence(setUpAndUnderBlockSeq);
                 }
                 seq3_toggle = gamepad2.circle;
 
-                if(gamepad2.triangle && !seq4_toggle && !isRest){
+                if(gamepad2.triangle && !seq4_toggle){
+                    if(!isRest && sequenceRunner.IsSequenceDone()){
+                        elevatorSystem.goTo(ElevatorSystem.Level.MED.state);
+                        seq4_toggle = gamepad2.triangle;
+                        continue;
+                    }
                     sequenceRunner.RunSequence(MiddleDrop);
                 }
                 seq4_toggle = gamepad2.triangle;
+
             }catch (Exception e){
                 telemetry.addData("exeption", e);
             }
@@ -87,7 +103,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             claw_toggle = gamepad2.left_bumper;
 
             if(gamepad1.right_bumper && !gwheel_toggle){
-                clawSystem.ChangePos(true);
+                //clawSystem.ChangePos(true);
                 gWheelSystem.toggle(true);
             }
 
@@ -96,7 +112,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper && !gwheel_toggle){
-                clawSystem.ChangePos(true);
+                //clawSystem.ChangePos(true);
                 gWheelSystem.toggle(false);
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
@@ -137,5 +153,4 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         sequenceRunner.Interapt();
         sleep(1000);
     }
-
 }

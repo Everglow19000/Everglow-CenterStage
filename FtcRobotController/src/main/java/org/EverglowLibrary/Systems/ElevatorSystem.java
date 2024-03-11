@@ -103,7 +103,7 @@ public class ElevatorSystem{
     }
 
     public void toggleMax(){
-        final double upPower = 0.65;
+        final double upPower = 0.9;
         if(ElevatorCurrentLevel != Level.MAX_UP)
         {
             ElevatorCurrentLevel = Level.MAX_UP;
@@ -121,7 +121,7 @@ public class ElevatorSystem{
 
     public class ElevatorExecutor extends Executor{
         private Level toRun = null;
-        private double Power = 0.7;
+        private double Power = 0.75;
 
         public ElevatorExecutor(){
             //ElevatorCurrentLevel = Level.DOWN;
