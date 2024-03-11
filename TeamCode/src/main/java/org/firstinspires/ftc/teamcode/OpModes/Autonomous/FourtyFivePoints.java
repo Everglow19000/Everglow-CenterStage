@@ -348,15 +348,6 @@ public class FourtyFivePoints {
     ////////////////////
     ////////////////////
 
-
-
-    private  void Sleep(double seconeds) {
-        double time = 1000000 * seconeds;
-        sleep((int)time);
-    }
-
-
-
     public void firstCall(LinearOpMode opMode, StartPosition startPosition) throws InterruptedException{
         // Initalize Systems //
         this.opMode = opMode;
@@ -532,13 +523,10 @@ public class FourtyFivePoints {
         opMode.telemetry.addData("Detection ", propPlace);
         opMode.telemetry.update();
 
-        Sleep(2);
-
         dropPurpleSeq.startSequence();
 
-
         drive.followTrajectory(splineToPurple);
-        threePurpleDropTrajectories.driveCorrectTrajectory();
+        //threePurpleDropTrajectories.driveCorrectTrajectory();
 
         /*opMode.telemetry.addData("Location ", LocationInTiles());
         opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations.poseMiddle);
@@ -556,41 +544,62 @@ public class FourtyFivePoints {
         switch (propPlace) {
             case LEFT:
                 drive.turn(-PI/2);
+                break;
             case RIGHT:
                 drive.turn(PI/2);
+                break;
+            case MIDDLE:
+                drive.turn(PI);
+                break;
         }
 
-        clawSystem.ChangePos(true);
+        while (!opMode.isStopRequested()){
+            if(dropPurpleSeq.isDone()){
+                clawSystem.ChangePos(true);
+                sleep(600);
+                break;
+            }
+        }
 
         // Sequance drop
         returnFromPurple.startSequence();
 
         turnTo(South);
 
-        sleep(1000);
+        while (!opMode.isStopRequested()){
+            if(returnFromPurple.isDone()){
+                break;
+            }
+        }
 
         if(isBack()) {
             threeMiddleForBackTrajectories.driveCorrectTrajectory();
-            Sleep(10);
+            opMode.sleep(10 * 1000);
         }
 
         // drop Yellow Sequance
-
-
-
         dropYellow.startSequence();
-
 
         /*opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
         opMode.telemetry.update();*/
 
         threeYellowDropTrajectories.driveCorrectTrajectory();
 
-        clawSystem.ChangePos(true);
-
+        while (!opMode.isStopRequested()){
+            if(dropYellow.isDone()){
+                clawSystem.ChangePos(true);
+                sleep(600);
+                break;
+            }
+        }
 
         returnSystemsToStart.startSequence();
 
+        while (!opMode.isStopRequested()){
+            if(returnSystemsToStart.isDone()){
+                break;
+            }
+        }
 
         threeParkTrajectories.driveCorrectTrajectory();
 
