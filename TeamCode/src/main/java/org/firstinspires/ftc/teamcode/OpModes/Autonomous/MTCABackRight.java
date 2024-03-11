@@ -24,19 +24,8 @@ import org.firstinspires.ftc.teamcode.util.ExecutorUtils.ExecutorTrajectories;
 public class MTCABackRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        //FourtyFivePoints autonumous = new FourtyFivePoints();
-        //autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_RIGHT);
-        CameraSystem cs = new CameraSystem(this, false,true);
+        FourtyFivePoints autonumous = new FourtyFivePoints();
+        autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_RIGHT);
 
-        waitForStart();
-
-        cs.DetectAndFindPropLocation();
-        telemetry.update();
-        while (opModeIsActive()){
-            if(gamepad1.x){
-                cs.DetectAndFindPropLocation();
-                telemetry.update();
-            }
-        }
     }
 }

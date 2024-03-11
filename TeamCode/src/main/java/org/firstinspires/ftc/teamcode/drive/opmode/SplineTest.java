@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static java.lang.Math.PI;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -10,7 +12,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous(group = "drive")
+@Autonomous(group = "drive", name = "SplineTest")
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,15 +23,19 @@ public class SplineTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d(0,0))
-                .splineTo(new Vector2d(100, 100),0)
+                .splineTo(new Vector2d(0, 50), PI/2)
+                .splineTo(new Vector2d(100, 100), 0)
                 .build();
         drive.followTrajectory(traj);
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("firstX", poseEstimate.getX());
-        telemetry.addData("firstY", poseEstimate.getY());
-        telemetry.addData("firstHeading", poseEstimate.getHeading());
-        telemetry.update();
+        while (opModeIsActive()) {
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            telemetry.addData("firstX", poseEstimate.getX());
+            telemetry.addData("firstY", poseEstimate.getY());
+            telemetry.addData("firstHeading", poseEstimate.getHeading());
+            telemetry.update();
+        }
+
 
         /*sleep(2000);
         drive.followTrajectory(
