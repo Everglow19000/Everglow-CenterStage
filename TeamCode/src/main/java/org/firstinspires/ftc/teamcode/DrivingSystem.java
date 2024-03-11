@@ -71,14 +71,14 @@ public class DrivingSystem extends SampleMecanumDrive {
 
     private Pose2d PassPowers(Pose2d robotTileLocation, Pose2d axisPowers) {
         final double X = robotTileLocation.getX(), Y = robotTileLocation.getY();
-        double deviationX;
+        double deviationX = 0;
         if(X > 3.5) deviationX = X - 3.5;
         if(X < 1.5) deviationX = 1.5 - X;
 
         double deviationY = chooseLain(robotTileLocation) - Y;
 
-        Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
-        Pr = anglePower(robotTileLocation.getHeading());
+        double Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
+        double Pr = anglePower(robotTileLocation.getHeading());
 
         return new Pose2d(axisPowers.getX(), Py, Pr);
         //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
@@ -140,6 +140,8 @@ public class DrivingSystem extends SampleMecanumDrive {
         return new Pose2d(px, py, axisPowers.getHeading());
 
     }
+
+
 
 
     double realAngle(double angle) {
