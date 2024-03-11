@@ -23,17 +23,17 @@ public class CameraSystem {
     private final OpMode m_OpMode;
     private final VisionPortal m_Camera;
     private final TfodProcessor m_Prop;
-    private final boolean m_IsBack;
+    public boolean m_IsBack;
 
-    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/model_20240130_235607.tflite";
-    private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueModle.tflite";
+    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/RedRocketFile.tflite"; //model_20240130_235607
+    private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueCubeFile.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABEL_RED = {
-            "RedConus"
+            "RedRocket"
     };
 
     private static final String[] LABEL_BLUE = {
-            "BlueConus"
+            "BlueCube"
     };
 
     public enum DetectionLocation{
@@ -69,7 +69,12 @@ public class CameraSystem {
 
     public CameraSystem(OpMode opMode, boolean isRedProp, boolean isBack)
     {
+        this(opMode, isRedProp);
         m_IsBack = isBack;
+    }
+
+    public CameraSystem(OpMode opMode, boolean isRedProp)
+    {
         m_OpMode = opMode;
         if(isRedProp)
         {
@@ -108,11 +113,9 @@ public class CameraSystem {
 
         m_Camera =  builder.build();
     }
-
     public List<AprilTagDetection> DetectAprilTags(){
         return m_AprilTag.getDetections();
     }
-
     public Dictionary<AprilTagDetection,DetectionLocation> GetDetectionLocation(List<AprilTagDetection> detections){
         if(detections.size() == 0)
             return new Hashtable<AprilTagDetection,DetectionLocation>();

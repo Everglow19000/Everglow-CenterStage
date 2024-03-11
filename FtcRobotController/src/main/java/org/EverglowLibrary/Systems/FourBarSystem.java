@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem{
 
     public enum Level {
-        START(15), PICKUP(15), DROP(-620), REST(-541), LOW(-435); //344
+        START(0), PICKUP(0), DROP(-720), REST(-720), LOW(-435); //344
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -26,7 +26,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.55), DROP(0), REST(0.66), LOW(0.3);
+        PICKUP(0.55), DROP(0), REST(1), LOW(1);
 
         public final double state;
 
@@ -52,6 +52,7 @@ public class FourBarSystem{
         clawAngelServo.setPosition(ServoAngel.PICKUP.state);
 
         //fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
+
         fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -97,15 +98,14 @@ public class FourBarSystem{
 
     public void set4BarPosition(int target) {
         fourBarTarget = target;
-        fourBarMotor.setTargetPosition(target);
-//        if (fourBarTarget == Level.DROP.state && !isFinish(Level.DROP)) {
-//            currentLevel = Level.DROP;
-//            fourBarMotor.setTargetPosition(target+75);
-//            opMode.telemetry.addLine("To virtual");
-//        } else {
-//            fourBarMotor.setTargetPosition(target);
-//            opMode.telemetry.addLine("To actual");
-//        }
+        if (fourBarTarget == Level.DROP.state && !isFinish(Level.DROP)) {
+            currentLevel = Level.DROP;
+            fourBarMotor.setTargetPosition(target+75);
+            opMode.telemetry.addLine("To virtual");
+        } else {
+            fourBarMotor.setTargetPosition(target);
+            opMode.telemetry.addLine("To actual");
+        }
     }
     public void set4BarPositionByLevel(Level targetLevel) {
         currentLevel = targetLevel;
@@ -124,6 +124,10 @@ public class FourBarSystem{
         else{
             set4BarPositionByLevel(Level.PICKUP);
         }
+    }
+
+    public Level getTargetLevel() {
+        return currentLevel;
     }
 
     public void toggleAngleServo() {

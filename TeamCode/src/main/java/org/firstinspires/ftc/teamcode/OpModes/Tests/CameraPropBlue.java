@@ -21,9 +21,14 @@ import java.util.List;
 
 @TeleOp(name = "Camera Prop blue", group = "test")
 public class CameraPropBlue extends LinearOpMode {
+
+    //make more attributes & functions
+    VisionPortal camera;
+    AprilTagProcessor aprilTag;
+
     @Override
     public void runOpMode(){
-        CameraSystem cs = new CameraSystem(this, false, false);
+        CameraSystem cs = new CameraSystem(this, false);
         telemetry.addLine("ready");
         telemetry.update();
         waitForStart();
@@ -31,7 +36,6 @@ public class CameraPropBlue extends LinearOpMode {
         telemetry.update();
         while (opModeIsActive()) {
             List<Recognition> recognitions = cs.DetectProp();
-            cs.DetectAndFindPropLocation();
             for (Recognition rec :
                     recognitions) {
                 telemetry.addData("rec -> x: ", CameraSystem.ConvertInchToCm(cs.ConvertRecognitionToPos(rec, true)));

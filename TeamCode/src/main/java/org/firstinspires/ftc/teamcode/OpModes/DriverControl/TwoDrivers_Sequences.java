@@ -25,6 +25,8 @@ public class TwoDrivers_Sequences extends LinearOpMode {
     private boolean gwheel_toggle = false;
     private boolean claw_toggle = false;
     private boolean elevator_toggle = false;
+    private boolean left_Claw = false;
+    private boolean right_claw = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -39,10 +41,12 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         double servoPos = 0.15; //open servo mode
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
-        SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
+        Sequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
         Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
         Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
         SequenceRunner sequenceRunner = new SequenceRunner();
+
+        boolean isRest;
 
         sequenceControl = null; // no more use for that
 
@@ -51,13 +55,15 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         fourBarSystem.setMotorPower(0.85);
 
         while (opModeIsActive()){
+            isRest = elevatorSystem.getCurrentPos() == ElevatorSystem.Level.DOWN
+                    && fourBarSystem.getTargetLevel() == FourBarSystem.Level.PICKUP;
             try {
                 if(gamepad2.square && !seq1_toggle){
                     sequenceRunner.RunSequence(getReadyToDropSeq);
                 }
                 seq1_toggle = gamepad2.square;
 
-                if(gamepad2.cross && !seq2_toggle){
+                if(gamepad2.cross && !seq2_toggle && !isRest){
                     sequenceRunner.RunSequence(dropAndRetreatSeq);
                 }
                 seq2_toggle = gamepad2.cross;
@@ -67,7 +73,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 }
                 seq3_toggle = gamepad2.circle;
 
-                if(gamepad2.triangle && !seq4_toggle){
+                if(gamepad2.triangle && !seq4_toggle && !isRest){
                     sequenceRunner.RunSequence(getUpSeq);
                 }
                 seq4_toggle = gamepad2.triangle;
@@ -90,6 +96,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper && !gwheel_toggle){
+                clawSystem.ChangePos(true);
                 gWheelSystem.toggle(false);
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
@@ -99,6 +106,16 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             elevator_toggle = gamepad1.square;
 
+            if(gamepad2.left_trigger > 0.8 && !left_Claw){
+                clawSystem.MoveOneClaw(false);
+            }
+            left_Claw = gamepad2.left_trigger > 0.8;
+
+            if(gamepad2.right_trigger > 0.8 && !right_claw){
+                clawSystem.MoveOneClaw(true);
+            }
+            right_claw = gamepad2.right_trigger > 0.8;
+
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
@@ -106,11 +123,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
-            telemetry.addData("power",new Pose2d(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x
-            ));
+
             drive.update();
             sequenceRunner.Update();
             if(fourBarSystem.getTargetPosition() == FourBarSystem.Level.DROP)
