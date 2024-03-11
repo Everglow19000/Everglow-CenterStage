@@ -43,7 +43,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
         Sequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
         Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
-        Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
+        Sequence MiddleDrop = sequenceControl.GetMiddleDrop();
         SequenceRunner sequenceRunner = new SequenceRunner();
 
         boolean isRest;
@@ -74,7 +74,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
                 seq3_toggle = gamepad2.circle;
 
                 if(gamepad2.triangle && !seq4_toggle && !isRest){
-                    sequenceRunner.RunSequence(getUpSeq);
+                    sequenceRunner.RunSequence(MiddleDrop);
                 }
                 seq4_toggle = gamepad2.triangle;
             }catch (Exception e){

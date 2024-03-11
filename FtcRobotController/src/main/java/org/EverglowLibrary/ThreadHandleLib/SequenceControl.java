@@ -59,4 +59,6 @@ public class SequenceControl {
     public Sequence GetUpAndReadyToDrop(){
         return getUpAndReadyToDrop;
     }
+
+    public Sequence GetMiddleDrop() {return DropMiddle;}
 }
