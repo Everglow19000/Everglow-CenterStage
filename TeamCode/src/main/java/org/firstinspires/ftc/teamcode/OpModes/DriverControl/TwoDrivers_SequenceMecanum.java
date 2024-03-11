@@ -40,7 +40,7 @@ public class TwoDrivers_SequenceMecanum extends LinearOpMode {
         double servoPos = 0.15; //open servo mode
 
         Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
-        SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
+        Sequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
         Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
         Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
         SequenceRunner sequenceRunner = new SequenceRunner();
