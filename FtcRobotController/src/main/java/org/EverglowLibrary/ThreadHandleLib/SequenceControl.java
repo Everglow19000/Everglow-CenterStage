@@ -8,10 +8,17 @@ import org.EverglowLibrary.Systems.FourBarSystem;
 
 public class SequenceControl {
 
+//    private boolean seq1_toggle = false;
+//    private boolean seq2_toggle = false;
+//    private boolean seq3_toggle = false;
+//    private boolean seq4_toggle = false;
+//    private boolean upAndDown_toggle = false;
+
     private final Sequence getReadyToDropSeq;
-    private final SequenceInSequence setUpAndUnderBlockSeq;
+    private final Sequence setUpAndUnderBlockSeq;
     private final Sequence dropAndRetreatSeq;
     private final Sequence getUpAndReadyToDrop;
+    private final Sequence DropMiddle;
 
     public SequenceControl(ClawSystem clawSystem, FourBarSystem fourBarSystem
             , ElevatorSystem elevatorSystem){
@@ -19,26 +26,29 @@ public class SequenceControl {
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
                 , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP));
 
-        setUpAndUnderBlockSeq = new SequenceInSequence(false,
-                new Sequence(false, clawSystem.getExecutor(false),
+        setUpAndUnderBlockSeq = new Sequence(false, clawSystem.getExecutor(false),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
-                fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP)),
-                new Sequence(true,fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.REST),
-                elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)));
+                fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
-        dropAndRetreatSeq = new Sequence(false, fourBarSystem.getExecutor(FourBarSystem.Level.PICKUP
-                        , FourBarSystem.ServoAngel.PICKUP)
+        dropAndRetreatSeq = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+                fourBarSystem.getExecutor(FourBarSystem.Level.PICKUP, FourBarSystem.ServoAngel.PICKUP)
                         , elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
-        getUpAndReadyToDrop = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
-                fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP,1));
+        getUpAndReadyToDrop = new Sequence(true, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+                fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP));
+
+        DropMiddle = new Sequence(false, clawSystem.getExecutor(false),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+                fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.MED));
     }
 
     public Sequence GetReadyToDropSeq(){
         return getReadyToDropSeq;
     }
 
-    public SequenceInSequence SetUpAndUnderBlockSeq(){
+    public Sequence SetUpAndUnderBlockSeq(){
         return setUpAndUnderBlockSeq;
     }
 

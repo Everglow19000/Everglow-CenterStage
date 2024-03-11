@@ -26,12 +26,11 @@ public class EncoderTest extends LinearOpMode {
         RE = new Encoder(hardwareMap.get(DcMotorEx.class, "GagazMot"));
         FE = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
 
-
         waitForStart();
         while (!isStopRequested()) {
             telemetry.addData("LE", LE.getCurrentPosition());
             telemetry.addData("RE", RE.getCurrentPosition());
-            telemetry.addData("FE", FE.getCurrentPosition());
+            //telemetry.addData("FE", FE.getCurrentPosition());
             telemetry.update();
         }
     }

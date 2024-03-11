@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem{
 
     public enum Level {
-        START(0), PICKUP(0), DROP(-600), REST(-541), LOW(-435); //344
+        START(20), PICKUP(20), DROP(-720), REST(-720), LOW(-435); //344
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -52,6 +52,7 @@ public class FourBarSystem{
         clawAngelServo.setPosition(ServoAngel.PICKUP.state);
 
         //fourBarMotor.setDirection( DcMotorSimple.Direction.REVERSE);
+
         fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fourBarMotor.setTargetPosition(Level.START.state);
         fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -123,6 +124,10 @@ public class FourBarSystem{
         else{
             set4BarPositionByLevel(Level.PICKUP);
         }
+    }
+
+    public Level getTargetLevel() {
+        return currentLevel;
     }
 
     public void toggleAngleServo() {

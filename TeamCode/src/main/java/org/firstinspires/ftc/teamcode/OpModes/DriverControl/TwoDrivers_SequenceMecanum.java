@@ -13,10 +13,11 @@ import org.EverglowLibrary.ThreadHandleLib.Sequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceControl;
 import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
+import org.firstinspires.ftc.teamcode.DrivingSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "DriveByAxis_Sequence", group = "main-drive")
-public class DriveByAxis_Sequence extends LinearOpMode {
+@TeleOp(name = "TwoDrivers_SequenceMecanum", group = "main-drive")
+public class TwoDrivers_SequenceMecanum extends LinearOpMode {
 
     private boolean seq1_toggle = false;
     private boolean seq2_toggle = false;
@@ -32,7 +33,7 @@ public class DriveByAxis_Sequence extends LinearOpMode {
         ClawSystem clawSystem = new ClawSystem(this);
         ElevatorSystem elevatorSystem = new ElevatorSystem(this);
         GWheelSystem gWheelSystem = new GWheelSystem(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        DrivingSystem drive = new DrivingSystem(this);
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
         Servo planeServo = hardwareMap.get(Servo.class, "PlaneServo");
         planeServo.setPosition(0); //close servo mode
@@ -43,14 +44,12 @@ public class DriveByAxis_Sequence extends LinearOpMode {
         Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
         Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
         SequenceRunner sequenceRunner = new SequenceRunner();
-        Pose2d powerSet;
 
         sequenceControl = null; // no more use for that
 
         waitForStart();
 
         fourBarSystem.setMotorPower(0.85);
-        //drive.setPoseEstimate(PoseInTiles(4, 4, 0));
 
         while (opModeIsActive()){
             try {
@@ -75,15 +74,15 @@ public class DriveByAxis_Sequence extends LinearOpMode {
                 seq4_toggle = gamepad2.triangle;
             }catch (Exception e){
                 telemetry.addData("exeption", e);
-                telemetry.update();
             }
 
-            if(gamepad2.right_bumper && !claw_toggle){
+            if(gamepad2.left_bumper && !claw_toggle){
                 clawSystem.toggle();
             }
-            claw_toggle = gamepad2.right_bumper;
+            claw_toggle = gamepad2.left_bumper;
 
             if(gamepad1.right_bumper && !gwheel_toggle){
+                clawSystem.ChangePos(false);
                 gWheelSystem.toggle(true);
             }
 
@@ -92,6 +91,7 @@ public class DriveByAxis_Sequence extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper && !gwheel_toggle){
+                clawSystem.ChangePos(false);
                 gWheelSystem.toggle(false);
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
@@ -101,19 +101,26 @@ public class DriveByAxis_Sequence extends LinearOpMode {
             }
             elevator_toggle = gamepad1.square;
 
-            powerSet = TestControlledDrive.driveByAxis(new Pose2d(-gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x), TestControlledDrive.realAngle(drive.getPoseEstimate().getHeading()));
-
-            drive.setWeightedDrivePower(TestControlledDrive.adjustedPowers(powerSet));
+            drive.driveMecanum(
+                    new Pose2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x,
+                            -gamepad1.right_stick_x
+                    )
+            );
 
             drive.update();
             sequenceRunner.Update();
-            fourBarSystem.updateP(0.8);
+            if(fourBarSystem.getTargetPosition() == FourBarSystem.Level.DROP)
+                fourBarSystem.set4BarPositionByLevel(fourBarSystem.getTargetPosition());
+
+            telemetry.addData("is finished?",
+                    fourBarSystem.isFinish(fourBarSystem.getTargetPosition()));
+            //fourBarSystem.updateP(0.8);
+            telemetry.update();
         }
         sequenceRunner.Interapt();
         sleep(1000);
     }
 
 }
-

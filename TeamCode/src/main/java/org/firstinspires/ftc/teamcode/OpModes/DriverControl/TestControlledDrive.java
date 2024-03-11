@@ -5,6 +5,7 @@ import static org.apache.commons.math3.stat.StatUtils.max;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
@@ -29,7 +30,7 @@ public class TestControlledDrive extends LinearOpMode {
      *
      * @return new Pose2d in CM Units
      */
-    public static Pose2d PoseInTiles(double x, double y, double Heading) {
+    public Pose2d PoseInTiles(double x, double y, double Heading) {
         return new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading);
     }
 
@@ -48,7 +49,7 @@ public class TestControlledDrive extends LinearOpMode {
         } else if(angle <= -PI/2){
             targetAngle = -PI;
         }
-        if(abs(targetAngle - angle) < 3 / 180 * PI) return 0;
+        if(abs(targetAngle - angle) < 3.0 / 180.0 * PI) return 0;
         return (targetAngle - angle) * 3;
     }
 
@@ -78,7 +79,7 @@ public class TestControlledDrive extends LinearOpMode {
     }
 
 
-    public Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d inputPowers) {
+    Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d inputPowers) {
         Pose2d axisPowers = driveByAxis(inputPowers, robotTileLocation.getHeading());
         telemetry.addData("axisPowers ", axisPowers);
         final double X = robotTileLocation.getX();
@@ -99,11 +100,11 @@ public class TestControlledDrive extends LinearOpMode {
         Pose2d pos = drive.getPoseEstimate();
         return new Pose2d(pos.getX() / TILE_LENGTH, pos.getY() / TILE_LENGTH, realAngle(pos.getHeading()));
     }
+
     SampleMecanumDrive drive;
 
     public static double realAngle(double angle) {
-        if(angle > PI)
-            angle -= 2 * PI;
+        if(angle > PI) angle -= 2 * PI;
         return angle;
     }
 
@@ -116,31 +117,36 @@ public class TestControlledDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(PoseInTiles(4, 4, 0));
+        drive.setPoseEstimate(PoseInTiles(4, 5, 0));
 
         waitForStart();
-        Pose2d lastLocation=new Pose2d(0, 0, 0);
+        Pose2d lastLocation=locationInTiles();
+        double maxDeltaPose=0;
         while(opModeIsActive()) {
             double Px = -gamepad1.left_stick_y,
                    Py = -gamepad1.left_stick_x,
                    Pangle = -gamepad1.right_stick_x;
             if(gamepad1.left_stick_button) {
-                Px /= 3;
-                Py /= 3;
+                Px /= 3.0;
+                Py /= 3.0;
             }
             if(gamepad1.right_stick_button) {
-                Pangle /= 5;
+                Pangle /= 5.0;
             }
             Pose2d powers = new Pose2d(Px, Py, Pangle);
 
 
             Pose2d currentLocation = locationInTiles();
-            double deltaX = sqrt((currentLocation.getX()-lastLocation.getX()));
+            double deltaPose = sqrt(
+                    pow((currentLocation.getX()-lastLocation.getX()),2)
+                            +pow((currentLocation.getY()-lastLocation.getY()),2));
+            maxDeltaPose=Math.max(maxDeltaPose,deltaPose);
             telemetry.addData("Location ", currentLocation);
             telemetry.addData("powers ", powers);
+            telemetry.addData("deltaPose in tiles", maxDeltaPose);
 
-            Pose2d controlledPowers = driveByAxis(powers, currentLocation.getHeading());
-            //Pose2d controlledPowers = controlledDriving(currentLocation, powers);
+            //Pose2d controlledPowers = driveByAxis(powers, currentLocation.getHeading());
+            Pose2d controlledPowers = controlledDriving(currentLocation, powers);
             telemetry.addData("controlledPowers", controlledPowers);
             drive.setWeightedDrivePower(adjustedPowers(controlledPowers));
             telemetry.update();
