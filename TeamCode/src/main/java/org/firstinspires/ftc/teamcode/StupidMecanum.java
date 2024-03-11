@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.fasterxml.jackson.databind.ext.SqlBlobSerializer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -69,7 +70,7 @@ public void runOpMode() throws InterruptedException {
     double servoPos = 0.15; //open servo mode
 
     Sequence getReadyToDropSeq = sequenceControl.GetReadyToDropSeq();
-    SequenceInSequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
+    Sequence setUpAndUnderBlockSeq = sequenceControl.SetUpAndUnderBlockSeq();
     Sequence dropAndRetreatSeq = sequenceControl.DropAndRetreatSeq();
     Sequence getUpSeq = sequenceControl.GetUpAndReadyToDrop();
     SequenceRunner sequenceRunner = new SequenceRunner();
