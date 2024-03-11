@@ -21,8 +21,8 @@ public class ClawSystem{
         toggle();
     }
 
-    public void ChangePos(boolean toClose){
-        if(toClose){
+    public void ChangePos(boolean toOpen){
+        if(toOpen){
             ClawR.setPosition(rightOpen); //open
             ClawL.setPosition(leftOpen);
         }
