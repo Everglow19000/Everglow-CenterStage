@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ControlSystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.EverglowLibrary.Systems.CameraSystem;
@@ -329,6 +330,7 @@ public class FourtyFivePoints {
         opMode.telemetry.addLine("Ready!!!!! ");
         opMode.telemetry.update();
 
+        clawSystem.MoveOneClaw(true, false);
         opMode.waitForStart();
 
         propPlace = cameraSystem.DetectAndFindPropLocation();
@@ -339,7 +341,15 @@ public class FourtyFivePoints {
     
     public void runAfterInput() {
         SequenceRunner sequenceRunner = new SequenceRunner();
+        Sequence dropPurpleSeq = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+            , fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.LOW)
+                , elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)
+                , clawSystem.getExecutor(true));
 
+        Sequence dropYellow = new Sequence(false, clawSystem.getExecutor(false)
+                ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+                , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP)
+                , clawSystem.getExecutor(true));
         // set the correct start location
 
         drive.followTrajectory(splineToPurple);
