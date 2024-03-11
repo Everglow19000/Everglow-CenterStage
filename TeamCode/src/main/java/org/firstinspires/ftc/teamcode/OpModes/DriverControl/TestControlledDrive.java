@@ -117,7 +117,7 @@ public class TestControlledDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
 
-        drive.setPoseEstimate(PoseInTiles(4, 4, 0));
+        drive.setPoseEstimate(PoseInTiles(4, 5, 0));
 
         waitForStart();
         Pose2d lastLocation=locationInTiles();
