@@ -58,20 +58,27 @@ public class DrivingSystem extends SampleMecanumDrive {
         return (targetAngle - angle) * 3;
     }
 
+    private Pose2d InPowers(Pose2d robotTileLocation, Pose2d axisPowers) {
+        final double Y = robotTileLocation.getY();
+        double deviationY = chooseLain(robotTileLocation) - Y;
+
+        double Py = deviationY * deviationY;
+        double Pr = anglePower(robotTileLocation.getHeading());
+
+        return new Pose2d(axisPowers.getX(), Py, Pr);
+    }
+
+
     private Pose2d PassPowers(Pose2d robotTileLocation, Pose2d axisPowers) {
         final double X = robotTileLocation.getX(), Y = robotTileLocation.getY();
-        double deviationX = 0;
+        double deviationX;
         if(X > 3.5) deviationX = X - 3.5;
         if(X < 1.5) deviationX = 1.5 - X;
 
         double deviationY = chooseLain(robotTileLocation) - Y;
 
-        double Py = 0; // deviationY * 0.4
-        double Pr = 0;
-        if(deviationX != 0){
-            Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
-            Pr = anglePower(robotTileLocation.getHeading());
-        }
+        Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
+        Pr = anglePower(robotTileLocation.getHeading());
 
         return new Pose2d(axisPowers.getX(), Py, Pr);
         //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
@@ -94,33 +101,44 @@ public class DrivingSystem extends SampleMecanumDrive {
     Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d axisPowers) {
 
         //telemetry.addData("axisPowers ", axisPowers);
-        final double X = robotTileLocation.getX();
+        final double X = robotTileLocation.getX(), Y = robotTileLocation.getY();
+        double px = axisPowers.getX(), py = axisPowers.getY();
 
-        //pMode.telemetry.addData("hitCheack", axisPowers.getX() -  (0.1 + (5.0 - X) / 4));
-        if((X > 4 && axisPowers.getX() > 0) || (X < 1.5 && axisPowers.getX() < 0)) {
-            final double minPower = 0.1, scalerDistance = 0.35;
-            double px = axisPowers.getX();
-
-            if(X > 4) {
-                double distanceTo = max(5 - X, 0);
-                px = min(px, minPower + scalerDistance * distanceTo);
-            }
-            else {
-                double distanceTo = max(X - 0.5, 0);
-                px = max(px, -minPower - scalerDistance * distanceTo);
-            }
-
-            return new Pose2d(px, axisPowers.getY(), axisPowers.getHeading());
+        if(X < 3.5 && X > 1.5) {
+            return InPowers(robotTileLocation, axisPowers);
+        }
+        if(((X > 4 && axisPowers.getX() < 0) || (X > 1 && axisPowers.getX() > 0)) && abs(axisPowers.getY()) < 0.6) {
+            return PassPowers(robotTileLocation, axisPowers);
         }
 
 
-        if(X > 4 || X < 1) return axisPowers;
-        if((X > 3.5 && axisPowers.getX() >= 0) || (X < 1.5 && axisPowers.getX() <= 0)) return axisPowers;
-        if(abs(axisPowers.getY()) > 0.6 && !(X < 3.5 && X > 1.5)) {
-            return new Pose2d(0, axisPowers.getY(), axisPowers.getHeading());
+        if(abs(axisPowers.getY()) > 0.6 && (X < 4 && X > 1)) {
+            px = 0;
         }
 
-        return PassPowers(robotTileLocation, axisPowers);
+
+        final double minPower = 0.1, scalerDrop = 0.35, scalerWall = 0.6;
+
+        if(X > 4) {
+            double distanceTo = max(5 - X, 0);
+
+            px = min(px, minPower + scalerDrop * distanceTo);
+        } else if (X < 1.5) {
+            double distanceTo = max(X - 0.5, 0);
+            px = max(px, -minPower - scalerWall * distanceTo);
+        }
+
+        if(Y > 4.5) {
+            double distanceTo = max(Y - 5.5, 0);
+            py = min(py, minPower + scalerWall * distanceTo);
+        } else if(Y < 1.5) {
+            double distanceTo = max(Y - 0.5, 0);
+            py = max(py, -minPower - scalerWall * distanceTo);
+        }
+
+
+        return new Pose2d(px, py, axisPowers.getHeading());
+
     }
 
 

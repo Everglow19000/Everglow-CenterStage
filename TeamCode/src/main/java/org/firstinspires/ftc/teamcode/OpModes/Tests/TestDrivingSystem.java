@@ -21,7 +21,7 @@ public class TestDrivingSystem extends LinearOpMode {
         boolean ajust = true, axis = true, control = false, slow = false;
 
         while(opModeIsActive()) {
-            if(gamepad1.circle) ajust = !ajust;
+            if(gamepad1.cross) ajust = !ajust;
             if(gamepad1.triangle) axis = !axis;
             if(gamepad1.square) control = !control;
 
