@@ -195,6 +195,36 @@ public class DrivingSystem extends SampleMecanumDrive {
         setPoseEstimate(new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading));
     }
 
+    public void driveMecanum(Pose2d powers) {
 
+        // in order to make the driving the same velocity for the same power in the x and y directions,
+        // reduce the y power slightly
+        double y = powers.getX();
+        double x = powers.getY();
+        double angle = powers.getHeading();
+        // Determine how much power each motor should receive.
+        double frontRightPower = y + x + angle;
+        double frontLeftPower = y - x - angle;
+        double backRightPower = y - x + angle;
+        double backLeftPower = y + x - angle;
+
+        // The method motor.setPower() only accepts numbers between -1 and 1.
+        // If any number that we want to give it is greater than 1,
+        // we must divide all the numbers equally so the maximum is 1
+        // and the proportions are preserved.
+        double norm = max(max(abs(frontRightPower), abs(frontLeftPower)), max(abs(backRightPower), abs(backLeftPower)));
+        if (norm > 1) {
+            frontRightPower /= norm;
+            frontLeftPower /= norm;
+            backRightPower /= norm;
+            backLeftPower /= norm;
+        }
+
+        rightFront.setPower(frontRightPower);
+        leftFront.setPower(frontLeftPower);
+        rightRear.setPower(backRightPower);
+        leftRear.setPower(backLeftPower);
+
+    }
 
 }
