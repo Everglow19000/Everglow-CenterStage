@@ -30,7 +30,7 @@ public class ClawSystem{
             ClawR.setPosition(rightClosed); //closed
             ClawL.setPosition(leftClosed);
         }
-        open = !open;
+        open = toOpen;
     }
 
     public void toggle() {

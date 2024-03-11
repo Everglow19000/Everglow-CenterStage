@@ -18,6 +18,7 @@ public class SequenceControl {
     private final Sequence setUpAndUnderBlockSeq;
     private final Sequence dropAndRetreatSeq;
     private final Sequence getUpAndReadyToDrop;
+    private final Sequence DropMiddle;
 
     public SequenceControl(ClawSystem clawSystem, FourBarSystem fourBarSystem
             , ElevatorSystem elevatorSystem){
@@ -36,6 +37,11 @@ public class SequenceControl {
 
         getUpAndReadyToDrop = new Sequence(true, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
                 fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP));
+
+        DropMiddle = new Sequence(false, clawSystem.getExecutor(false),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+                fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.MED));
     }
 
     public Sequence GetReadyToDropSeq(){
