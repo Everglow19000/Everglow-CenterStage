@@ -67,7 +67,7 @@ public class CameraSystem {
         m_Camera =  builder.build();
     }
 
-    public CameraSystem(OpMode opMode, boolean isRedProp, boolean isBack)
+    public CameraSystem(OpMode opMode, boolean isRedProp, boolean isBack, boolean isRight)
     {
         this(opMode, isRedProp);
         m_IsBack = isBack;

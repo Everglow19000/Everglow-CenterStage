@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
 
 import static org.EverglowLibrary.Systems.Executor.sleep;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -366,7 +368,7 @@ public class FourtyFivePoints {
         sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
         sequenceRunner = new SequenceRunner();
 
-        clawSystem.MoveOneClaw(true);
+
 
         // Create all Sequences //
         dropPurpleSeq  = new Sequence(false,
@@ -389,9 +391,10 @@ public class FourtyFivePoints {
         // Trajectory Calculations //
 
 
-        Pose2d startLocation = PoseInTiles(3.61, 5.667, East);
+        Pose2d startLocation = PoseInTiles(3.71, 5.6, East);
+
         if(isBack()) {
-            startLocation.minus(PoseInTiles(2, 0, 0));
+            startLocation.minus(PoseInTiles(2.4, 0, 0));
         }
         /*if(isRight()) {
             startLocation.minus(PoseInTiles(0.27, 0, 0));
@@ -487,7 +490,7 @@ public class FourtyFivePoints {
                 = threeYellowDropTrajectories.endLocations.poseMiddle.plus(
                 new Pose2d(0, distanceBetweenTags, 0));
 
-        threeYellowDropTrajectories.createLinerHeadingTrajectories();
+        threeYellowDropTrajectories.createTrajectories();
 
 
         // Park Traj //
@@ -505,6 +508,12 @@ public class FourtyFivePoints {
         threeParkTrajectories.createMiddleTrajectories();
 
         //
+
+
+
+        sleep(1000);
+
+        clawSystem.MoveOneClaw(true);
 
         opMode.telemetry.addLine("Ready!!!!! ");
         opMode.telemetry.update();
@@ -524,46 +533,27 @@ public class FourtyFivePoints {
         opMode.telemetry.update();
 
 
-        sleep(1000 * 1);
-
-        drive.setPoseEstimate(PoseInTiles(3.5, 4.5, South));
-
-        drive.followTrajectory(threeYellowDropTrajectories.trajMiddle);
 
 
-
-        opMode.telemetry.addLine("finished");
-        opMode.telemetry.update();
-
-
-        while(opMode.opModeIsActive()){
-
-        }
-
-       /* drive.followTrajectory(splineToPurple);
+        drive.followTrajectory(splineToPurple); //tod
         //threePurpleDropTrajectories.driveCorrectTrajectory();
 
-        *//*opMode.telemetry.addData("Location ", LocationInTiles());
+        /*opMode.telemetry.addData("Location ", LocationInTiles());
         opMode.telemetry.addData("start ", threeYellowDropTrajectories.startLocations.poseMiddle);
-        opMode.telemetry.update();
-*//*
+        opMode.telemetry.update();*/
 
-        *//*if(isBack()) {
-            drive.turnAsync(South);
-        }
-        else{
-            drive.turnAsync(North);
-        }*//*
+
+
 
         // Drop Purple
         dropPurpleSeq.startSequence();
 
         switch (propPlace) {
             case LEFT:
-                drive.turn(-PI/2);
+                drive.turn(-PI/2 * 1.2);
                 break;
             case RIGHT:
-                drive.turn(PI/2);
+                drive.turn(PI/2 * 1.2);
                 break;
             case MIDDLE:
                 drive.turn(PI);
@@ -581,6 +571,24 @@ public class FourtyFivePoints {
         // Sequance drop
         returnFromPurple.startSequence();
 
+        while(opMode.opModeIsActive()) {
+
+        }
+
+
+
+        /*double devation = trueAngle(PI - LocationInTiles().getHeading());
+        while(devation > toRadians(1)) {
+            drive.setWeightedDrivePower(new Pose2d(0, 0, devation * abs(devation) * 0.01));
+            devation = trueAngle(PI - LocationInTiles().getHeading());
+            opMode.telemetry.addData("devation", devation);
+            opMode.telemetry.update();
+        }*/
+
+        //drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
+
+        /*turnTo(South);
+        sleep(1000);
         turnTo(South);
 
         while (!opMode.isStopRequested()){
@@ -595,13 +603,13 @@ public class FourtyFivePoints {
             opMode.sleep(10 * 1000);
         }
 
-        // drop Yellow Sequance
+        dropYellow.startSequence();
 
 
         *//*opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
         opMode.telemetry.update();*//*
 
-        threeYellowDropTrajectories.driveCorrectTrajectory();
+        //threeYellowDropTrajectories.driveCorrectTrajectory();
 
         while (!opMode.isStopRequested()){
             if(dropYellow.isDone()){

@@ -31,9 +31,9 @@ public class SequenceControl {
                 fourBarSystem.getExecutor(FourBarSystem.Level.REST, FourBarSystem.ServoAngel.DROP),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
-        dropAndRetreatSeq = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+        dropAndRetreatSeq = new Sequence(false, elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+                , clawSystem.getExecutor(true),
                 fourBarSystem.getExecutor(FourBarSystem.Level.PICKUP, FourBarSystem.ServoAngel.PICKUP)
-                    , clawSystem.getExecutor(true)
                         , elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN));
 
         getUpAndReadyToDrop = new Sequence(true, elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
