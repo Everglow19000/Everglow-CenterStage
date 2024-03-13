@@ -19,6 +19,7 @@ import org.EverglowLibrary.Systems.GWheelSystem;
 import org.EverglowLibrary.ThreadHandleLib.Sequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceControl;
 import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
+import org.EverglowLibrary.utils.PointD;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
@@ -271,10 +272,6 @@ public class FourtyFivePoints {
         }
     }
 
-
-
-
-
     /////////////
     /////////////
     // Systems //
@@ -292,10 +289,6 @@ public class FourtyFivePoints {
     CameraSystem cameraSystem;
 
     SequenceRunner sequenceRunner = new SequenceRunner();
-
-
-
-
 
     ///////////////
     ///////////////
@@ -315,10 +308,6 @@ public class FourtyFivePoints {
     static final double TILE_LENGTH = 60.5;
 
 
-
-
-
-
     ///////////////////////////
     ///////////////////////////
     // Autonomous Parameters //
@@ -331,6 +320,7 @@ public class FourtyFivePoints {
 
     Trajectory splineToPurple, trajMiddleForBack;
 
+    Trajectory tempPark;
     ThreeTrajectories threePurpleDropTrajectories = new ThreeTrajectories();
 
     ThreeTrajectories threeYellowDropTrajectories = new ThreeTrajectories();
@@ -341,6 +331,7 @@ public class FourtyFivePoints {
 
     Sequence dropYellow;
 
+    Pose2d StartLocation;
 
 
 
@@ -391,27 +382,29 @@ public class FourtyFivePoints {
         // Trajectory Calculations //
 
 
-        Pose2d startLocation = PoseInTiles(3.71, 5.6, East);
+        StartLocation = PoseInTiles(3.71, 5.6, East);
 
         if(isBack()) {
-            startLocation.minus(PoseInTiles(2.4, 0, 0));
+            opMode.telemetry.addLine("move the pose...");
+            StartLocation = StartLocation.minus(PoseInTiles(2.42, 0, 0));
         }
         /*if(isRight()) {
             startLocation.minus(PoseInTiles(0.27, 0, 0));
         }*/
-        drive.setPoseEstimate(tryRight(startLocation));
+        StartLocation = tryRight(StartLocation);
+        drive.setPoseEstimate(StartLocation);
 
 
         // Simple drive to Purple //
 
-        Pose2d middleDropLocation = PoseInTiles(3.5, 4.5, East);
+        Pose2d middleDropLocation = PoseInTiles(3.55, 4.5, East);
         if(isBack()) {
-            middleDropLocation.minus(PoseInTiles(2, 0, 0));
+            opMode.telemetry.addLine("move the pose...");
+            middleDropLocation = middleDropLocation.minus(PoseInTiles(2.1, 0, 0));
         }
-        splineToPurple = trajToConstantHeading(tryRight(startLocation), tryRight(middleDropLocation));
+        splineToPurple = trajToConstantHeading(tryRight(StartLocation), tryRight(middleDropLocation));
 
         if(isBack()) {
-
 
             //threeMiddleForBackTrajectories.setStartPose(tryRight(new Pose2d(middleDropLocation.getX(), middleDropLocation.getY(), South)));
 
@@ -430,9 +423,6 @@ public class FourtyFivePoints {
         else{
             threeYellowDropTrajectories.setStartPose(tryRight(new Pose2d(middleDropLocation.getX(), middleDropLocation.getY(), South)));
         }
-
-
-
 
         // Complex drive to Purple //
 
@@ -478,9 +468,8 @@ public class FourtyFivePoints {
             threeYellowDropTrajectories.startLocations = threePurpleDropTrajectories.endLocations;
         }*/
 
-
-
         // Yellow Traj
+
 
         threeYellowDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(5, 4.5, South));
         threeYellowDropTrajectories.endLocations.poseLeft =
@@ -493,23 +482,19 @@ public class FourtyFivePoints {
         threeYellowDropTrajectories.createTrajectories();
 
 
-        // Park Traj //
 
+        // Park Traj //
 
         Pose2d parkLocation = PoseInTiles(5.4, 5.6, South), parkMiddleLocation = PoseInTiles(4.8, 5.3, South);
         if(isBack()) {
-            parkLocation.minus(PoseInTiles(0, 2, 0));
-            parkMiddleLocation.minus(PoseInTiles(0, 1.2, 0));
+            parkLocation = parkLocation.minus(PoseInTiles(0, 2, 0));
+            parkMiddleLocation = parkMiddleLocation.minus(PoseInTiles(0, 1.2, 0));
         }
 
         threeParkTrajectories.setEndPose(tryRight(parkLocation));
         threeParkTrajectories.setMiddlePose(tryRight(parkMiddleLocation));
         threeParkTrajectories.startLocations = threeYellowDropTrajectories.endLocations;
         threeParkTrajectories.createMiddleTrajectories();
-
-        //
-
-
 
         sleep(1000);
 
@@ -527,13 +512,10 @@ public class FourtyFivePoints {
     
     public void runAfterInput() {
 
-
+        fourBarSystem.setMotorPower(0.85);
         propPlace = cameraSystem.DetectAndFindPropLocation();
         opMode.telemetry.addData("Detection ", propPlace);
         opMode.telemetry.update();
-
-
-
 
         drive.followTrajectory(splineToPurple); //tod
         //threePurpleDropTrajectories.driveCorrectTrajectory();
@@ -543,39 +525,30 @@ public class FourtyFivePoints {
         opMode.telemetry.update();*/
 
 
-
-
         // Drop Purple
         dropPurpleSeq.startSequence();
 
+        while (!opMode.isStopRequested()){
+            if(dropPurpleSeq.isDone()){
+                break;
+            }
+        }
+
         switch (propPlace) {
             case LEFT:
-                drive.turn(-PI/2 * 1.2);
+                drive.turn(-PI/2 * 1.4);
                 break;
             case RIGHT:
-                drive.turn(PI/2 * 1.2);
+                drive.turn(PI/2 * 1.4);
                 break;
             case MIDDLE:
                 drive.turn(PI);
                 break;
         }
-
-        while (!opMode.isStopRequested()){
-            if(dropPurpleSeq.isDone()){
-                clawSystem.ChangePos(true);
-                sleep(1000);
-                break;
-            }
-        }
-
+        clawSystem.ChangePos(true);
+        sleep(1000);
         // Sequance drop
         returnFromPurple.startSequence();
-
-        while(opMode.opModeIsActive()) {
-
-        }
-
-
 
         /*double devation = trueAngle(PI - LocationInTiles().getHeading());
         while(devation > toRadians(1)) {
@@ -587,16 +560,53 @@ public class FourtyFivePoints {
 
         //drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 
-        /*turnTo(South);
-        sleep(1000);
-        turnTo(South);
+        //turnTo(South);
+        //sleep(1000);
+        //turnTo(South);
 
         while (!opMode.isStopRequested()){
             if(returnFromPurple.isDone()){
                 break;
             }
         }
+        /*
+        switch (propPlace) {
+            case LEFT:
+                drive.turn(PI/2 * 1.4);
+                break;
+            case RIGHT:
+                drive.turn(-PI/2 * 1.4);
+                break;
+            case MIDDLE:
+                drive.turn(-PI);
+                break;
+        }
 
+         */
+
+        if(!isBack()) {
+            if(!isRight()) {
+                tempPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .splineTo(StartLocation.vec(), 0)
+                        .splineTo(PoseInTiles(5.5, 5.5, 0).vec(), 0)
+                        .build();
+            }
+            else{
+                tempPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .splineTo(StartLocation.vec(), 0)
+                        .splineTo(PoseInTiles(5.5, 0.5, 0).vec(), 0)
+                        .build();
+            }
+
+            drive.followTrajectory(tempPark);
+
+            gWheelSystem.setPower(1);
+
+            opMode.sleep(2500);
+
+            gWheelSystem.setPower(0);
+        }
+        /*
         if(isBack()) {
             drive.followTrajectory(trajMiddleForBack);
             //threeMiddleForBackTrajectories.driveCorrectTrajectory();
@@ -606,10 +616,10 @@ public class FourtyFivePoints {
         dropYellow.startSequence();
 
 
-        *//*opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
-        opMode.telemetry.update();*//*
+        //*opMode.telemetry.addData("end ", threeYellowDropTrajectories.endLocations.poseMiddle);
+        //opMode.telemetry.update();
 
-        //threeYellowDropTrajectories.driveCorrectTrajectory();
+        threeYellowDropTrajectories.driveCorrectTrajectory();
 
         while (!opMode.isStopRequested()){
             if(dropYellow.isDone()){
@@ -627,8 +637,52 @@ public class FourtyFivePoints {
             }
         }
 
-        threeParkTrajectories.driveCorrectTrajectory();*/
+        //threeParkTrajectories.driveCorrectTrajectory();
 
+         */
+
+    }
+
+    public void SecondCall(){
+        Trajectory backPark;
+        if(isBack()) {
+            if (propPlace != CameraSystem.DetectionLocation.MIDDLE) {
+                if (isRight()) {
+                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineTo(PoseInTiles(1.5, 2.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(5.5, 2.5, -PI / 2).vec(), 0)
+                            .build();
+                } else {
+                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineTo(PoseInTiles(1.5, 3.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(5.5, 3.5, 0).vec(), 0)
+                            .build();
+                }
+            }
+            else {
+                if(isRight()){
+                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+//                            .strafeRight(40)
+                            .splineToConstantHeading(PoseInTiles(2.5, 2.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(5.5, 2.5, 0).vec(), 0)
+                            .build();
+                }
+                else {
+                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+//                            .strafeLeft(40)
+                            .splineToConstantHeading(PoseInTiles(0.5, 3.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(5.5, 3.5, 0).vec(), 0)
+                            .build();
+                }
+            }
+            drive.followTrajectory(backPark);
+
+            gWheelSystem.setPower(1);
+
+            opMode.sleep(2500);
+
+            gWheelSystem.setPower(0);
+        }
     }
 
 }

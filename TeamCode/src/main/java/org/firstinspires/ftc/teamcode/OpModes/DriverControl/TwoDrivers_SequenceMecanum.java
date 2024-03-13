@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.DriverControl;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,6 +17,7 @@ import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
 import org.firstinspires.ftc.teamcode.DrivingSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+@Disabled
 @TeleOp(name = "TwoDrivers_SequenceMecanum", group = "main-drive")
 public class TwoDrivers_SequenceMecanum extends LinearOpMode {
 

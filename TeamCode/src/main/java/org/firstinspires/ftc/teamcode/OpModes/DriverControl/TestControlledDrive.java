@@ -10,12 +10,14 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
+@Disabled
 @TeleOp(name = "TestControlledDrive", group = "main-drive")
 public class TestControlledDrive extends LinearOpMode {
 

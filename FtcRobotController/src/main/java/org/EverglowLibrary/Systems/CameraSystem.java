@@ -24,6 +24,7 @@ public class CameraSystem {
     private final VisionPortal m_Camera;
     private final TfodProcessor m_Prop;
     public boolean m_IsBack;
+    private boolean m_IsRight;
 
     private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/RedRocketFile.tflite"; //model_20240130_235607
     private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueCubeFile.tflite";
@@ -67,10 +68,11 @@ public class CameraSystem {
         m_Camera =  builder.build();
     }
 
-    public CameraSystem(OpMode opMode, boolean isRedProp, boolean isBack, boolean isRight)
+    public CameraSystem(OpMode opMode, boolean isRedProp, boolean isBack)
     {
         this(opMode, isRedProp);
         m_IsBack = isBack;
+        m_IsRight = isRedProp;
     }
 
     public CameraSystem(OpMode opMode, boolean isRedProp)
@@ -225,7 +227,7 @@ public class CameraSystem {
         double distanceFromCameraX;
         distanceFromCameraX = ConvertRecognitionToPos(recognition, true);
 
-        if(m_IsBack){
+        if((m_IsBack && !m_IsRight)||(!m_IsBack && m_IsRight)){
             m_OpMode.telemetry.addLine("In the Back");
             m_OpMode.telemetry.addData("distance", distanceFromCameraX);
             MIN_RIGHT_LOCATION = 180;
