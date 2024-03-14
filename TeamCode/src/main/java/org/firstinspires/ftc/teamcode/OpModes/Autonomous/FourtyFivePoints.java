@@ -674,7 +674,7 @@ public class FourtyFivePoints {
             }
 
             drive.followTrajectory(backWaitForMove);
-            opMode.sleep(10000);
+            //opMode.sleep(10000);
             threeYellowDropTrajectories.driveCorrectTrajectory();
             //drop
             gWheelSystem.setPower(1);

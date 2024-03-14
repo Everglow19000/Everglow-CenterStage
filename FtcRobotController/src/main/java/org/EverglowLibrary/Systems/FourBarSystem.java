@@ -70,8 +70,18 @@ public class FourBarSystem{
     public boolean isFinish(Level level){
         boolean isFinished;
         final int epsilon4Bar = 15;
-        isFinished = (fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
-                (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar);
+        final int lower = -318;
+        final int upper =  -200;
+        isFinished = ((fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
+                (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar));
+
+        if(level == Level.DROP){
+            isFinished = isFinished || fourBarMotor.getCurrentPosition() <= lower;
+        }
+        else if(level == Level.PICKUP){
+            isFinished = isFinished || fourBarMotor.getCurrentPosition() >= upper;
+        }
+
         opMode.telemetry.addData("is FourBar finished? ", isFinished);
         return isFinished;
     }
@@ -198,7 +208,7 @@ public class FourBarSystem{
             if(m_Level == Level.PICKUP){
                 fourBarMotor.setPower(m_Power);
                 set4BarPositionByLevel(m_Level);
-                opMode.sleep(400);
+                //opMode.sleep(400);
                 setServoPositionByLevel(m_ServoAngle);
             }
             else {
