@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.Autonomous;
 
-import static org.EverglowLibrary.Systems.Executor.sleep;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
@@ -496,8 +495,6 @@ public class FourtyFivePoints {
         threeParkTrajectories.startLocations = threeYellowDropTrajectories.endLocations;
         threeParkTrajectories.createMiddleTrajectories();
 
-        sleep(1000);
-
         clawSystem.MoveOneClaw(true);
 
         opMode.telemetry.addLine("Ready!!!!! ");
@@ -546,7 +543,7 @@ public class FourtyFivePoints {
                 break;
         }
         clawSystem.ChangePos(true);
-        sleep(1000);
+        opMode.sleep(1000);
         // Sequance drop
         returnFromPurple.startSequence();
 
@@ -644,39 +641,42 @@ public class FourtyFivePoints {
     }
 
     public void SecondCall(){
-        Trajectory backPark;
+        Trajectory backWaitForMove;
         if(isBack()) {
             if (propPlace != CameraSystem.DetectionLocation.MIDDLE) {
                 if (isRight()) {
-                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .splineTo(PoseInTiles(1.5, 2.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(5.5, 2.5, -PI / 2).vec(), 0)
+                            .splineTo(PoseInTiles(3.5, 2.5, 0).vec(), 0)
                             .build();
                 } else {
-                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .splineTo(PoseInTiles(1.5, 3.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(5.5, 3.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(3.5, 3.5, 0).vec(), 0)
                             .build();
                 }
             }
             else {
                 if(isRight()){
-                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
 //                            .strafeRight(40)
                             .splineToConstantHeading(PoseInTiles(2.5, 2.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(5.5, 2.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(3.5, 2.5, 0).vec(), 0)
                             .build();
                 }
                 else {
-                    backPark = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
 //                            .strafeLeft(40)
                             .splineToConstantHeading(PoseInTiles(0.5, 3.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(5.5, 3.5, 0).vec(), 0)
+                            .splineTo(PoseInTiles(3.5, 3.5, 0).vec(), 0)
                             .build();
                 }
             }
-            drive.followTrajectory(backPark);
 
+            drive.followTrajectory(backWaitForMove);
+            opMode.sleep(10000);
+            threeYellowDropTrajectories.driveCorrectTrajectory();
+            //drop
             gWheelSystem.setPower(1);
 
             opMode.sleep(2500);

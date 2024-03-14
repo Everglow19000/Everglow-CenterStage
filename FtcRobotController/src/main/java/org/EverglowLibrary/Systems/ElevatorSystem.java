@@ -156,6 +156,7 @@ public class ElevatorSystem{
         @Override
         public boolean isFinished() {
             final double epsilon = 10;
+
             if(ElevatorCurrentLevel == Level.UP)
                 return left.getCurrentPosition() + epsilon >= Level.UP.state
                         && right.getCurrentPosition() + epsilon >= Level.UP.state;
