@@ -114,7 +114,7 @@ public class DrivingSystem extends SampleMecanumDrive {
     }
 
     public Pose2d adjustedPowers(Pose2d Powers) {
-        return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getHeading() * 1.0);
+        return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.0, Powers.getHeading() * 1.0 - 0.07 * Powers.getX());
     }
 
 
@@ -133,9 +133,9 @@ public class DrivingSystem extends SampleMecanumDrive {
             finalPower = driveByAxisPowers(inputPowers, robotTileLocation.getHeading());
         }
 
-        //if(adjusted) {
-        //    finalPower = adjustedPowers(inputPowers);
-        //}
+        if(adjusted) {
+            finalPower = adjustedPowers(inputPowers);
+        }
 
         setWeightedDrivePower(finalPower);
     }
