@@ -32,29 +32,37 @@ public class TestDrivingSystem extends LinearOpMode {
         boolean ajust = true, axis = true, control = false, slow = false;
         Pose2d location;
         Pose2d powers;
+        double Px, Py, Pangle;
+        boolean toggle_slow = false, toggle_control = false, toggle_axis = false, toggle_ajust = false;
         while(opModeIsActive()) {
-            if(gamepad1.circle) ajust = !ajust;
-            if(gamepad1.triangle) axis = !axis;
-            if(gamepad1.square) control = !control;
-            if(gamepad1.cross) slow = !slow;
+            if(gamepad1.circle && !toggle_ajust) ajust = !ajust;
+            if(gamepad1.triangle && !toggle_axis) axis = !axis;
+            if(gamepad1.square && !toggle_control) control = !control;
+            if(gamepad1.cross && !toggle_slow) slow = !slow;
+
+            toggle_axis = gamepad1.triangle;
+            toggle_ajust = gamepad1.circle;
+            toggle_control = gamepad1.square;
+            toggle_slow = gamepad1.cross;
 
             if(ajust) telemetry.addLine("Ajusted powers is On");
             if(axis) telemetry.addLine("Axis powers is On");
             if(control) telemetry.addLine("Controlled powers is On");
+            if(slow) telemetry.addLine("Slow powers is On");
 
             location = drivingSystem.getPoseEstimate();
             telemetry.addData("X ", location.getX());
             telemetry.addData("Y ", location.getY());
             telemetry.addData("Heading ", location.getHeading());
+            location = drivingSystem.locationInTiles();
+            telemetry.addData("X ", location.getX());
+            telemetry.addData("Y ", location.getY());
+            telemetry.addData("Heading ", location.getHeading());
 
-            drivingSystem.setWeightedDrivePower(new Pose2d(
-                    -gamepad1.left_stick_y,
-                     -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x));
 
-            double Px = -gamepad1.left_stick_y,
-                    Py = -gamepad1.left_stick_x,
-                    Pangle = -gamepad1.right_stick_x;
+            Px = -gamepad1.left_stick_y;
+            Py = -gamepad1.left_stick_x;
+            Pangle = -gamepad1.right_stick_x;
 
             Px = linearInputToExponential(Px);
             Py = linearInputToExponential(Py);
@@ -70,6 +78,7 @@ public class TestDrivingSystem extends LinearOpMode {
 
             drivingSystem.allDrives(powers, ajust, axis, control);
             telemetry.update();
+            drivingSystem.update();
         }
 
     }
