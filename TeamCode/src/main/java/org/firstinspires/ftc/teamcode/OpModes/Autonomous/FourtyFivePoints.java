@@ -355,6 +355,8 @@ public class FourtyFivePoints {
         fourBarSystem = new FourBarSystem(opMode);
         gWheelSystem = new GWheelSystem(opMode);
 
+        fourBarSystem.restart();
+
         sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
         sequenceRunner = new SequenceRunner();
 
@@ -407,7 +409,7 @@ public class FourtyFivePoints {
 
             //threeMiddleForBackTrajectories.setStartPose(tryRight(new Pose2d(middleDropLocation.getX(), middleDropLocation.getY(), South)));
 
-            Pose2d waitLocation = PoseInTiles(3.5, 3.5, South), waitMiddleLocation = PoseInTiles(1.5, 3.5, South);
+            Pose2d waitLocation = PoseInTiles(4.5, 3.5, South), waitMiddleLocation = PoseInTiles(1.5, 3.5, South);
             /*threeMiddleForBackTrajectories.setMiddlePose(tryRight(waitMiddleLocation));
             threeMiddleForBackTrajectories.setEndPose(tryRight(waitLocation));
             threeMiddleForBackTrajectories.createMiddleTrajectories();*/
@@ -473,12 +475,12 @@ public class FourtyFivePoints {
         threeYellowDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(5, 4.5, South));
         threeYellowDropTrajectories.endLocations.poseLeft =
                 threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                        new Pose2d(0, -distanceBetweenTags, 0));
+                        new Pose2d(0, distanceBetweenTags, 0));
         threeYellowDropTrajectories.endLocations.poseRight
                 = threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                new Pose2d(0, distanceBetweenTags, 0));
+                new Pose2d(0, -distanceBetweenTags, 0));
 
-        threeYellowDropTrajectories.createTrajectories();
+        threeYellowDropTrajectories.createConstHeadingTrajectories();
 
 
 
@@ -642,46 +644,54 @@ public class FourtyFivePoints {
 
     public void SecondCall(){
         Trajectory backWaitForMove;
+        Trajectory betweenWait = null;
         if(isBack()) {
             if (propPlace != CameraSystem.DetectionLocation.MIDDLE) {
                 if (isRight()) {
-                    backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .splineTo(PoseInTiles(1.5, 2.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(3.5, 2.5, 0).vec(), 0)
+                    backWaitForMove = drive.trajectoryBuilder(PoseInTiles(1.5,2.5,0))
+                            .lineToConstantHeading(PoseInTiles(4.5, 2.5, 0).vec())
+                            .build();
+                    betweenWait = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .lineToSplineHeading(PoseInTiles(1.5, 2.5, PI))
                             .build();
                 } else {
-                    backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
-                            .splineTo(PoseInTiles(1.5, 3.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(3.5, 3.5, 0).vec(), 0)
+                    backWaitForMove = drive.trajectoryBuilder(PoseInTiles(1.5, 3.5,PI))
+                            .lineToConstantHeading(PoseInTiles(4.5, 3.5, 0).vec())
+                            .build();
+                    betweenWait = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .lineToSplineHeading(PoseInTiles(1.5, 3.5, PI))
                             .build();
                 }
             }
             else {
                 if(isRight()){
                     backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
-//                            .strafeRight(40)
-                            .splineToConstantHeading(PoseInTiles(2.5, 2.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(3.5, 2.5, 0).vec(), 0)
+                            .lineToSplineHeading(PoseInTiles(0.5, 4.5, PI))
+                            .splineTo(PoseInTiles(2.5, 2.5, 0).vec(), -PI)
+                            .splineToConstantHeading(PoseInTiles(4.5, 2.5, 0).vec(), 0)
                             .build();
                 }
                 else {
                     backWaitForMove = drive.trajectoryBuilder(drive.getPoseEstimate())
-//                            .strafeLeft(40)
-                            .splineToConstantHeading(PoseInTiles(0.5, 3.5, 0).vec(), 0)
-                            .splineTo(PoseInTiles(3.5, 3.5, 0).vec(), 0)
+                            .lineToSplineHeading(PoseInTiles(0.5, 4.5, PI))
+                            .splineTo(PoseInTiles(0.5, 3.5, 0).vec(), PI)
+                            .splineToConstantHeading(PoseInTiles(4.5, 3.5, 0).vec(), 0)
                             .build();
                 }
             }
 
+            if (betweenWait != null) {
+                drive.followTrajectory(betweenWait);
+            }
             drive.followTrajectory(backWaitForMove);
-            opMode.sleep(10000);
+            //opMode.sleep(10000);
             threeYellowDropTrajectories.driveCorrectTrajectory();
             //drop
-            gWheelSystem.setPower(1);
+            //gWheelSystem.setPower(1);
 
-            opMode.sleep(2500);
+            //opMode.sleep(2500);
 
-            gWheelSystem.setPower(0);
+            //gWheelSystem.setPower(0);
         }
     }
 

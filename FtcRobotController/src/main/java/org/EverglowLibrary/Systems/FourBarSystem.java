@@ -67,6 +67,10 @@ public class FourBarSystem{
         //clawAngelServo.resetDeviceConfigurationForOpMode();
     }
 
+    public void restart(){
+        fourBarMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fourBarMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
     public boolean isFinish(Level level){
         boolean isFinished;
         final int epsilon4Bar = 15;
