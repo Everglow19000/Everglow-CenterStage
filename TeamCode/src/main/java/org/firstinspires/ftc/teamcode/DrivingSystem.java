@@ -26,6 +26,14 @@ public class DrivingSystem extends SampleMecanumDrive {
 
     public static double TILE_LENGTH = 60.5;
 
+
+    public double realAngle(double angle) {
+        if(angle > PI) angle -= 2* PI;
+        return angle;
+
+    }
+
+
     /**
      * Creates a new Pose2d but with X and Y values multiplaied by Tile Length
      *
@@ -37,6 +45,11 @@ public class DrivingSystem extends SampleMecanumDrive {
      */
     public Pose2d PoseInTiles(double x, double y, double Heading) {
         return new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading);
+    }
+
+    public Pose2d locationInTiles() {
+        Pose2d L = getPoseEstimate();
+        return new Pose2d(L.getX() / TILE_LENGTH, L.getY() / TILE_LENGTH, Heading);
     }
 
 
