@@ -4,6 +4,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -25,6 +26,15 @@ public class DrivingSystem extends SampleMecanumDrive {
 
     public static double TILE_LENGTH = 60.5;
 
+
+    public double realAngle(double angle) {
+        if(angle > PI) angle -= 2 * PI;
+        if(angle < -PI) angle += 2 * PI;
+        return angle;
+
+    }
+
+
     /**
      * Creates a new Pose2d but with X and Y values multiplaied by Tile Length
      *
@@ -36,6 +46,11 @@ public class DrivingSystem extends SampleMecanumDrive {
      */
     public Pose2d PoseInTiles(double x, double y, double Heading) {
         return new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading);
+    }
+
+    public Pose2d locationInTiles() {
+        Pose2d L = getPoseEstimate();
+        return new Pose2d(L.getX() / TILE_LENGTH, L.getY() / TILE_LENGTH, realAngle(L.getHeading()));
     }
 
 
@@ -58,25 +73,6 @@ public class DrivingSystem extends SampleMecanumDrive {
         return (targetAngle - angle) * 3;
     }
 
-    private Pose2d PassPowers(Pose2d robotTileLocation, Pose2d axisPowers) {
-        final double X = robotTileLocation.getX(), Y = robotTileLocation.getY();
-        double deviationX = 0;
-        if(X > 3.5) deviationX = X - 3.5;
-        if(X < 1.5) deviationX = 1.5 - X;
-
-        double deviationY = chooseLain(robotTileLocation) - Y;
-
-        double Py = 0; // deviationY * 0.4
-        double Pr = 0;
-        if(deviationX != 0){
-            Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
-            Pr = anglePower(robotTileLocation.getHeading());
-        }
-
-        return new Pose2d(axisPowers.getX(), Py, Pr);
-        //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
-    }
-
     Pose2d driveByAxisPowers(Pose2d inputPowers, double heading) {
         double powerX =  inputPowers.getX() * cos(heading) + inputPowers.getY() * sin(heading);
         double powerY =  -inputPowers.getX() * sin(heading) + inputPowers.getY() * cos(heading);
@@ -85,46 +81,85 @@ public class DrivingSystem extends SampleMecanumDrive {
         return new Pose2d(powerX, powerY, inputPowers.getHeading());
     }
 
-    Pose2d controlledDriving(Pose2d robotTileLocation, Pose2d inputPowers) {
-        Pose2d axisPowers = driveByAxisPowers(inputPowers, robotTileLocation.getHeading());
+    private Pose2d InPowers(Pose2d robotTileLocation, Pose2d axisPowers) {
+        final double Y = robotTileLocation.getY();
+        double deviationY = chooseLain(robotTileLocation) - Y;
+
+        double Py = deviationY * abs(deviationY);
+        double Pr = anglePower(robotTileLocation.getHeading());
+
+        return new Pose2d(axisPowers.getX(), Py, Pr);
+    }
+
+    private Pose2d PassPowers(Pose2d robotTileLocation, Pose2d axisPowers) {
+        final double X = robotTileLocation.getX(), Y = robotTileLocation.getY();
+        double deviationX = 0;
+        if (X > 3.5) deviationX = X - 3.5;
+        if (X < 1.5) deviationX = 1.5 - X;
+
+        double deviationY = chooseLain(robotTileLocation) - Y;
+
+
+        double Py = deviationY * abs(deviationY / deviationX * axisPowers.getX() * 5);
+        double Pr = anglePower(robotTileLocation.getHeading());
+
+        return new Pose2d(axisPowers.getX(), Py, Pr);
+        //return new Pose2d(axisPowers.getX(), Py, axisPowers.getHeading());
+    }
+
+
+    Pose2d controlledDriving(Pose2d axisPowers, Pose2d robotTileLocation) {
+
         //telemetry.addData("axisPowers ", axisPowers);
-        final double X = robotTileLocation.getX();
-        if(X > 4 && axisPowers.getX() > 0.1 + (5.0 - X) / 4) {
-            return new Pose2d(0.1 + (5.0 - X) / 4, axisPowers.getY(), axisPowers.getHeading());
+        final double X = robotTileLocation.getX(), Y = robotTileLocation.getY();
+        double Px = axisPowers.getX(), Py = axisPowers.getY();
+
+
+
+        if (X <= 3.5 && X >= 1.5) {
+            opMode.telemetry.addLine("Pass");
+            return InPowers(robotTileLocation, axisPowers);
         }
 
-        if(X > 4 || X < 1) return axisPowers;
-        if((X > 3.5 && axisPowers.getX() >= 0) || (X < 1.5 && axisPowers.getX() <= 0)) return axisPowers;
-        if(axisPowers.getY() > 0.6) {
-            return new Pose2d(0, axisPowers.getY(), axisPowers.getHeading());
+        if((X > 3.5 && X < 4 && Px < 0) || ((X > 1 && X < 1.5 && Px > 0))) {
+            opMode.telemetry.addLine("Between Zone");
+            if(abs(Py) < 0.60) {
+                return  PassPowers(robotTileLocation, axisPowers);
+            }
+            Px = 0;
         }
 
-        return PassPowers(robotTileLocation, inputPowers);
-    }
+
+        final double minPower = 0.1, scalerDistance = 0.35, scalerWall = 0.6;
+
+        if (X > 4) {
+            double distanceTo = max(5 - X, 0);
+            Px = min(Px, minPower + scalerDistance * distanceTo);
+        } else if(X < 1.5) {
+            double distanceTo = max(X - 0.5, 0);
+            Px = max(Px, - (minPower + scalerDistance * distanceTo));
+        }
+        if (Y > 4.5) {
+            double distanceTo = max(5.5 - Y, 0);
+            Py = min(Py, minPower + scalerWall * distanceTo);
+        } else if (Y < 1.5) {
+            double distanceTo = max(Y - 0.5, 0);
+            Py = max(Py, - (minPower + scalerWall * distanceTo));
+        }
+
+        return driveByAxisPowers(new Pose2d(Px, Py, axisPowers.getHeading()), robotTileLocation.getHeading());
 
 
-    double realAngle(double angle) {
-        if(angle > PI) angle -= 2 * PI;
-        return angle;
-    }
-
-    public Pose2d locationInTiles() {
-        Pose2d pos = getPoseEstimate();
-        return new Pose2d(pos.getX() / TILE_LENGTH, pos.getY() / TILE_LENGTH, realAngle(pos.getHeading()));
-    }
-
-    public Pose2d adjustedPowers(Pose2d Powers) {
-        return new Pose2d (Powers.getX() * 1.0, Powers.getY() * 1.13, Powers.getHeading() * 1.0);
     }
 
 
     public void allDrives(Pose2d inputPowers, boolean adjusted, boolean byAxis, boolean controlled) {
         //update the location
-        update();
+
 
         opMode.telemetry.addData("input Powers ", inputPowers);
         Pose2d robotTileLocation = locationInTiles();
-        Pose2d finalPower = new Pose2d();
+        Pose2d finalPower = inputPowers;
         if(controlled) {
             finalPower = controlledDriving(inputPowers, robotTileLocation);
         }
@@ -133,15 +168,19 @@ public class DrivingSystem extends SampleMecanumDrive {
             finalPower = driveByAxisPowers(inputPowers, robotTileLocation.getHeading());
         }
 
-        //if(adjusted) {
-        //    finalPower = adjustedPowers(inputPowers);
-        //}
+        if(adjusted) {
+            finalPower = adjustedPowers(finalPower);
+        }
 
         setWeightedDrivePower(finalPower);
     }
 
     public void setLocationInTiles(double x, double y, double Heading) {
         setPoseEstimate(new Pose2d(x * TILE_LENGTH, y * TILE_LENGTH, Heading));
+    }
+
+    public Pose2d adjustedPowers(Pose2d powers) {
+        return new Pose2d(powers.getX() * 1.0, powers.getY() * 1.0, powers.getHeading() * 1.0 - powers.getX() * 0.07);
     }
 
     public void driveMecanum (Pose2d powers){
