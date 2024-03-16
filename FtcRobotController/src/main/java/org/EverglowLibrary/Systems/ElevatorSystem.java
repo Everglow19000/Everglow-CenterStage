@@ -155,14 +155,20 @@ public class ElevatorSystem{
 
         @Override
         public boolean isFinished() {
-            final double epsilon = 10;
+            final double epsilon = 400;
+            boolean isFinished;
 
-            if(ElevatorCurrentLevel == Level.UP)
-                return left.getCurrentPosition() + epsilon >= Level.UP.state
-                        && right.getCurrentPosition() + epsilon >= Level.UP.state;
-            else
-                return left.getCurrentPosition() - epsilon <= Level.DOWN.state
-                        && right.getCurrentPosition() - epsilon <= Level.DOWN.state;
+            isFinished =  left.getCurrentPosition() + epsilon >= toRun.state
+                    && right.getCurrentPosition() + epsilon >= toRun.state
+                    && left.getCurrentPosition() - epsilon <= toRun.state
+                    && right.getCurrentPosition() - epsilon <= toRun.state;
+//            if(ElevatorCurrentLevel == Level.UP)
+//                return left.getCurrentPosition() + epsilon >= Level.UP.state
+//                        && right.getCurrentPosition() + epsilon >= Level.UP.state;
+//            else
+//                return left.getCurrentPosition() - epsilon <= Level.DOWN.state
+//                        && right.getCurrentPosition() - epsilon <= Level.DOWN.state;
+            return isFinished;
         }
 
         @Override
