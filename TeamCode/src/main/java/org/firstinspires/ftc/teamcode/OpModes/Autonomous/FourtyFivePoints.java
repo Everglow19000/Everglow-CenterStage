@@ -7,6 +7,7 @@ import static java.lang.Math.toRadians;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -190,25 +191,11 @@ public class FourtyFivePoints {
                 .build();
     }
 
-
-    public class ThreePose {
-        public Pose2d poseMiddle, poseLeft, poseRight;
-        ThreePose(Pose2d poseMiddle, Pose2d poseLeft, Pose2d poseRight) {
-            this.poseMiddle = poseMiddle;
-            this.poseLeft = poseLeft;
-            this.poseRight = poseRight;
-        }
-        ThreePose() {
-            this.poseMiddle = new Pose2d();
-            this.poseLeft = new Pose2d();
-            this.poseRight = new Pose2d();
-        }
-    }
-
-
     public class ThreeTrajectories {
         public ThreePose startLocations = new ThreePose(), middleLocations = new ThreePose(),  endLocations = new ThreePose();
         public Trajectory trajMiddle, trajLeft, trajRight;
+
+        public TrajectoryBuilder trajbuilderMiddle, trajbuilderLeft, trajbuilderRight;
 
 
         public void setStartPose(Pose2d startLocation) {
@@ -222,10 +209,34 @@ public class FourtyFivePoints {
             endLocations = new ThreePose(endLocation, endLocation, endLocation);
         }
 
+        public void addConstHeadingTraj(ThreePose poses) {
+            trajbuilderMiddle.splineToConstantHeading(poses.poseMiddle.vec(), poses.poseMiddle.getHeading());
+            trajbuilderLeft.splineToConstantHeading(poses.poseLeft.vec(), poses.poseLeft.getHeading());
+            trajbuilderRight.splineToConstantHeading(poses.poseRight.vec(), poses.poseRight.getHeading());
+        }
+
+        public void addLinearHeadingTraj(ThreePose poses) {
+            trajbuilderMiddle.splineToLinearHeading(poses.poseMiddle, poses.poseMiddle.getHeading());
+            trajbuilderLeft.splineToLinearHeading(poses.poseLeft, poses.poseLeft.getHeading());
+            trajbuilderRight.splineToLinearHeading(poses.poseRight, poses.poseRight.getHeading());
+        }
+
+        public void addLineToSplineHeading(ThreePose poses) {
+            trajbuilderMiddle.lineToSplineHeading(poses.poseMiddle);
+            trajbuilderLeft.lineToSplineHeading(poses.poseLeft);
+            trajbuilderRight.lineToSplineHeading(poses.poseRight);
+        }
+
         public void createTrajectories() {
             trajMiddle = trajToPose(startLocations.poseMiddle, endLocations.poseMiddle);
             trajLeft = trajToPose(startLocations.poseLeft, endLocations.poseLeft);
             trajRight = trajToPose(startLocations.poseRight, endLocations.poseRight);
+        }
+
+        public void buildTrajs(){
+            trajMiddle = trajbuilderMiddle.build();
+            trajLeft = trajbuilderLeft.build();
+            trajRight = trajbuilderRight.build();
         }
 
         public void createLinerHeadingTrajectories() {
@@ -268,6 +279,12 @@ public class FourtyFivePoints {
                 case RIGHT:
                     drive.followTrajectory(trajRight);
             }
+        }
+
+        public void createThreePoseStart(ThreePose threePose){
+            trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle);
+            trajbuilderRight = drive.trajectoryBuilder(threePose.poseRight);
+            trajbuilderLeft = drive.trajectoryBuilder(threePose.poseLeft);
         }
     }
 
@@ -427,13 +444,25 @@ public class FourtyFivePoints {
 
         // Complex drive to Purple //
 
-        threePurpleDropTrajectories.setStartPose(tryRight(StartLocation));
+        threePurpleDropTrajectories.createThreePoseStart(new ThreePose(StartLocation));
+        //threePurpleDropTrajectories.setStartPose(tryRight(StartLocation));
 
         if(isBack()) {
-            threePurpleDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(0.8, 4, East));
-            threePurpleDropTrajectories.endLocations.poseLeft = tryRight(PoseInTiles(1.1, 4.5, East));
-            threePurpleDropTrajectories.endLocations.poseRight = tryRight(PoseInTiles(0.5, 4.5, East));
-            threePurpleDropTrajectories.createConstHeadingTrajectories();
+            ThreePose purpleDropLocation = new ThreePose(
+                    tryRight(PoseInTiles(1.6, 4.153, South)),
+                    tryRight(PoseInTiles(1.1, 4.5, South)),
+                    tryRight(PoseInTiles(0.659, 4.153, South))
+            );
+
+            Pose2d purpleHalfWayLocation = tryRight(PoseInTiles(0.5,5,East));
+
+            threePurpleDropTrajectories.addConstHeadingTraj(new ThreePose(purpleHalfWayLocation));
+            threePurpleDropTrajectories.addLinearHeadingTraj(purpleDropLocation);
+            threePurpleDropTrajectories.buildTrajs();
+            //threePurpleDropTrajectories.endLocations.poseMiddle = tryRight(PoseInTiles(1.6, 4.153, South));
+            //threePurpleDropTrajectories.endLocations.poseLeft = tryRight(PoseInTiles(1.1, 4.5, East));
+            //threePurpleDropTrajectories.endLocations.poseRight = tryRight(PoseInTiles(0.659, 4.153, South)); //x: 0.659, y: 4.328
+            //threePurpleDropTrajectories.createLinerHeadingTrajectories();
 
 
 
