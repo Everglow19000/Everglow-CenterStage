@@ -13,6 +13,7 @@ import org.EverglowLibrary.ThreadHandleLib.Sequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceControl;
 import org.EverglowLibrary.ThreadHandleLib.SequenceInSequence;
 import org.EverglowLibrary.ThreadHandleLib.SequenceRunner;
+import org.firstinspires.ftc.teamcode.DrivingSystem;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @TeleOp(name = "TwoDrivers_Sequences", group = "main-drive")
@@ -34,7 +35,8 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         ClawSystem clawSystem = new ClawSystem(this);
         ElevatorSystem elevatorSystem = new ElevatorSystem(this);
         GWheelSystem gWheelSystem = new GWheelSystem(this);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        DrivingSystem drivingSystem = new DrivingSystem(this);
+        drivingSystem.setLocationInTiles(4, 4, 0);
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
         Servo planeServo = hardwareMap.get(Servo.class, "PlaneServo");
         planeServo.setPosition(0); //close servo mode
@@ -53,6 +55,14 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         waitForStart();
 
         fourBarSystem.setMotorPower(0.85);
+
+
+        boolean ajust = true, axis = true, control = false, slow = false;
+        Pose2d location;
+        Pose2d powers;
+        double Px, Py, Pangle;
+        boolean toggle_slow = false, toggle_control = false, toggle_axis = false, toggle_ajust = false;
+
 
         while (opModeIsActive()){
             isRest = elevatorSystem.getCurrentPos() == ElevatorSystem.Level.DOWN
@@ -117,10 +127,10 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             gwheel_toggle = gamepad1.right_bumper || gamepad1.left_bumper;
 
-            if(gamepad1.square && !elevator_toggle){
+            if(gamepad1.dpad_up && !elevator_toggle){
                 elevatorSystem.toggleMax();
             }
-            elevator_toggle = gamepad1.square;
+            elevator_toggle = gamepad1.dpad_up;
 
             if(gamepad2.left_trigger > 0.8 && !left_Claw){
                 clawSystem.MoveOneClaw(false);
@@ -132,15 +142,48 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             right_claw = gamepad2.right_trigger > 0.8;
 
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
-                    )
-            );
+            if(gamepad1.circle && !toggle_ajust) ajust = !ajust;
+            if(gamepad1.triangle && !toggle_axis) axis = !axis;
+            if(gamepad1.square && !toggle_control) control = !control;
+            if(gamepad1.cross && !toggle_slow) slow = !slow;
 
-            drive.update();
+            toggle_axis = gamepad1.triangle;
+            toggle_ajust = gamepad1.circle;
+            toggle_control = gamepad1.square;
+            toggle_slow = gamepad1.cross;
+
+            if(ajust) telemetry.addLine("Ajusted powers is On");
+            if(axis) telemetry.addLine("Axis powers is On");
+            if(control) telemetry.addLine("Controlled powers is On");
+            if(slow) telemetry.addLine("Slow powers is On");
+
+            location = drivingSystem.getPoseEstimate();
+            telemetry.addData("X ", location.getX());
+            telemetry.addData("Y ", location.getY());
+            telemetry.addData("Heading ", location.getHeading());
+            location = drivingSystem.locationInTiles();
+            telemetry.addData("X in Tiles", location.getX());
+            telemetry.addData("Y in Tiles", location.getY());
+
+
+            Px = -gamepad1.left_stick_y;
+            Py = -gamepad1.left_stick_x;
+            Pangle = -gamepad1.right_stick_x;
+
+            Px = linearInputToExponential(Px);
+            Py = linearInputToExponential(Py);
+            Pangle = linearInputToExponential(Pangle);
+
+            if(slow) {
+                Px /= 3;
+                Py /= 3;
+                Pangle /= 5;
+            }
+
+            powers = new Pose2d(Px, Py, Pangle);
+
+            drivingSystem.allDrives(powers, ajust, axis, control);
+            drivingSystem.update();
             sequenceRunner.Update();
             if(fourBarSystem.getTargetPosition() == FourBarSystem.Level.DROP)
                 fourBarSystem.set4BarPositionByLevel(fourBarSystem.getTargetPosition());
@@ -153,4 +196,10 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         sequenceRunner.Interapt();
         sleep(1000);
     }
+
+    public double linearInputToExponential(double power){
+        double base = 6;
+        return (Math.pow(base, Math.abs(power)) - 1) / (base - 1) * Math.signum(power);
+    }
+
 }

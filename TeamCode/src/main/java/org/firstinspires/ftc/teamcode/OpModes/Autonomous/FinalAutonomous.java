@@ -355,7 +355,6 @@ public class FinalAutonomous {
 //            threePurpleDropTrajectories.endLocations.poseLeft = tryRight(PoseInTiles(4.35, 3.5, East));
 //            threePurpleDropTrajectories.endLocations.poseRight =tryRight( PoseInTiles(0.39, 3.5, East));
 //            threePurpleDropTrajectories.createConstHeadingTrajectories();
-            tryRight()
             correctPark = 5.5;
             threeYellowDropTrajectories.startLocations = threePurpleDropTrajectories.endLocations;
         }
