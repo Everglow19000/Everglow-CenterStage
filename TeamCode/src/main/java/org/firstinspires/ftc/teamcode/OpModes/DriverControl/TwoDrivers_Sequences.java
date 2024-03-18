@@ -57,7 +57,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         fourBarSystem.setMotorPower(0.85);
 
 
-        boolean ajust = true, axis = true, control = false, slow = false;
+        boolean ajust = true, axis = false, control = false, slow = false;
         Pose2d location;
         Pose2d powers;
         double Px, Py, Pangle;
