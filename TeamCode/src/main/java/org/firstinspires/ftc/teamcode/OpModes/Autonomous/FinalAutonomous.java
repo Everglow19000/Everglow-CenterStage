@@ -267,7 +267,7 @@ public class FinalAutonomous {
         dropYellow = new Sequence(false, clawSystem.getExecutor(false)
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
                 , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP)
-                ,elevatorSystem.getExecutor(ElevatorSystem.Level.MED)
+                ,elevatorSystem.getExecutor(ElevatorSystem.Level.MED_AUTONOMOUS)
         );
 
         getReadyToDrop  = sequenceControl.GetReadyToDropSeq();

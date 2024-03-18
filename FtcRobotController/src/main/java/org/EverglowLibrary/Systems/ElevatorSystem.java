@@ -17,7 +17,7 @@ public class ElevatorSystem{
     }
 
     public enum Level {
-        DOWN(0), UP(865), MED(400), MAX_UP(1480), TLIA(900); //TLIA 918
+        DOWN(0), UP(865), MED_AUTONOMOUS(250), MED(400), MAX_UP(1480), TLIA(900); //TLIA 918
         //Up 834
 
         public final int state;
