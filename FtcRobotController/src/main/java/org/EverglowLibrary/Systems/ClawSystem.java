@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 public class ClawSystem{
     private boolean open = false;
-    private final double leftClosed = 0.7, leftOpen = 0, rightClosed = 0.4, rightOpen = 1;
+    private final double leftClosed = 0.7, leftOpen = 0.25, rightClosed = 0.4, rightOpen = 0.8;
     private final LinearOpMode opMode;
 
     Servo ClawR, ClawL;

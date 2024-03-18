@@ -131,6 +131,12 @@ public class ThreeTrajectories {
                 .build();
     }
 
+    private Trajectory trajLinetoSplineHeading(Pose2d poseStart, Pose2d poseFinish){
+        return drive.trajectoryBuilder(poseStart)
+                .lineToSplineHeading(poseFinish)
+                .build();
+    }
+
     public void driveCorrectTrajectory(CameraSystem.DetectionLocation propPlace) {
         switch (propPlace) {
             case MIDDLE:
@@ -149,6 +155,12 @@ public class ThreeTrajectories {
         trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle);
         trajbuilderLeft = drive.trajectoryBuilder(threePose.poseLeft);
         trajbuilderRight = drive.trajectoryBuilder(threePose.poseRight);
+    }
+
+    public void createLineToSplineHeading(){
+        trajMiddle = trajLinetoSplineHeading(startLocations.poseMiddle, endLocations.poseMiddle);
+        trajLeft = trajLinetoSplineHeading(startLocations.poseLeft, endLocations.poseLeft);
+        trajRight = trajLinetoSplineHeading(startLocations.poseRight, endLocations.poseRight);
     }
 
     public void addForward(double distance){

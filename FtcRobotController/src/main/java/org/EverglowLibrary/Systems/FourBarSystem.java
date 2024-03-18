@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem{
 
     public enum Level {
-        START(35), PICKUP(35), DROP(-635), REST(-635), LOW(-410); //344
+        START(0), PICKUP(0), DROP(-670), REST(-670), LOW(-460); //344
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -74,16 +74,17 @@ public class FourBarSystem{
     public boolean isFinish(Level level){
         boolean isFinished;
         final int epsilon4Bar = 15;
-        final int lower = -318;
-        final int upper =  -200;
         isFinished = ((fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar));
+        if(level != Level.LOW){
+            final int lower = -318;
+            final int upper = -200;
 
-        if(level == Level.DROP){
-            isFinished = isFinished || fourBarMotor.getCurrentPosition() <= lower;
-        }
-        else if(level == Level.PICKUP){
-            isFinished = isFinished || fourBarMotor.getCurrentPosition() >= upper;
+            if (level == Level.DROP) {
+                isFinished = isFinished || fourBarMotor.getCurrentPosition() <= lower;
+            } else if (level == Level.PICKUP) {
+                isFinished = isFinished || fourBarMotor.getCurrentPosition() >= upper;
+            }
         }
 
         opMode.telemetry.addData("is FourBar finished? ", isFinished);

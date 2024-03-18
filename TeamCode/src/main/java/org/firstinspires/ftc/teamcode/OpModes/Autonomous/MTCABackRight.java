@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.util.ExecutorUtils.ExecutorTrajectories;
 public class MTCABackRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        FourtyFivePoints autonumous = new FourtyFivePoints();
-        autonumous.firstCall(this, FourtyFivePoints.StartPosition.BACK_RIGHT);
-
+        FinalAutonomous autonumous = new FinalAutonomous();
+        autonumous.firstCall(this, FinalAutonomous.StartPosition.BACK_RIGHT);
+        autonumous.SecondCall();
     }
 }

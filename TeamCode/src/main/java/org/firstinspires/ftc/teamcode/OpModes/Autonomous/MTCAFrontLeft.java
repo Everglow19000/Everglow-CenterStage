@@ -12,7 +12,9 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class MTCAFrontLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        FourtyFivePoints autonumous = new FourtyFivePoints();
-        autonumous.firstCall(this, FourtyFivePoints.StartPosition.FRONT_LEFT);
+        FinalAutonomous autonumous = new FinalAutonomous();
+        autonumous.firstCall(this, FinalAutonomous.StartPosition.FRONT_LEFT);
+
+        autonumous.SecondCall();
     }
 }
