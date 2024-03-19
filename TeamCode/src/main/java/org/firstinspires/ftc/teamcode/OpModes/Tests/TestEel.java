@@ -23,7 +23,7 @@ public class TestEel extends LinearOpMode {
         int pos = ElevatorSystem.Level.DOWN.state;
 
         while (opModeIsActive()) {
-            pos += -gamepad1.left_stick_y;
+            pos += -gamepad1.left_stick_y/100;
             if(gamepad1.cross)
                 elevators.setPower(-0.4);
             else if(gamepad1.circle){

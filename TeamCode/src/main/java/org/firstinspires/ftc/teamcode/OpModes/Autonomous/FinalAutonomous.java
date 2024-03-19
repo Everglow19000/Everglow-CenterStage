@@ -248,6 +248,7 @@ public class FinalAutonomous {
         fourBarSystem = new FourBarSystem(opMode);
         gWheelSystem = new GWheelSystem(opMode);
 
+        opMode.sleep(1000);
         fourBarSystem.restart();
 
         sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
