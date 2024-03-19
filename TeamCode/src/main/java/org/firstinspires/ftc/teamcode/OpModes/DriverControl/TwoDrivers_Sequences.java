@@ -36,7 +36,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
         ElevatorSystem elevatorSystem = new ElevatorSystem(this);
         GWheelSystem gWheelSystem = new GWheelSystem(this);
         DrivingSystem drivingSystem = new DrivingSystem(this);
-        drivingSystem.setLocationInTiles(4, 4, 0);
+        drivingSystem.setLocationInTiles(5, 2, 0);
         SequenceControl sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
         Servo planeServo = hardwareMap.get(Servo.class, "PlaneServo");
         planeServo.setPosition(0); //close servo mode
@@ -132,15 +132,15 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             elevator_toggle = gamepad1.dpad_up;
 
-            if(gamepad2.left_trigger > 0.8 && !left_Claw){
+            if(gamepad2.left_trigger > 0.5 && !left_Claw){
                 clawSystem.MoveOneClaw(false);
             }
-            left_Claw = gamepad2.left_trigger > 0.8;
+            left_Claw = gamepad2.left_trigger > 0.5;
 
-            if(gamepad2.right_trigger > 0.8 && !right_claw){
+            if(gamepad2.right_trigger > 0.5 && !right_claw){
                 clawSystem.MoveOneClaw(true);
             }
-            right_claw = gamepad2.right_trigger > 0.8;
+            right_claw = gamepad2.right_trigger > 0.5;
 
             if(gamepad1.circle && !toggle_ajust) ajust = !ajust;
             if(gamepad1.triangle && !toggle_axis) axis = !axis;

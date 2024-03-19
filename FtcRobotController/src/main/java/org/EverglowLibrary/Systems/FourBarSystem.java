@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class FourBarSystem{
 
     public enum Level {
-        START(0), PICKUP(0), DROP(-670), REST(-670), LOW(-460); //344
+        START(29), PICKUP(29), DROP(-641), REST(-641), LOW(-431); //344
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -77,8 +77,8 @@ public class FourBarSystem{
         isFinished = ((fourBarMotor.getCurrentPosition() >= level.state - epsilon4Bar) &&
                 (fourBarMotor.getCurrentPosition() <= level.state + epsilon4Bar));
 //        if(level != Level.LOW){
-//            final int lower = -318;
-//            final int upper = -200;
+//            final int lower = -400;
+//            final int upper = -50;
 //
 //            if (level == Level.DROP) {
 //                isFinished = isFinished || fourBarMotor.getCurrentPosition() <= lower;

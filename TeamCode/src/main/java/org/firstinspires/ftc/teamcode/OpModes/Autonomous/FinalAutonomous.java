@@ -341,8 +341,8 @@ public class FinalAutonomous {
             threeMiddleForBackTrajectories.addLineToSplineHeading(between);
 
             waitLoc.poseRight = waitLoc.poseRight.plus(tryRight(PoseInTiles(0,rightBuffer,0)));
-            waitLoc.poseMiddle = waitLoc.poseMiddle.plus(PoseInTiles(0,backRightBuff,0));
-            waitLoc.poseLeft = waitLoc.poseLeft.plus(PoseInTiles(0,backRightBuff,0));
+            waitLoc.poseMiddle = waitLoc.poseMiddle.plus(PoseInTiles(0,-backRightBuff,0));
+            waitLoc.poseLeft = waitLoc.poseLeft.plus(PoseInTiles(0,-backRightBuff,0));
 
             threeMiddleForBackTrajectories.addConstHeadingTraj(waitLoc);
 
@@ -515,7 +515,7 @@ public class FinalAutonomous {
             }
 
             drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .back(12.5).build());
+                    .back(11).build());
         }
 
         clawSystem.toggle();

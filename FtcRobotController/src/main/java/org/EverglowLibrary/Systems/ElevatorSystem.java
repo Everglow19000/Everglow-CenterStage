@@ -155,7 +155,7 @@ public class ElevatorSystem{
 
         @Override
         public boolean isFinished() {
-            final double epsilon = 20;
+            final double epsilon = 15;
             boolean isFinished;
 
             isFinished =  left.getCurrentPosition() + epsilon >= toRun.state
