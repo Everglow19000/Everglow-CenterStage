@@ -109,7 +109,7 @@ public class ClawSystem{
                 opMode.sleep(10);
 
             //in milliseconds
-            int waitTime = 600;
+            int waitTime = 400;
 
             if(Calendar.getInstance().getTimeInMillis() - startTime >= waitTime || isWasOpenBefore == m_toOpen) {
                 startTime = -1;

@@ -300,7 +300,7 @@ public class FinalAutonomous {
         if((!isRight() && !isBack()) || (isRight() && isBack())){
             purpleDropLocation = new ThreePose(
                     tryRight(tryFront(PoseInTiles(1.1, 4.01, South))), //middle
-                    tryRight(tryFront(PoseInTiles(1.55, 4.3, North))), //left
+                    tryRight(tryFront(PoseInTiles(1.52, 4.3, North))), //left
                     tryRight(tryFront(PoseInTiles(1.383, 4.3, South))) //right
             );
         }
@@ -308,7 +308,7 @@ public class FinalAutonomous {
             purpleDropLocation = new ThreePose(
                     tryRight(tryFront(PoseInTiles(1.1, 4.01, South))), //middle
                     tryRight(tryFront(PoseInTiles(1.383, 4.3, South))), //left
-                    tryRight(tryFront(PoseInTiles(1.55, 4.3, North))) //right
+                    tryRight(tryFront(PoseInTiles(1.52, 4.3, North))) //right
             );
         }
 
@@ -316,11 +316,14 @@ public class FinalAutonomous {
 
         double frontBuff = 0;
         double angleFront = 0;
+        double backRightBuff = 0;
         if(isBack()) {
-            if (isRight())
-                rightBuffer = -0.35;
-            else
-                rightBuffer = 0.35;
+            ThreePose waitLoc = new ThreePose(tryRight(PoseInTiles(4.5, 3.5, South)));
+            if (isRight()) {
+                backRightBuff = 0.25;
+            }
+
+            rightBuffer = 0.35;
 
             opMode.telemetry.addData("purple right: ", purpleDropLocation.poseRight);
             opMode.telemetry.addData("purple Halfway: ", purpleHalfWayLocation);
@@ -337,8 +340,9 @@ public class FinalAutonomous {
             threeMiddleForBackTrajectories.createThreePoseStart(purpleDropLocation);
             threeMiddleForBackTrajectories.addLineToSplineHeading(between);
 
-            ThreePose waitLoc = new ThreePose(tryRight(PoseInTiles(4.5, 3.5, South)));
             waitLoc.poseRight = waitLoc.poseRight.plus(tryRight(PoseInTiles(0,rightBuffer,0)));
+            waitLoc.poseMiddle = waitLoc.poseMiddle.plus(PoseInTiles(0,backRightBuff,0));
+            waitLoc.poseLeft = waitLoc.poseLeft.plus(PoseInTiles(0,backRightBuff,0));
 
             threeMiddleForBackTrajectories.addConstHeadingTraj(waitLoc);
 
@@ -400,11 +404,9 @@ public class FinalAutonomous {
 
         // end of purple drop location //
 
-
-
         // yellow Trajectories //
         threeYellowDropTrajectories.endLocations.poseMiddle =
-                tryRight(PoseInTiles(5, 4.4, South+angleFront));
+                tryRight(PoseInTiles(5, 4.4 + backRightBuff, South+angleFront));
         threeYellowDropTrajectories.endLocations.poseLeft =
                 threeYellowDropTrajectories.endLocations.poseMiddle.plus(
                         new Pose2d(0, distanceBetweenTags, 0));
@@ -497,6 +499,8 @@ public class FinalAutonomous {
                 if (dropYellow.isDone())
                     break;
             }
+
+            opMode.sleep(3000);
         }
 
         //both Back and Front//
