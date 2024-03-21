@@ -22,8 +22,8 @@ public class SuperSplineTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         Trajectory traj = drive.trajectoryBuilder(new Pose2d())
-                .lineToSplineHeading(new Pose2d(100, 40,Math.toRadians(180)))
-                .splineToConstantHeading(new Vector2d(200, 0),Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(100, 40),0)
+                .splineTo(new Vector2d(200, 0),0)
                 .build();
 
         drive.followTrajectory(traj);
