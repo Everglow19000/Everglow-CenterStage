@@ -296,6 +296,7 @@ public class FinalAutonomous {
         double correctPark;
         double rightBuffer = 0;
         ThreePose purpleDropLocation;
+        int signX = getXSignByPosition(), signY = getYSignByPosition();
 
         // drop of the purple in the back //
         if((!isRight() && !isBack()) || (isRight() && isBack())){
@@ -315,14 +316,11 @@ public class FinalAutonomous {
 
         Pose2d purpleHalfWayLocation = tryFront(tryRight(PoseInTiles(0.5,5,South)));
 
-        double frontBuff = 0;
-        double angleFront = 0;
-        double backRightBuff = 0;
         if(isBack()) {
             ThreePose waitLoc = new ThreePose(tryRight(PoseInTiles(4.5, 3.5, South)));
-            if (isRight()) {
-                backRightBuff = 0.25;
-            }
+//            if (isRight()) {
+//                backRightBuff = 0.25;
+//            }
 
             rightBuffer = 0.35;
 
@@ -330,20 +328,20 @@ public class FinalAutonomous {
             opMode.telemetry.addData("purple Halfway: ", purpleHalfWayLocation);
 
             ThreePose between = new ThreePose(
-                    tryRight(purpleDropLocation.poseMiddle.plus(
-                            PoseInTiles(0,3.9-purpleDropLocation.poseMiddle.getY()/TILE_LENGTH,0))),
-                    tryRight(purpleDropLocation.poseLeft.plus(
-                            PoseInTiles(0,3.9-purpleDropLocation.poseLeft.getY()/TILE_LENGTH,0))),
-                    tryRight(purpleDropLocation.poseRight.plus(
-                            PoseInTiles(-0.2,3.9-purpleDropLocation.poseRight.getY()/TILE_LENGTH,0)))
+                purpleDropLocation.poseMiddle.plus(PoseInTiles(
+                        0,(3.9-purpleDropLocation.poseMiddle.getY()/TILE_LENGTH) * signY,0)),
+                purpleDropLocation.poseLeft.plus(PoseInTiles(
+                        0,(3.9-purpleDropLocation.poseLeft.getY()/TILE_LENGTH)* signY,0)),
+                purpleDropLocation.poseRight.plus(PoseInTiles(
+                        -0.2 * signX,(3.9-purpleDropLocation.poseRight.getY()/TILE_LENGTH) * signY,0))
             );
 
             threeMiddleForBackTrajectories.createThreePoseStart(purpleDropLocation);
             threeMiddleForBackTrajectories.addLineToSplineHeading(between);
 
-            waitLoc.poseRight = waitLoc.poseRight.plus(tryRight(PoseInTiles(0,rightBuffer,0)));
-            waitLoc.poseMiddle = waitLoc.poseMiddle.plus(PoseInTiles(0,-backRightBuff,0));
-            waitLoc.poseLeft = waitLoc.poseLeft.plus(PoseInTiles(0,-backRightBuff,0));
+            //waitLoc.poseRight = waitLoc.poseRight.plus(tryRight(PoseInTiles(0,rightBuffer,0))); //rightBuff
+            //waitLoc.poseMiddle = waitLoc.poseMiddle.plus(PoseInTiles(0,-backRightBuff,0)); //-backRightBuff
+            //waitLoc.poseLeft = waitLoc.poseLeft.plus(PoseInTiles(0,-backRightBuff,0)); //-backRightBuff
 
             threeMiddleForBackTrajectories.addConstHeadingTraj(waitLoc);
 
@@ -374,8 +372,8 @@ public class FinalAutonomous {
             //opMode.sleep(30000);
 
             correctPark = 5.6;
-            frontBuff = 0.3;
-            angleFront = 0;
+//            frontBuff = 0.3;
+//            angleFront = 0;
             threePurpleDropTrajectories.endLocations = purpleDropLocation;
             threeYellowDropTrajectories.startLocations = threePurpleDropTrajectories.endLocations;
         }
@@ -407,13 +405,13 @@ public class FinalAutonomous {
 
         // yellow Trajectories //
         threeYellowDropTrajectories.endLocations.poseMiddle =
-                tryRight(PoseInTiles(5, 4.4 + backRightBuff, South+angleFront));
+                tryRight(PoseInTiles(5, 4.4, South)); //backRightBuff, angleFront
         threeYellowDropTrajectories.endLocations.poseLeft =
                 threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                        new Pose2d(0, distanceBetweenTags, 0));
+                        new Pose2d(0, distanceBetweenTags*signY, 0));
         threeYellowDropTrajectories.endLocations.poseRight
                 = threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                new Pose2d(0, -distanceBetweenTags + (rightBuffer * TILE_LENGTH), 0));
+                new Pose2d(0, (-distanceBetweenTags + 0)*signY, 0)); //where is the 0 was (rightBuffer * TILE_LENGTH)
 
         if(!isBack())
             threeYellowDropTrajectories.createLinerHeadingTrajectories();
@@ -422,13 +420,14 @@ public class FinalAutonomous {
 
         // park //
         ThreePose dropYellowLocs = threeYellowDropTrajectories.endLocations;
+
         ThreePose between = new ThreePose(
                 tryRight(dropYellowLocs.poseMiddle.plus(
-                        PoseInTiles(-0.2,correctPark-dropYellowLocs.poseMiddle.getY()/TILE_LENGTH,0))),
+                        PoseInTiles(-0.2,(correctPark-dropYellowLocs.poseMiddle.getY()/TILE_LENGTH) * signY,0))),
                 tryRight(dropYellowLocs.poseLeft.plus(
-                        PoseInTiles(-0.2,correctPark-dropYellowLocs.poseLeft.getY()/TILE_LENGTH,0))),
+                        PoseInTiles(-0.2,(correctPark-dropYellowLocs.poseLeft.getY()/TILE_LENGTH) * signY,0))),
                 tryRight(dropYellowLocs.poseRight.plus(
-                        PoseInTiles(-0.2,correctPark+rightBuffer-dropYellowLocs.poseRight.getY()/TILE_LENGTH,0)))
+                        PoseInTiles(-0.2,(correctPark-dropYellowLocs.poseRight.getY()/TILE_LENGTH) * signY,0)))
         );
 
         threeParkTrajectories.createThreePoseStart(threeYellowDropTrajectories.endLocations);
@@ -456,6 +455,201 @@ public class FinalAutonomous {
 
     }
 
+    public void BuildAutonomous(LinearOpMode opMode, StartPosition startPosition){
+        this.opMode = opMode;
+        this.startPosition = startPosition;
+        drive = new SampleMecanumDrive(opMode.hardwareMap);
+        Servo planeServo = opMode.hardwareMap.get(Servo.class, "PlaneServo");
+        planeServo.setPosition(0);
+        //drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        cameraSystem = new CameraSystem(opMode, isRight(), isBack());
+
+
+        elevatorSystem = new ElevatorSystem(opMode);
+        clawSystem = new ClawSystem(opMode);
+        fourBarSystem = new FourBarSystem(opMode);
+        gWheelSystem = new GWheelSystem(opMode);
+
+        opMode.sleep(1000);
+        fourBarSystem.restart();
+
+        sequenceControl = new SequenceControl(clawSystem, fourBarSystem, elevatorSystem);
+        sequenceRunner = new SequenceRunner();
+        threeParkTrajectories = new ThreeTrajectories(drive);
+        threePurpleDropTrajectories = new ThreeTrajectories(drive);
+        threeYellowDropTrajectories = new ThreeTrajectories(drive);
+        threeMiddleForBackTrajectories = new ThreeTrajectories(drive);
+
+        // Create all Sequences //
+        dropPurpleSeq  = new Sequence(false,
+                elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+                fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.DROP),
+                elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)
+        );
+
+        dropYellow = new Sequence(false, clawSystem.getExecutor(false)
+                ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+                , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP)
+                ,elevatorSystem.getExecutor(ElevatorSystem.Level.MED_AUTONOMOUS)
+        );
+
+        getReadyToDrop  = sequenceControl.GetReadyToDropSeq();
+        returnSystemsToStart = sequenceControl.DropAndRetreatSeq();
+        returnFromPurple = sequenceControl.DropAndRetreatSeq();
+
+        switch (startPosition){
+            case BACK_LEFT: {
+                StartLocation = PoseInTiles(1.29, 5.6, East);
+                drive.setPoseEstimate(StartLocation);
+                threePurpleDropTrajectories.createThreePoseStart(new ThreePose(StartLocation));
+
+                ThreePose purpleDropLocation = new ThreePose(
+                        PoseInTiles(1.1, 4.01, South), //middle
+                        PoseInTiles(1.383, 4.3, South), //left
+                        PoseInTiles(1.52, 4.3, North) //right
+                );
+
+                Pose2d purpleHalfWayLocation = PoseInTiles(0.5,5,South);
+
+                threePurpleDropTrajectories.trajbuilderLeft //add path to the left trajectory
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseLeft.vec(), purpleDropLocation.poseLeft.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderRight
+                        .splineToLinearHeading(purpleDropLocation.poseRight, purpleDropLocation.poseRight.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderMiddle
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseMiddle.vec(), purpleDropLocation.poseMiddle.getHeading());
+
+                threePurpleDropTrajectories.buildTrajs();
+                break;
+            }
+            case BACK_RIGHT: {
+                StartLocation = PoseInTiles(1.29, 0.4, West);
+                drive.setPoseEstimate(StartLocation);
+                threePurpleDropTrajectories.createThreePoseStart(new ThreePose(StartLocation));
+
+                ThreePose purpleDropLocation = new ThreePose(
+                        PoseInTiles(1.1, 1.99, North), //middle
+                        PoseInTiles(1.52, 1.7, South), //left
+                        PoseInTiles(1.383, 1.7, North) //right
+                );
+
+                Pose2d purpleHalfWayLocation = PoseInTiles(0.5,1,North);
+
+                // Wait position trajectory //
+
+                ThreePose waitLoc = new ThreePose(PoseInTiles(4.5, 2.15, North));
+
+                opMode.telemetry.addData("purple right: ", purpleDropLocation.poseRight);
+                opMode.telemetry.addData("purple Halfway: ", purpleHalfWayLocation);
+
+                ThreePose between = new ThreePose(
+                        purpleDropLocation.poseMiddle.plus(
+                                PoseInTiles(0,2.1-purpleDropLocation.poseMiddle.getY()/TILE_LENGTH,0)),
+                        purpleDropLocation.poseLeft.plus(
+                                PoseInTiles(0,2.1-purpleDropLocation.poseLeft.getY()/TILE_LENGTH,0)),
+                        purpleDropLocation.poseRight.plus(
+                                PoseInTiles(-0.2,2.1-purpleDropLocation.poseRight.getY()/TILE_LENGTH,0))
+                );
+
+                threeMiddleForBackTrajectories.createThreePoseStart(purpleDropLocation);
+                threeMiddleForBackTrajectories.addLineToSplineHeading(between);
+
+                threeMiddleForBackTrajectories.addConstHeadingTraj(waitLoc);
+
+                threeMiddleForBackTrajectories.endLocations = waitLoc;
+                double correctPark = 3.5;
+                threeYellowDropTrajectories.startLocations = threeMiddleForBackTrajectories.endLocations;
+                threeMiddleForBackTrajectories.buildTrajs();
+
+                //end of Wait Position trajectory //
+
+                threePurpleDropTrajectories.trajbuilderRight
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseRight.vec(), purpleDropLocation.poseRight.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderLeft //add path to the left trajectory
+                        .splineToLinearHeading(purpleDropLocation.poseLeft, purpleDropLocation.poseLeft.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderMiddle
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseMiddle.vec(), purpleDropLocation.poseMiddle.getHeading());
+                threePurpleDropTrajectories.buildTrajs();
+                break;
+            }
+            case FRONT_LEFT: {
+                StartLocation = PoseInTiles(3.71, 5.6, East);
+                drive.setPoseEstimate(StartLocation);
+                threePurpleDropTrajectories.createThreePoseStart(new ThreePose(StartLocation));
+
+                ThreePose purpleDropLocation = new ThreePose(
+                        PoseInTiles(3.9, 4.01, North), //middle
+                        PoseInTiles(3.48, 4.3, North), //left
+                        PoseInTiles(3.617, 4.3, North) //right
+                );
+
+                Pose2d purpleHalfWayLocation = tryFront(tryRight(PoseInTiles(5.5,5,South)));
+
+                threePurpleDropTrajectories.trajbuilderRight
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseRight.vec(), purpleDropLocation.poseRight.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderLeft //add path to the left trajectory
+                        .splineToLinearHeading(purpleDropLocation.poseLeft, purpleDropLocation.poseLeft.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderMiddle
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseMiddle.vec(), purpleDropLocation.poseMiddle.getHeading());
+                threePurpleDropTrajectories.buildTrajs();
+                break;
+            }
+            case  FRONT_RIGHT: {
+                StartLocation = PoseInTiles(3.71, 0.4, West);
+                drive.setPoseEstimate(StartLocation);
+                threePurpleDropTrajectories.createThreePoseStart(new ThreePose(StartLocation));
+
+                ThreePose purpleDropLocation = new ThreePose(
+                        PoseInTiles(3.9, 1.99, North), //middle
+                        PoseInTiles(3.02, 1.7, North), //left
+                        PoseInTiles(3.617, 1.7, North) //right
+                );
+
+                Pose2d purpleHalfWayLocation = tryFront(tryRight(PoseInTiles(5.5,1,South)));
+
+                threePurpleDropTrajectories.trajbuilderLeft //add path to the left trajectory
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseLeft.vec(), purpleDropLocation.poseLeft.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderRight
+                        .splineToLinearHeading(purpleDropLocation.poseRight, purpleDropLocation.poseRight.getHeading());
+
+                threePurpleDropTrajectories.trajbuilderMiddle
+                        .lineToSplineHeading(purpleHalfWayLocation)
+                        .splineToConstantHeading(purpleDropLocation.poseMiddle.vec(), purpleDropLocation.poseMiddle.getHeading());
+                threePurpleDropTrajectories.buildTrajs();
+                break;
+            }
+        }
+    }
+
+    public int getXSignByPosition(){
+        int sign = 1;
+        if(!isBack()){
+            sign = -1;
+        }
+        return sign;
+    }
+
+    public int getYSignByPosition(){
+        int sign = 1;
+        if(isRight()){
+            sign = -1;
+        }
+        return sign;
+    }
 
     public void runAfterInput() {
 
