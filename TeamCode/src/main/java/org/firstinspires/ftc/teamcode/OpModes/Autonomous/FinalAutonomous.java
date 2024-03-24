@@ -317,7 +317,7 @@ public class FinalAutonomous {
         Pose2d purpleHalfWayLocation = tryFront(tryRight(PoseInTiles(0.5,5,South)));
 
         if(isBack()) {
-            ThreePose waitLoc = new ThreePose(tryRight(PoseInTiles(4.5, 3.5, South)));
+            ThreePose waitLoc = new ThreePose(tryRight(PoseInTiles(4.5, 3, South)));
 //            if (isRight()) {
 //                backRightBuff = 0.25;
 //            }
@@ -438,7 +438,7 @@ public class FinalAutonomous {
                 between.poseLeft.plus(new Pose2d(TILE_LENGTH/1.6,0,0)),
                 between.poseRight.plus(new Pose2d(TILE_LENGTH/1.6,0,0)));
 
-        threeParkTrajectories.addConstHeadingTraj(parkLocation);
+        //threeParkTrajectories.addConstHeadingTraj(parkLocation);
         threeParkTrajectories.buildTrajs();
 
         clawSystem.MoveOneClaw(true, false);

@@ -27,11 +27,11 @@ public class SuperSplineTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         double T_LEN = 60.5;
-        Pose2d start = new Pose2d(T_LEN * 5, 4.4 * T_LEN, PI);
-        Pose2d between = start.plus(new Pose2d(-0.2 * T_LEN, 5.5 * T_LEN - start.getY(), 0));
-        drive.setPoseEstimate(start);
+        Pose2d start = new Pose2d(T_LEN * 5, 4.4 * T_LEN, PI);//start.plus()
+        Pose2d between = new Pose2d(-0.2 * T_LEN, 5.5 * T_LEN - start.getY(), 0);
+        //drive.setPoseEstimate(start);
         drive.followTrajectory(
-                drive.trajectoryBuilder(start, false)
+                drive.trajectoryBuilder(new Pose2d(0,0,0), true)
                         .splineToConstantHeading(between.vec(),between.getHeading())
                         .splineToConstantHeading(
                                 between.plus(new Pose2d(T_LEN/1.6, 0,0)).vec(),between.getHeading())

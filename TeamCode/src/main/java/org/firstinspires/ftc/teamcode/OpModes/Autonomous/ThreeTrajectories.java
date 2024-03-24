@@ -151,6 +151,11 @@ public class ThreeTrajectories {
         }
     }
 
+    public void createThreePoseStart(ThreePose threePose, boolean reversed){
+        trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle, reversed);
+        trajbuilderLeft = drive.trajectoryBuilder(threePose.poseLeft, reversed);
+        trajbuilderRight = drive.trajectoryBuilder(threePose.poseRight, reversed);
+    }
     public void createThreePoseStart(ThreePose threePose){
         trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle);
         trajbuilderLeft = drive.trajectoryBuilder(threePose.poseLeft);
