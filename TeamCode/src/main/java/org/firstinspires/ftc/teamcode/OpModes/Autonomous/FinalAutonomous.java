@@ -301,14 +301,14 @@ public class FinalAutonomous {
         // drop of the purple in the back //
         if((!isRight() && !isBack()) || (isRight() && isBack())){
             purpleDropLocation = new ThreePose(
-                    tryRight(tryFront(PoseInTiles(1.1, 4.01, South))), //middle
+                    tryRight(tryFront(PoseInTiles(1, 4.01, South))), //middle
                     tryRight(tryFront(PoseInTiles(1.52, 4.3, North))), //left
                     tryRight(tryFront(PoseInTiles(1.383, 4.3, South))) //right
             );
         }
         else{
             purpleDropLocation = new ThreePose(
-                    tryRight(tryFront(PoseInTiles(1.1, 4.01, South))), //middle
+                    tryRight(tryFront(PoseInTiles(1, 4.01, South))), //middle
                     tryRight(tryFront(PoseInTiles(1.383, 4.3, South))), //left
                     tryRight(tryFront(PoseInTiles(1.52, 4.3, North))) //right
             );
@@ -405,7 +405,7 @@ public class FinalAutonomous {
 
         // yellow Trajectories //
         threeYellowDropTrajectories.endLocations.poseMiddle =
-                tryRight(PoseInTiles(5, 4.4, South)); //backRightBuff, angleFront
+                tryRight(PoseInTiles(5, 4.0, South)); //backRightBuff, angleFront 4.4
         threeYellowDropTrajectories.endLocations.poseLeft =
                 threeYellowDropTrajectories.endLocations.poseMiddle.plus(
                         new Pose2d(0, distanceBetweenTags*signY, 0));
@@ -423,11 +423,11 @@ public class FinalAutonomous {
 
         ThreePose between = new ThreePose(
                 tryRight(dropYellowLocs.poseMiddle.plus(
-                        PoseInTiles(-0.2,(correctPark-dropYellowLocs.poseMiddle.getY()/TILE_LENGTH) * signY,0))),
+                        PoseInTiles(-0.15,(correctPark-dropYellowLocs.poseMiddle.getY()/TILE_LENGTH) * signY,0))),
                 tryRight(dropYellowLocs.poseLeft.plus(
-                        PoseInTiles(-0.2,(correctPark-dropYellowLocs.poseLeft.getY()/TILE_LENGTH) * signY,0))),
+                        PoseInTiles(-0.15,(correctPark-dropYellowLocs.poseLeft.getY()/TILE_LENGTH) * signY,0))),
                 tryRight(dropYellowLocs.poseRight.plus(
-                        PoseInTiles(-0.2,(correctPark-dropYellowLocs.poseRight.getY()/TILE_LENGTH) * signY,0)))
+                        PoseInTiles(-0.15,(correctPark-dropYellowLocs.poseRight.getY()/TILE_LENGTH) * signY,0)))
         );
 
         threeParkTrajectories.createThreePoseStart(threeYellowDropTrajectories.endLocations);
