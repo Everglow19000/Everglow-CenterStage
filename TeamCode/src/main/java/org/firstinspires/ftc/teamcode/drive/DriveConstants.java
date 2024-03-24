@@ -54,8 +54,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.007;
-    public static double kA = 0.0025;
+    public static double kV = 0.0072;
+    public static double kA = 0.002;
     public static double kStatic = 0.002;
 
     /*
@@ -66,9 +66,9 @@ public class DriveConstants {
      * inches.
      */
     public static double MAX_VEL = 100;
-    public static double MAX_ACCEL = 50;
+    public static double MAX_ACCEL = MAX_VEL;
     public static double MAX_ANG_VEL = Math.toRadians(180);
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+    public static double MAX_ANG_ACCEL = MAX_ANG_VEL;
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
