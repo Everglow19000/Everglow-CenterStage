@@ -13,10 +13,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.security.cert.TrustAnchor;
+import java.util.Calendar;
+
 public class FourBarSystem{
 
     public enum Level {
-        START(0), PICKUP(0), DROP(-670), REST(-670), LOW(-460); //344
+        START(0), PICKUP(0), DROP(-670), REST(-670), LOW(-470); //460
         //start: -10, pickup: 210,235
         public final int state;
 
@@ -65,6 +68,10 @@ public class FourBarSystem{
         fourBarMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pid);
 
         //clawAngelServo.resetDeviceConfigurationForOpMode();
+    }
+
+    public FourBarExecutor getExecutor(ServoAngel servoAngel, boolean wait){
+        return new FourBarExecutor(servoAngel, wait);
     }
 
     public void restart(){
@@ -197,30 +204,52 @@ public class FourBarSystem{
         private final Level m_Level;
         private final double m_Power;
 
+        private final boolean isOnlyServo;
+        private boolean m_toWait;
+
+        private long startTime;
+
         public FourBarExecutor(ServoAngel servoAngel, Level level) {
             m_ServoAngle = servoAngel;
             m_Level = level;
             m_Power = 0.85;
+            isOnlyServo = false;
         }
 
         public FourBarExecutor(ServoAngel servoAngel, Level level, double power) {
             m_ServoAngle = servoAngel;
             m_Level = level;
             m_Power = power;
+            isOnlyServo = false;
+        }
+
+        public FourBarExecutor(ServoAngel servoAngel, boolean toWait){
+            isOnlyServo = true;
+            m_ServoAngle = servoAngel;
+            m_Level = null;
+            m_Power = 0;
+            m_toWait = toWait;
         }
 
         @Override
         public void run() {
-            if(m_Level == Level.PICKUP){
-                fourBarMotor.setPower(m_Power);
-                set4BarPositionByLevel(m_Level);
-                //opMode.sleep(400);
+            if(isOnlyServo){
+                if(m_toWait){
+                    startTime = Calendar.getInstance().getTimeInMillis();
+                }
                 setServoPositionByLevel(m_ServoAngle);
             }
             else {
-                fourBarMotor.setPower(m_Power);
-                setServoPositionByLevel(m_ServoAngle);
-                set4BarPositionByLevel(m_Level);
+                if (m_Level == Level.PICKUP) {
+                    fourBarMotor.setPower(m_Power);
+                    set4BarPositionByLevel(m_Level);
+                    //opMode.sleep(400);
+                    setServoPositionByLevel(m_ServoAngle);
+                } else {
+                    fourBarMotor.setPower(m_Power);
+                    setServoPositionByLevel(m_ServoAngle);
+                    set4BarPositionByLevel(m_Level);
+                }
             }
         }
 
@@ -228,7 +257,18 @@ public class FourBarSystem{
         @Override
         public boolean isFinished() {
             //set4BarPositionByLevel(m_Level);
-            return isFinish(m_Level);
+
+            if(isOnlyServo) {
+                if (m_toWait) {
+                    return Calendar.getInstance().getTimeInMillis() - startTime >= 300;
+                }
+                else
+                    return true;
+            }
+            else
+            {
+                return isFinish(m_Level);
+            }
         }
 
         @Override

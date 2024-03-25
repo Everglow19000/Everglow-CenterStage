@@ -120,7 +120,7 @@ public class FinalAutonomous {
      * @return new Pose2d to use for a Right-Start Autonomous
      */
     public Pose2d mirrorToRight(Pose2d pose) {
-        return new Pose2d(pose.getX(), 6 * TILE_LENGTH - pose.getY(), -pose.getHeading());
+        return new Pose2d(pose.getX(), 6 * 61 - pose.getY(), -pose.getHeading());
     }
 
     public Pose2d mirrorToFront(Pose2d pose) {
@@ -261,12 +261,14 @@ public class FinalAutonomous {
         // Create all Sequences //
         dropPurpleSeq  = new Sequence(false,
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
+                fourBarSystem.getExecutor(FourBarSystem.ServoAngel.DROP, true),
                 fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.DROP),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)
         );
 
         dropYellow = new Sequence(false, clawSystem.getExecutor(false)
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
+                ,fourBarSystem.getExecutor(FourBarSystem.ServoAngel.DROP, true)
                 , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP)
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.MED_AUTONOMOUS)
         );
@@ -295,6 +297,7 @@ public class FinalAutonomous {
         ThreePose parkLocation;
         double correctPark;
         double rightBuffer = 0;
+        double multy = 0;
         ThreePose purpleDropLocation;
         int signX = getXSignByPosition(), signY = getYSignByPosition();
 
@@ -303,48 +306,90 @@ public class FinalAutonomous {
             purpleDropLocation = new ThreePose(
                     tryRight(tryFront(PoseInTiles(1, 4.01, South))), //middle
                     tryRight(tryFront(PoseInTiles(1.52, 4.3, North))), //left
-                    tryRight(tryFront(PoseInTiles(1.383, 4.3, South))) //right
+                    tryRight(tryFront(PoseInTiles(1.382, 4.3, South))) //right
             );
         }
         else{
             purpleDropLocation = new ThreePose(
                     tryRight(tryFront(PoseInTiles(1, 4.01, South))), //middle
-                    tryRight(tryFront(PoseInTiles(1.383, 4.3, South))), //left
+                    tryRight(tryFront(PoseInTiles(1.382, 4.3, South))), //left
                     tryRight(tryFront(PoseInTiles(1.52, 4.3, North))) //right
             );
         }
 
         Pose2d purpleHalfWayLocation = tryFront(tryRight(PoseInTiles(0.5,5,South)));
-
+        double frontRightBuff = 0, frontLeftBuff = 0;
         if(isBack()) {
-            ThreePose waitLoc = new ThreePose(tryRight(PoseInTiles(4.5, 3, South)));
-//            if (isRight()) {
-//                backRightBuff = 0.25;
-//            }
+            rightBuffer = 0.5;
+            ThreePose waitLoc;
+            if (isRight()) {
+                multy = 2;
+            }
 
-            rightBuffer = 0.35;
+            //rightBuffer = 0.35;
 
             opMode.telemetry.addData("purple right: ", purpleDropLocation.poseRight);
             opMode.telemetry.addData("purple Halfway: ", purpleHalfWayLocation);
 
             ThreePose between = new ThreePose(
-                purpleDropLocation.poseMiddle.plus(PoseInTiles(
-                        0,(3.9-purpleDropLocation.poseMiddle.getY()/TILE_LENGTH) * signY,0)),
-                purpleDropLocation.poseLeft.plus(PoseInTiles(
-                        0,(3.9-purpleDropLocation.poseLeft.getY()/TILE_LENGTH)* signY,0)),
-                purpleDropLocation.poseRight.plus(PoseInTiles(
-                        -0.2 * signX,(3.9-purpleDropLocation.poseRight.getY()/TILE_LENGTH) * signY,0))
+                purpleDropLocation.poseMiddle.plus(tryRight(PoseInTiles(
+                        0,3.65,0))
+                        .plus(PoseInTiles(0,-purpleDropLocation.poseMiddle.getY()/TILE_LENGTH,0))),
+                purpleDropLocation.poseLeft.plus(tryRight(PoseInTiles(
+                        0,3.65,0))
+                        .plus(PoseInTiles(0,-purpleDropLocation.poseLeft.getY()/TILE_LENGTH,0))),
+                purpleDropLocation.poseRight.plus(tryRight(PoseInTiles(
+                        -0.2 * signX,3.65,0))
+                        .plus(PoseInTiles(0,-purpleDropLocation.poseRight.getY()/TILE_LENGTH,0)))
             );
 
-            threeMiddleForBackTrajectories.createThreePoseStart(purpleDropLocation);
+            threeMiddleForBackTrajectories.createThreePoseStart(purpleDropLocation, true);
             threeMiddleForBackTrajectories.addLineToSplineHeading(between);
 
             //waitLoc.poseRight = waitLoc.poseRight.plus(tryRight(PoseInTiles(0,rightBuffer,0))); //rightBuff
             //waitLoc.poseMiddle = waitLoc.poseMiddle.plus(PoseInTiles(0,-backRightBuff,0)); //-backRightBuff
             //waitLoc.poseLeft = waitLoc.poseLeft.plus(PoseInTiles(0,-backRightBuff,0)); //-backRightBuff
+            waitLoc = new ThreePose(
+                    tryRight(PoseInTiles(3, 3.25, South)),
+                    tryRight(PoseInTiles(3, 3.25, South)),
+                    tryRight(PoseInTiles(3, 3.25, North))
+                            .plus(PoseInTiles(0, rightBuffer * signY,0)));
+
+            waitLoc = createRightPose(waitLoc);
 
             threeMiddleForBackTrajectories.addConstHeadingTraj(waitLoc);
 
+            waitLoc = new ThreePose(
+                    tryRight(PoseInTiles(4.45, 3.25, South)),
+                    tryRight(PoseInTiles(4.45, 3.25,South)),
+                    tryRight(PoseInTiles(4.45, 3.25, North))
+                            .plus(PoseInTiles(0, rightBuffer * signY,0)));
+
+            waitLoc = createRightPose(waitLoc);
+
+            threeMiddleForBackTrajectories.addConstHeadingTraj(waitLoc);
+
+            waitLoc = new ThreePose(
+                    tryRight(PoseInTiles(4.45, 3.23, South)),
+                    tryRight(PoseInTiles(4.45, 3.23,South)),
+                    tryRight(PoseInTiles(4.45, 3.23, South))
+                            .plus(PoseInTiles(0, rightBuffer * signY,0)));
+
+            waitLoc = createRightPose(waitLoc);
+
+            if(isRight()){
+                threeMiddleForBackTrajectories.trajbuilderLeft
+                        .splineTo(waitLoc.poseLeft.vec(), waitLoc.poseLeft.getHeading());
+                threeMiddleForBackTrajectories.trajbuilderRight
+                        .splineToConstantHeading(waitLoc.poseRight.vec(),waitLoc.poseRight.getHeading());
+            }else {
+                threeMiddleForBackTrajectories.trajbuilderLeft
+                        .splineToConstantHeading(waitLoc.poseLeft.vec(), waitLoc.poseLeft.getHeading());
+                threeMiddleForBackTrajectories.trajbuilderRight
+                        .splineTo(waitLoc.poseRight.vec(),waitLoc.poseRight.getHeading());
+            }
+            threeMiddleForBackTrajectories.trajbuilderMiddle
+                    .splineToConstantHeading(waitLoc.poseMiddle.vec(), waitLoc.poseMiddle.getHeading());
             threeMiddleForBackTrajectories.endLocations = waitLoc;
             correctPark = 3.5;
             threeYellowDropTrajectories.startLocations = threeMiddleForBackTrajectories.endLocations;
@@ -356,23 +401,19 @@ public class FinalAutonomous {
             purpleDropLocation.poseRight = purpleDropLocation.poseRight.plus(PoseInTiles(-1,0,0));
 
             if(isRight()){
-                purpleDropLocation.poseRight = purpleDropLocation.poseRight.plus(PoseInTiles(1.15,0,PI));
+                purpleDropLocation.poseRight = purpleDropLocation.poseRight.plus(PoseInTiles(1.175,0,PI));
             }
             else {
-                purpleDropLocation.poseLeft = purpleDropLocation.poseLeft.plus(PoseInTiles(1.15,0,PI));
+                purpleDropLocation.poseLeft = purpleDropLocation.poseLeft.plus(PoseInTiles(1.175,0,PI));
             }
 
             purpleHalfWayLocation = purpleHalfWayLocation.plus(PoseInTiles(-1,0,0));
 
-            opMode.telemetry.addData("purple left: ", purpleDropLocation.poseLeft);
-            opMode.telemetry.addData("purple right: ", purpleDropLocation.poseRight);
-            opMode.telemetry.addData("purple middle: ", purpleDropLocation.poseMiddle);
-            opMode.telemetry.addData("purple Halfway: ", purpleHalfWayLocation);
-            opMode.telemetry.update();
-            //opMode.sleep(30000);
-
             correctPark = 5.6;
-//            frontBuff = 0.3;
+            if(isRight())
+                frontRightBuff = 0.07;
+            else
+                frontLeftBuff = 0.07;
 //            angleFront = 0;
             threePurpleDropTrajectories.endLocations = purpleDropLocation;
             threeYellowDropTrajectories.startLocations = threePurpleDropTrajectories.endLocations;
@@ -405,32 +446,35 @@ public class FinalAutonomous {
 
         // yellow Trajectories //
         threeYellowDropTrajectories.endLocations.poseMiddle =
-                tryRight(PoseInTiles(5, 4.0, South)); //backRightBuff, angleFront 4.4
+                tryRight(PoseInTiles(4.9, 4.5, South)); //backRightBuff, angleFront 4.4
         threeYellowDropTrajectories.endLocations.poseLeft =
                 threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                        new Pose2d(0, distanceBetweenTags*signY, 0));
+                        new Pose2d(frontLeftBuff*TILE_LENGTH, distanceBetweenTags, 0));
         threeYellowDropTrajectories.endLocations.poseRight
                 = threeYellowDropTrajectories.endLocations.poseMiddle.plus(
-                new Pose2d(0, (-distanceBetweenTags + 0)*signY, 0)); //where is the 0 was (rightBuffer * TILE_LENGTH)
+                new Pose2d(frontRightBuff*TILE_LENGTH, -distanceBetweenTags, 0)); //where is the 0 was (rightBuffer * TILE_LENGTH)
 
         if(!isBack())
-            threeYellowDropTrajectories.createLinerHeadingTrajectories();
+            threeYellowDropTrajectories.createLinerHeadingTrajectories(true);
         else
-            threeYellowDropTrajectories.createConstHeadingTrajectories();
+            threeYellowDropTrajectories.createConstHeadingTrajectories(true);
 
         // park //
         ThreePose dropYellowLocs = threeYellowDropTrajectories.endLocations;
 
         ThreePose between = new ThreePose(
-                tryRight(dropYellowLocs.poseMiddle.plus(
-                        PoseInTiles(-0.15,(correctPark-dropYellowLocs.poseMiddle.getY()/TILE_LENGTH) * signY,0))),
-                tryRight(dropYellowLocs.poseLeft.plus(
-                        PoseInTiles(-0.15,(correctPark-dropYellowLocs.poseLeft.getY()/TILE_LENGTH) * signY,0))),
-                tryRight(dropYellowLocs.poseRight.plus(
-                        PoseInTiles(-0.15,(correctPark-dropYellowLocs.poseRight.getY()/TILE_LENGTH) * signY,0)))
+                dropYellowLocs.poseMiddle.plus(tryRight(PoseInTiles(
+                        -0.15,correctPark,0)))
+                        .plus(PoseInTiles(0,-dropYellowLocs.poseMiddle.getY()/TILE_LENGTH,0)),
+                dropYellowLocs.poseLeft.plus(tryRight(PoseInTiles(
+                        -0.15,correctPark,0)))
+                        .plus(PoseInTiles(0,-dropYellowLocs.poseLeft.getY()/TILE_LENGTH,0)),
+                dropYellowLocs.poseRight.plus(tryRight(PoseInTiles(
+                        -0.15,correctPark,0)))
+                        .plus(PoseInTiles(0,-dropYellowLocs.poseRight.getY()/TILE_LENGTH,0))
         );
 
-        threeParkTrajectories.createThreePoseStart(threeYellowDropTrajectories.endLocations);
+        threeParkTrajectories.createThreePoseStart(threeYellowDropTrajectories.endLocations, true);
         threeParkTrajectories.addConstHeadingTraj(between);
 
         parkLocation = new ThreePose(
@@ -438,7 +482,7 @@ public class FinalAutonomous {
                 between.poseLeft.plus(new Pose2d(TILE_LENGTH/1.6,0,0)),
                 between.poseRight.plus(new Pose2d(TILE_LENGTH/1.6,0,0)));
 
-        //threeParkTrajectories.addConstHeadingTraj(parkLocation);
+        threeParkTrajectories.addConstHeadingTraj(parkLocation);
         threeParkTrajectories.buildTrajs();
 
         clawSystem.MoveOneClaw(true, false);
@@ -451,8 +495,19 @@ public class FinalAutonomous {
         if(opMode.isStopRequested())
             return;
 
-        runAfterInput();
+        //runAfterInput();
 
+    }
+
+    public ThreePose createRightPose(ThreePose threePose){
+        if(isRight()){
+            threePose = new ThreePose(
+                    threePose.poseMiddle,
+                    threePose.poseRight,
+                    threePose.poseLeft
+            );
+        }
+        return threePose;
     }
 
     public void BuildAutonomous(LinearOpMode opMode, StartPosition startPosition){
@@ -651,6 +706,38 @@ public class FinalAutonomous {
         return sign;
     }
 
+    public void runAfterInputTest(CameraSystem.DetectionLocation location){
+
+        fourBarSystem.setMotorPower(0.85);
+        propPlace = location;
+        opMode.telemetry.addData("Detection ", propPlace);
+        opMode.telemetry.update();
+
+        //drive.followTrajectory(splineToPurple); //tod
+        dropPurpleSeq.startSequence();
+
+        threePurpleDropTrajectories.driveCorrectTrajectory(propPlace);
+
+        // Drop Purple
+
+        while (!opMode.isStopRequested()){
+            if(dropPurpleSeq.isDone()){
+                break;
+            }
+        }
+
+        clawSystem.MoveOneClaw(true, true);
+        opMode.sleep(1000);
+        // Sequance drop
+        returnFromPurple.startSequence();
+
+        while (!opMode.isStopRequested()){
+            if(returnFromPurple.isDone()){
+                break;
+            }
+        }
+
+    }
     public void runAfterInput() {
 
         fourBarSystem.setMotorPower(0.85);
@@ -687,31 +774,22 @@ public class FinalAutonomous {
     public void SecondCall(){
         if(isBack()) {
             threeMiddleForBackTrajectories.driveCorrectTrajectory(propPlace);
-
-            dropYellow.startSequence();
-
-            while (!opMode.isStopRequested()) {
-                if (dropYellow.isDone())
-                    break;
-            }
-
+            drive.setPoseEstimate(tryRight(PoseInTiles(4.5, 3.5, PI)));
             opMode.sleep(3000);
         }
 
         //both Back and Front//
         threeYellowDropTrajectories.driveCorrectTrajectory(propPlace);
 
-        if(!isBack()) {
-            dropYellow.startSequence();
+        dropYellow.startSequence();
 
-            while (!opMode.isStopRequested()) {
-                if (dropYellow.isDone())
-                    break;
-            }
-
-            drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .back(11).build());
+        while (!opMode.isStopRequested()) {
+            if (dropYellow.isDone())
+                break;
         }
+
+        drive.followTrajectory(drive.trajectoryBuilder(drive.getPoseEstimate())
+                .back(12.5).build());
 
         clawSystem.toggle();
         opMode.sleep(300);
@@ -726,4 +804,3 @@ public class FinalAutonomous {
         }
     }
 }
-

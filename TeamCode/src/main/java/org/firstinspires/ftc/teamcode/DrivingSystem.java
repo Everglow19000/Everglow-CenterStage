@@ -56,8 +56,8 @@ public class DrivingSystem extends SampleMecanumDrive {
 
     private double chooseLain(Pose2d robotTileLocation) {
         double tileY = (int)robotTileLocation.getY() + 0.5;
-        if((robotTileLocation.getX() > 3.5) && (tileY == 2.5)) tileY = 1.5;
-        if((robotTileLocation.getX() > 3.5) && (tileY == 3.5)) tileY = 4.5;
+        //if((robotTileLocation.getX() > 3.5) && (tileY == 2.5)) tileY = 1.5;
+        //if((robotTileLocation.getX() > 3.5) && (tileY == 3.5)) tileY = 4.5;
         //opMode.telemetry.addData("Target Lain ", tileY);
         return tileY;
     }

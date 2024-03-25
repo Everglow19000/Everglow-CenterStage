@@ -66,16 +66,16 @@ public class ThreeTrajectories {
         trajRight = trajbuilderRight.build();
     }
 
-    public void createLinerHeadingTrajectories() {
-        trajMiddle = trajToLinearHeading(startLocations.poseMiddle, endLocations.poseMiddle);
-        trajLeft = trajToLinearHeading(startLocations.poseLeft, endLocations.poseLeft);
-        trajRight = trajToLinearHeading(startLocations.poseRight, endLocations.poseRight);
+    public void createLinerHeadingTrajectories(boolean reversed) {
+        trajMiddle = trajToLinearHeading(startLocations.poseMiddle, endLocations.poseMiddle, reversed);
+        trajLeft = trajToLinearHeading(startLocations.poseLeft, endLocations.poseLeft, reversed);
+        trajRight = trajToLinearHeading(startLocations.poseRight, endLocations.poseRight, reversed);
     }
 
-    public void createConstHeadingTrajectories() {
-        trajMiddle = trajToConstantHeading(startLocations.poseMiddle, endLocations.poseMiddle);
-        trajLeft = trajToConstantHeading(startLocations.poseLeft, endLocations.poseLeft);
-        trajRight = trajToConstantHeading(startLocations.poseRight, endLocations.poseRight);
+    public void createConstHeadingTrajectories(boolean reversed) {
+        trajMiddle = trajToConstantHeading(startLocations.poseMiddle, endLocations.poseMiddle, reversed);
+        trajLeft = trajToConstantHeading(startLocations.poseLeft, endLocations.poseLeft, reversed);
+        trajRight = trajToConstantHeading(startLocations.poseRight, endLocations.poseRight, reversed);
     }
 
     public void createMiddleTrajectories() {
@@ -101,13 +101,13 @@ public class ThreeTrajectories {
                 .splineTo(poseFinish.vec(), poseFinish.getHeading())
                 .build();
     }
-    private Trajectory trajToConstantHeading(Pose2d startPose, Pose2d endPose){
-        return drive.trajectoryBuilder(startPose)
+    private Trajectory trajToConstantHeading(Pose2d startPose, Pose2d endPose, boolean reversed){
+        return drive.trajectoryBuilder(startPose, reversed)
                 .splineToConstantHeading(endPose.vec(),endPose.getHeading())
                 .build();
     }
-    private Trajectory trajToLinearHeading(Pose2d startPose, Pose2d endPose){
-        return drive.trajectoryBuilder(startPose)
+    private Trajectory trajToLinearHeading(Pose2d startPose, Pose2d endPose, boolean isReversed){
+        return drive.trajectoryBuilder(startPose, isReversed)
                 .splineToLinearHeading(endPose,endPose.getHeading())
                 .build();
     }
@@ -155,6 +155,11 @@ public class ThreeTrajectories {
         trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle, reversed);
         trajbuilderLeft = drive.trajectoryBuilder(threePose.poseLeft, reversed);
         trajbuilderRight = drive.trajectoryBuilder(threePose.poseRight, reversed);
+    }
+    public void createThreePoseStart(ThreePose threePose, double angle){
+        trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle, angle);
+        trajbuilderLeft = drive.trajectoryBuilder(threePose.poseLeft, angle);
+        trajbuilderRight = drive.trajectoryBuilder(threePose.poseRight, angle);
     }
     public void createThreePoseStart(ThreePose threePose){
         trajbuilderMiddle = drive.trajectoryBuilder(threePose.poseMiddle);

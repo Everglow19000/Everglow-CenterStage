@@ -21,4 +21,12 @@ public class ThreePose {
         this.poseLeft = new Pose2d();
         this.poseRight = new Pose2d();
     }
+
+    public ThreePose plus(ThreePose other){
+        return new ThreePose(
+                this.poseMiddle.plus(other.poseMiddle),
+                this.poseLeft.plus(other.poseLeft),
+                this.poseRight.plus(other.poseRight)
+        );
+    }
 }
