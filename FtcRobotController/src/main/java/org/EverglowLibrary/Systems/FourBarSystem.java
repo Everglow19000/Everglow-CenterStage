@@ -29,7 +29,7 @@ public class FourBarSystem{
     }
 
     public enum ServoAngel {
-        PICKUP(0.56), DROP(0), REST(1), LOW(1);
+        PICKUP(0.56), DROP(0.164), LOW(0.1);//, REST(1), LOW(1);
 
         public final double state;
 

@@ -142,9 +142,9 @@ public class TwoDrivers_Sequences extends LinearOpMode {
             }
             right_claw = gamepad2.right_trigger > 0.5;
 
-            //if(gamepad1.circle && !toggle_ajust) ajust = !ajust;
+            if(gamepad1.circle && !toggle_ajust) ajust = !ajust;
             if(gamepad1.triangle && !toggle_axis) axis = !axis;
-            if(gamepad1.square && !toggle_control) control = !control;
+            //if(gamepad1.square && !toggle_control) control = !control;
             //if(gamepad1.cross && !toggle_slow) slow = !slow;
 
             toggle_axis = gamepad1.triangle;
@@ -198,7 +198,7 @@ public class TwoDrivers_Sequences extends LinearOpMode {
     }
 
     public double linearInputToExponential(double power){
-        double base = 10;
+        double base = 6;
         return (Math.pow(base, Math.abs(power)) - 1) / (base - 1) * Math.signum(power);
     }
 

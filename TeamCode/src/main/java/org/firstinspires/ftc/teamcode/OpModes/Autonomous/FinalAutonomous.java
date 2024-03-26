@@ -261,16 +261,16 @@ public class FinalAutonomous {
         // Create all Sequences //
         dropPurpleSeq  = new Sequence(false,
                 elevatorSystem.getExecutor(ElevatorSystem.Level.UP),
-                fourBarSystem.getExecutor(FourBarSystem.ServoAngel.DROP, true),
+                //fourBarSystem.getExecutor(FourBarSystem.ServoAngel.DROP, true),
                 fourBarSystem.getExecutor(FourBarSystem.Level.LOW, FourBarSystem.ServoAngel.DROP),
                 elevatorSystem.getExecutor(ElevatorSystem.Level.DOWN)
         );
 
-        dropYellow = new Sequence(false, clawSystem.getExecutor(false)
+        dropYellow =  new Sequence(false, clawSystem.getExecutor(false)
                 ,elevatorSystem.getExecutor(ElevatorSystem.Level.UP)
                 ,fourBarSystem.getExecutor(FourBarSystem.ServoAngel.DROP, true)
                 , fourBarSystem.getExecutor(FourBarSystem.Level.DROP, FourBarSystem.ServoAngel.DROP)
-                ,elevatorSystem.getExecutor(ElevatorSystem.Level.MED_AUTONOMOUS)
+                , elevatorSystem.getExecutor(ElevatorSystem.Level.MED_AUTONOMOUS)
         );
 
         getReadyToDrop  = sequenceControl.GetReadyToDropSeq();
@@ -495,8 +495,7 @@ public class FinalAutonomous {
         if(opMode.isStopRequested())
             return;
 
-        //runAfterInput();
-
+        runAfterInput();
     }
 
     public ThreePose createRightPose(ThreePose threePose){
