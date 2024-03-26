@@ -26,11 +26,11 @@ public class CameraSystem {
     public boolean m_IsBack;
     private boolean m_IsRight;
 
-    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/RedRocketFile.tflite"; //model_20240130_235607
+    private static final String TFOD_MODEL_FILE_RED = "/sdcard/FIRST/tflitemodels/RedCubeFile.tflite"; //model_20240130_235607
     private static final String TFOD_MODEL_FILE_BLUE = "/sdcard/FIRST/tflitemodels/BlueCubeFile.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABEL_RED = {
-            "RedRocket"
+            "RedCube"
     };
 
     private static final String[] LABEL_BLUE = {
