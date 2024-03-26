@@ -120,7 +120,7 @@ public class FinalAutonomous {
      * @return new Pose2d to use for a Right-Start Autonomous
      */
     public Pose2d mirrorToRight(Pose2d pose) {
-        return new Pose2d(pose.getX(), 6 * 61 - pose.getY(), -pose.getHeading());
+        return new Pose2d(pose.getX(), 6 * TILE_LENGTH - pose.getY(), -pose.getHeading());
     }
 
     public Pose2d mirrorToFront(Pose2d pose) {
@@ -195,7 +195,7 @@ public class FinalAutonomous {
     static final double West = PI/2;
     static final double South = PI;
 
-    static final double TILE_LENGTH = 60.5;
+    static final double TILE_LENGTH = 60; // 60.5
 
 
     ///////////////////////////
